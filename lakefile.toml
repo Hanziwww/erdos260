@@ -1,0 +1,14 @@
+name = "erdos260"
+version = "0.1.0"
+defaultTargets = ["erdos260"]
+
+[[require]]
+name = "mathlib"
+path = "D:/proof/GracefulTrees/.lake/packages/mathlib"
+
+[[lean_lib]]
+name = "Erdos260"
+
+[[lean_exe]]
+name = "erdos260"
+root = "Main"
