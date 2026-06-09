@@ -41,7 +41,6 @@ order, dyadic `X`, and pinned `cStar`, `ξ`.  Concretely:
 -/
 structure ChernoffPathData (cStar ξ X : ℝ) where
   α : Type
-  decEq : DecidableEq α
   paths : Finset α
   weight : α -> ℝ
   cost : α -> Nat
@@ -74,7 +73,6 @@ theorem chernoffPathSpace
       0 <= Regular ∧
       Regular <= cStar * ξ * X / 6 := by
   classical
-  haveI : DecidableEq data.α := data.decEq
   refine
     ⟨weightedMass (highCostSet data.paths data.cost data.Y) data.weight,
      ?_, ?_⟩

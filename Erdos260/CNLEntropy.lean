@@ -47,6 +47,37 @@ theorem cleanCNLKraftSum_mono {α : Type _} {paths₁ paths₂ : Finset α}
   exact sum_le_sum_of_subset_of_nonneg h fun p _ _ =>
     Real.rpow_nonneg (by norm_num) _
 
+/-- If all BND heights are nonnegative and the slope `c` is nonnegative, then
+each Kraft summand is at most `1`, so the clean CNL Kraft sum is bounded by the
+number of paths. -/
+theorem cleanCNLKraftSum_le_card_of_nonneg_height {α : Type _}
+    (paths : Finset α) (BNDHeight : α -> ℝ) {c : ℝ}
+    (hc_nonneg : 0 <= c)
+    (hheight : ∀ p, p ∈ paths -> 0 <= BNDHeight p) :
+    cleanCNLKraftSum paths BNDHeight c <= (paths.card : ℝ) := by
+  unfold cleanCNLKraftSum
+  calc
+    (∑ p ∈ paths, (2 : ℝ) ^ (-(c * BNDHeight p)))
+        <= ∑ p ∈ paths, (1 : ℝ) := by
+          refine sum_le_sum ?_
+          intro p hp
+          have hmul : 0 <= c * BNDHeight p :=
+            mul_nonneg hc_nonneg (hheight p hp)
+          have hexp : -(c * BNDHeight p) <= 0 := by linarith
+          exact Real.rpow_le_one_of_one_le_of_nonpos (by norm_num) hexp
+    _ = (paths.card : ℝ) := by simp
+
+/-- A cardinality bound for a nonnegative-height CNL family implies the weighted
+Kraft bound.  This is the finite counting bridge used before inserting the
+full proof-v4 L.1.2 weighted encoding. -/
+theorem cleanCNLKraftSum_le_of_card_bound {α : Type _}
+    (paths : Finset α) (BNDHeight : α -> ℝ) {c CQ : ℝ} {M : Nat}
+    (hc_nonneg : 0 <= c)
+    (hheight : ∀ p, p ∈ paths -> 0 <= BNDHeight p)
+    (hcard : (paths.card : ℝ) <= CQ ^ M) :
+    cleanCNLKraftSum paths BNDHeight c <= CQ ^ M :=
+  (cleanCNLKraftSum_le_card_of_nonneg_height paths BNDHeight hc_nonneg hheight).trans hcard
+
 /--
 **Theorem G.6 (clean CNL entropy).**  The weighted-Kraft sum over all
 clean unclassified CNL paths through a cluster of length `M` is at

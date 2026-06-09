@@ -61,7 +61,6 @@ structure TowerPackageData (cStar ξ X : ℝ) where
       outputBoundConstant * nextLayerMass + smallError
   hSmall :
     outputBoundConstant * nextLayerMass + smallError <= cStar * ξ * X / 6
-  hMassNonneg : 0 <= ∑ b ∈ entryExitSet, chargedWeight b
 
 /--
 **Phase 7 deliverable: `towerPackageBound`.**
@@ -80,15 +79,16 @@ theorem towerPackageBound
       Tower <= cStar * ξ * X / 6 := by
   refine
     ⟨∑ b ∈ data.entryExitSet, data.chargedWeight b,
-     data.hMassNonneg, ?_⟩
+     ?_, ?_⟩
+  · exact Finset.sum_nonneg fun b hb => data.chargedWeight_nonneg b hb
   -- Apply Proposition I.3.1 (manuscript form) which is already proven in
   -- AppendixI.lean via `propositionI3_1_towerOutput` as the real linarith
   -- transformation of `hSummable`.
-  have hTower :
-      ∑ b ∈ data.entryExitSet, data.chargedWeight b <=
-        data.outputBoundConstant * data.nextLayerMass + data.smallError :=
-    propositionI3_1_towerOutput data.hSummable
-  exact hTower.trans data.hSmall
+  · have hTower :
+        ∑ b ∈ data.entryExitSet, data.chargedWeight b <=
+          data.outputBoundConstant * data.nextLayerMass + data.smallError :=
+      propositionI3_1_towerOutput data.hSummable
+    exact hTower.trans data.hSmall
 
 end
 

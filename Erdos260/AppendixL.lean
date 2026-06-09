@@ -214,6 +214,97 @@ theorem AuxiliaryEstimatesV2_proved :
   runTrichotomy := RunTrichotomyV2_proved
   thresholdDescent := ThresholdDescentV2_proved
 
+/-! ## Appendix L.5 / L.6 (v4): same-threshold high/drop and corrected residuals
+
+These are the local high/drop decomposition (Lemma L.5.1) and the corrected
+residual-weight dichotomy (Lemmas L.6.1–L.6.3) feeding Appendix N's terminal
+compression and bounded-scale estimates.  The high/low split itself is a
+**faithful** `Finset` partition; the one-step continuation containment (L.14h)
+and the shell-paid charge bound (L.11) reference the local-closure lemmas
+(M.1–M.5, K.2, L.1) and Lemma 22.1A, and are recorded as **conditional**
+inputs. -/
+
+/--
+**Lemma L.5.1 (same-threshold high/drop decomposition).**
+
+For a nonterminal successor `O`, the residual event `Ω_res` splits at the level
+`T+Y` into a high subfibre `{ζ : T+Y < 𝒲_O(ζ)}` and a low (drop) subfibre
+`{ζ : 𝒲_O(ζ) ≤ T+Y}`.  The split is a genuine disjoint partition; the
+one-step continuation containment `high ⊆ Ω(O,T)` (eq. L.14h) is the conditional
+input, and the low subfibre is charged to the variation-drop package (Appendix N).
+-/
+theorem lemmaL5_1_highDropDecomposition {σ : Type*} [DecidableEq σ]
+    (Ωres ΩO : Finset σ) (WO : σ → ℝ) (lvl : ℝ)
+    (hcont : Ωres.filter (fun ζ => lvl < WO ζ) ⊆ ΩO) :
+    ∃ high low : Finset σ,
+      Ωres = high ∪ low ∧ Disjoint high low ∧
+        high ⊆ ΩO ∧ (∀ ζ ∈ high, lvl < WO ζ) ∧ (∀ ζ ∈ low, WO ζ ≤ lvl) := by
+  classical
+  refine ⟨Ωres.filter (fun ζ => lvl < WO ζ),
+    Ωres.filter (fun ζ => ¬ lvl < WO ζ), ?_, ?_, hcont, ?_, ?_⟩
+  · rw [Finset.filter_union_filter_not_eq]
+  · exact Finset.disjoint_filter_filter_not Ωres Ωres _
+  · intro ζ hζ; exact (Finset.mem_filter.1 hζ).2
+  · intro ζ hζ; exact not_lt.1 (Finset.mem_filter.1 hζ).2
+
+/--
+**Lemma L.6.1 (low-residual / shell-paid dichotomy), `Finset` partition form.**
+
+The output event `Ω(O,T)` splits measurably into the low-residual fibre
+`Ω^low = {ζ : Y_res ≤ C_Q}` and the complementary paid fibre `Ω^paid`
+(eq. L.10).  This split is a faithful `Finset` partition; the shell-paid
+charge bound `𝔰(O,ζ) ≥ c_Q Y` on `Ω^paid` (eq. L.11) is the conditional input. -/
+theorem lemmaL6_1_lowPaidDichotomy {σ : Type*} [DecidableEq σ]
+    (ΩO : Finset σ) (Yres : σ → ℝ) (CQ : ℝ) :
+    ∃ low paid : Finset σ,
+      ΩO = low ∪ paid ∧ Disjoint low paid ∧
+        (∀ ζ ∈ low, Yres ζ ≤ CQ) ∧ (∀ ζ ∈ paid, CQ < Yres ζ) := by
+  classical
+  refine ⟨ΩO.filter (fun ζ => Yres ζ ≤ CQ),
+    ΩO.filter (fun ζ => ¬ Yres ζ ≤ CQ), ?_, ?_, ?_, ?_⟩
+  · rw [Finset.filter_union_filter_not_eq]
+  · exact Finset.disjoint_filter_filter_not ΩO ΩO _
+  · intro ζ hζ; exact (Finset.mem_filter.1 hζ).2
+  · intro ζ hζ; exact not_le.1 (Finset.mem_filter.1 hζ).2
+
+/--
+**Lemmas L.6.1–L.6.3 (corrected residual weights), aggregate bundle.**
+
+The corrected residual-weight dichotomy: a terminal non-DensePack output mass
+splits as `total = low + paid` (L.6.1), the low-residual part is `o(sX|I_j|)`
+(`low ≤ remLow`, L.6.3), and the paid part embeds into a stopped shell-paid
+family bounded by Lemma 22.1A (`paid ≤ mainPaid + remPaid`, L.6.2).  The three
+analytic bounds are conditional; the structure records them as fields. -/
+structure CorrectedResidualWeights where
+  /-- Total terminal non-DensePack residual mass. -/
+  total : ℝ
+  /-- Low-residual part (`Y_res ≤ C_Q`). -/
+  low : ℝ
+  /-- Shell-paid part (`𝔰 ≥ c_Q Y`). -/
+  paid : ℝ
+  /-- Main shell-Chernoff term `C_Q X|I_j|2^{-cY}` (Lemma 22.1A / L.6.2). -/
+  mainPaid : ℝ
+  /-- The `o(sX|I_j|)` remainder on the low part (L.6.3). -/
+  remLow : ℝ
+  /-- The `o(sX|I_j|)` remainder on the paid part (L.6.2). -/
+  remPaid : ℝ
+  /-- L.6.1: dichotomy split. -/
+  split : total = low + paid
+  /-- L.6.3: low-residual counting. -/
+  low_le : low ≤ remLow
+  /-- L.6.2: shell-paid embedding + Lemma 22.1A. -/
+  paid_le : paid ≤ mainPaid + remPaid
+
+/--
+**Lemmas L.6.1–L.6.3 (corrected residual weights), combined bound.**
+
+`total ≤ C_Q X|I_j|2^{-cY} + o(sX|I_j|)`: combine the dichotomy split with the
+low (L.6.3) and paid (L.6.2) bounds.  Faithful arithmetic on the conditional
+inputs. -/
+theorem lemmaL6_correctedResidualWeights (D : CorrectedResidualWeights) :
+    D.total ≤ D.mainPaid + (D.remLow + D.remPaid) := by
+  rw [D.split]; linarith [D.low_le, D.paid_le]
+
 end
 
 end Erdos260

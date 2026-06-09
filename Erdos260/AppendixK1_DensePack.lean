@@ -56,7 +56,6 @@ structure DensePackData (cStar ξ X : ℝ) where
     densePackPoints.card <= markersCard * (2 * spread + 1)
   hcount :
     (markersCard : ℝ) <= cStarSmall * X
-  hX_nonneg : 0 <= X
   hsmall :
     cStarSmall * X * ((2 * spread + 1 : Nat) : ℝ) <= cStar * ξ * X / 6
 

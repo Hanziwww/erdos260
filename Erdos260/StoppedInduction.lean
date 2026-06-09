@@ -157,7 +157,7 @@ def highCostSet {α : Type*} (paths : Finset α) (cost : α -> Nat) (Y : Nat) :
     Finset α :=
   paths.filter fun p => Y <= cost p
 
-theorem mem_highCostSet {α : Type*} [DecidableEq α]
+theorem mem_highCostSet {α : Type*}
     {paths : Finset α} {cost : α -> Nat} {Y : Nat} {p : α} :
     p ∈ highCostSet paths cost Y <-> p ∈ paths ∧ Y <= cost p := by
   simp [highCostSet]
@@ -396,18 +396,18 @@ theorem weightedMass_le_code_bound_mul_fiber_bound_mul_of_le
   exact weightedMass_le_code_bound_mul_of_fiber_mass_le
     paths code weight (mul_nonneg (by positivity) hW) hcodes hfiberMass
 
-theorem highCostSet_subset {α : Type*} [DecidableEq α]
+theorem highCostSet_subset {α : Type*}
     (paths : Finset α) (cost : α -> Nat) (Y : Nat) :
     highCostSet paths cost Y ⊆ paths := by
   intro p hp
   exact (mem_highCostSet.1 hp).1
 
-theorem highCostSet_card_le {α : Type*} [DecidableEq α]
+theorem highCostSet_card_le {α : Type*}
     (paths : Finset α) (cost : α -> Nat) (Y : Nat) :
     (highCostSet paths cost Y).card <= paths.card :=
   card_le_card (highCostSet_subset paths cost Y)
 
-theorem highCostSet_mono_threshold {α : Type*} [DecidableEq α]
+theorem highCostSet_mono_threshold {α : Type*}
     {paths : Finset α} {cost : α -> Nat} {Y₁ Y₂ : Nat}
     (hY : Y₁ <= Y₂) :
     highCostSet paths cost Y₂ ⊆ highCostSet paths cost Y₁ := by
@@ -415,7 +415,7 @@ theorem highCostSet_mono_threshold {α : Type*} [DecidableEq α]
   rcases mem_highCostSet.1 hp with ⟨hmem, hcost⟩
   exact mem_highCostSet.2 ⟨hmem, hY.trans hcost⟩
 
-theorem highCostSet_mono_subset {α : Type*} [DecidableEq α]
+theorem highCostSet_mono_subset {α : Type*}
     {s t : Finset α} {cost : α -> Nat} {Y : Nat}
     (hst : s ⊆ t) :
     highCostSet s cost Y ⊆ highCostSet t cost Y := by
@@ -423,7 +423,7 @@ theorem highCostSet_mono_subset {α : Type*} [DecidableEq α]
   rcases mem_highCostSet.1 hp with ⟨hmem, hcost⟩
   exact mem_highCostSet.2 ⟨hst hmem, hcost⟩
 
-theorem highCostSet_eq_empty_of_forall_lt {α : Type*} [DecidableEq α]
+theorem highCostSet_eq_empty_of_forall_lt {α : Type*}
     {paths : Finset α} {cost : α -> Nat} {Y : Nat}
     (hcost : ∀ p ∈ paths, cost p < Y) :
     highCostSet paths cost Y = ∅ := by
@@ -435,7 +435,7 @@ theorem highCostSet_eq_empty_of_forall_lt {α : Type*} [DecidableEq α]
   · intro hp
     simp at hp
 
-theorem highCostSet_eq_self_of_forall_ge {α : Type*} [DecidableEq α]
+theorem highCostSet_eq_self_of_forall_ge {α : Type*}
     {paths : Finset α} {cost : α -> Nat} {Y : Nat}
     (hcost : ∀ p ∈ paths, Y <= cost p) :
     highCostSet paths cost Y = paths := by
@@ -446,20 +446,20 @@ theorem highCostSet_eq_self_of_forall_ge {α : Type*} [DecidableEq α]
   · intro hp
     exact mem_highCostSet.2 ⟨hp, hcost p hp⟩
 
-theorem weightedMass_highCostSet_le {α : Type*} [DecidableEq α]
+theorem weightedMass_highCostSet_le {α : Type*}
     {paths : Finset α} {cost : α -> Nat} {Y : Nat} {weight : α -> ℝ}
     (hweight : ∀ p ∈ paths, 0 <= weight p) :
     weightedMass (highCostSet paths cost Y) weight <= weightedMass paths weight :=
   weightedMass_mono_subset (highCostSet_subset paths cost Y) hweight
 
-theorem weightedMoment_highCostSet_le {α : Type*} [DecidableEq α]
+theorem weightedMoment_highCostSet_le {α : Type*}
     {paths : Finset α} {cost : α -> Nat} {Y : Nat} {weight : α -> ℝ}
     {z : ℝ} (hweight : ∀ p ∈ paths, 0 <= weight p) (hz : 0 <= z) :
     weightedMoment (highCostSet paths cost Y) weight cost z <=
       weightedMoment paths weight cost z :=
   weightedMoment_mono_subset (highCostSet_subset paths cost Y) hweight hz
 
-theorem shellChernoff_bound_of_moment {α : Type*} [DecidableEq α]
+theorem shellChernoff_bound_of_moment {α : Type*}
     {paths : Finset α} {weight : α -> ℝ} {cost : α -> Nat} {Y : Nat} {z : ℝ}
     (hweight : ∀ p ∈ paths, 0 <= weight p) (hz : 1 <= z) :
     weightedMass (highCostSet paths cost Y) weight <=
@@ -498,7 +498,7 @@ theorem shellChernoff_bound_of_moment {α : Type*} [DecidableEq α]
             hpowYpos.le
     _ = weightedMoment paths weight cost z / z ^ Y := by rfl
 
-theorem shellChernoff_bound_of_moment_bound {α : Type*} [DecidableEq α]
+theorem shellChernoff_bound_of_moment_bound {α : Type*}
     {paths : Finset α} {weight : α -> ℝ} {cost : α -> Nat}
     {Y m : Nat} {z root A : ℝ}
     (hweight : ∀ p ∈ paths, 0 <= weight p) (hz : 1 <= z)
@@ -509,7 +509,7 @@ theorem shellChernoff_bound_of_moment_bound {α : Type*} [DecidableEq α]
     (div_le_div_of_nonneg_right hmoment (pow_pos hzpos Y).le)
 
 theorem shellChernoff_bound_of_pointwise_tilt
-    {α : Type*} [DecidableEq α]
+    {α : Type*}
     {paths : Finset α} {weight : α -> ℝ} {cost : α -> Nat}
     {Y : Nat} {z B : ℝ}
     (hweight : ∀ p ∈ paths, 0 <= weight p) (hz : 1 <= z)
@@ -523,7 +523,7 @@ theorem shellChernoff_bound_of_pointwise_tilt
     (div_le_div_of_nonneg_right hmoment (pow_pos (by linarith) Y).le)
 
 theorem shellChernoff_bound_of_pointwise_weight_and_cost
-    {α : Type*} [DecidableEq α]
+    {α : Type*}
     {paths : Finset α} {weight : α -> ℝ} {cost : α -> Nat}
     {Y M : Nat} {z B : ℝ}
     (hweight_nonneg : ∀ p ∈ paths, 0 <= weight p)

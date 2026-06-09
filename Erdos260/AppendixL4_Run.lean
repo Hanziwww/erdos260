@@ -24,7 +24,8 @@ reduces to `Run_{s,j} ≤ C_Run · cStar · ξ · X · |I_j| + o(sX|I_j|)`, whic
 inside `cStar · ξ · X / 6` after K.4 step 5.
 
 Phase 9 takes the trichotomy outputs (NextTower, NextReturn, NextDensePack, CNLTail,
-small error) as a `RunPackageData` bundle and produces `RunVal ≤ cStar · ξ · X / 6`.
+small error) as a `RunPackageData` bundle and proves the concrete run mass is
+`≤ cStar · ξ · X / 6`.
 -/
 
 namespace Erdos260
@@ -42,7 +43,6 @@ Per-instance manuscript inputs to Proposition I.5.2.
 * `nextTower`, `nextReturn`, `nextDensePack` — bounds from the next threshold layer;
 * `twoNegcY` — the manuscript `2^{-cY}` clean CNL tail factor;
 * `X, Ij, smallError` — auxiliary parameters;
-* `hMassNonneg` — nonnegativity of `runMass`;
 * `hRun` — Proposition I.5.2 manuscript bound (real linarith);
 * `hSmall` — K.4 compatibility chain to fit into `cStar · ξ · X / 6`.
 -/
@@ -54,7 +54,6 @@ structure RunPackageData (cStar ξ X : ℝ) where
   twoNegcY : ℝ
   Ij : ℝ
   smallError : ℝ
-  hMassNonneg : 0 <= runMass
   hRun :
     runMass <=
       nextTower + nextReturn + nextDensePack + X * Ij * twoNegcY + smallError
@@ -65,8 +64,8 @@ structure RunPackageData (cStar ξ X : ℝ) where
 /--
 **Phase 9 deliverable: `runBound`.**
 
-Given `RunPackageData`, produce `RunVal` and the bound
-`RunVal ≤ cStar · ξ · X / 6`.
+Given `RunPackageData`, prove the concrete run mass satisfies the bound
+`≤ cStar · ξ · X / 6`.
 
 Constructed via Proposition I.5.2 (already a real inequality in
 [Erdos260.AppendixI]) followed by the K.4 numerical compatibility.
@@ -74,10 +73,7 @@ Constructed via Proposition I.5.2 (already a real inequality in
 theorem runBound
     {cStar ξ X : ℝ}
     (data : RunPackageData cStar ξ X) :
-    ∃ RunVal : ℝ,
-      0 <= RunVal ∧
-      RunVal <= cStar * ξ * X / 6 := by
-  refine ⟨data.runMass, data.hMassNonneg, ?_⟩
+    data.runMass <= cStar * ξ * X / 6 := by
   have hRun := propositionI5_2_runOutput data.hRun
   exact hRun.trans data.hSmall
 

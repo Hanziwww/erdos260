@@ -21,6 +21,13 @@ inductive CNLNormalForm where
   | childResidue
 deriving DecidableEq, Fintype, Repr
 
+/-- The exact CNL normal-form vocabulary has only the two manuscript cases. -/
+theorem CNLNormalForm.exhaustive (nf : CNLNormalForm) :
+    nf = CNLNormalForm.positiveLift ∨ nf = CNLNormalForm.childResidue := by
+  cases nf
+  · exact Or.inl rfl
+  · exact Or.inr rfl
+
 /-- CNL one-step classes in the priority order of Appendix L.1. -/
 inductive CNLClass where
   | bnd
@@ -49,6 +56,12 @@ structure CNLTransition where
   normalForm : CNLNormalForm
   available : Finset CNLClass
 deriving DecidableEq
+
+/-- A transition's exact CNL normal form is one of the two manuscript cases. -/
+theorem CNLTransition.normalForm_exhaustive (t : CNLTransition) :
+    t.normalForm = CNLNormalForm.positiveLift ∨
+      t.normalForm = CNLNormalForm.childResidue :=
+  CNLNormalForm.exhaustive t.normalForm
 
 /-- Deterministic CNL priority scan, in the order
 PKG, SEP, BND, TC, VS, DS, TP. -/
@@ -249,6 +262,26 @@ theorem selectedTransitions_subset (transitions : Finset CNLTransition) :
     selectedTransitions transitions ⊆ transitions := by
   intro t ht
   exact (mem_selectedTransitions.1 ht).1
+
+/-- A selected transition is automatically clean-visible: if the canonical
+selector returns some class, that class lies in the transition's available set. -/
+theorem available_nonempty_of_mem_selectedTransitions
+    {transitions : Finset CNLTransition} {t : CNLTransition}
+    (ht : t ∈ selectedTransitions transitions) :
+    t.available.Nonempty := by
+  rcases mem_selectedTransitions.1 ht with ⟨_ht, hsome⟩
+  cases hsel : canonicalCNLSelector t with
+  | none =>
+      simp [hsel] at hsome
+  | some cls =>
+      exact ⟨cls, canonicalCNLSelector_eq_some_mem hsel⟩
+
+/-- Applying the selected-transition filter twice does not change the family. -/
+theorem selectedTransitions_idempotent (transitions : Finset CNLTransition) :
+    selectedTransitions (selectedTransitions transitions) =
+      selectedTransitions transitions := by
+  ext t
+  simp [selectedTransitions]
 
 theorem transitionsOfNormalForm_subset (transitions : Finset CNLTransition)
     (normalForm : CNLNormalForm) :

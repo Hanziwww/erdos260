@@ -45,10 +45,12 @@ Packages the per-instance manuscript Appendix G inputs:
 * `manuscript_bound` — the manuscript chain
   `kraftBound · shellFactor · X · I_j ≤ cStar · ξ · X / 6`
   established in `proof_v2.tex` lines 1903--1932 (Appendix H.2).
+*
+The domination by `kraftBound` after multiplying by the nonnegative shell
+factor is proved below from `kraftSum_le`, rather than stored as another field.
 -/
 structure CNLEntropyData (cStar ξ X : ℝ) where
   α : Type
-  decEq : DecidableEq α
   paths : Finset α
   BNDHeight : α -> ℝ
   c : ℝ
@@ -56,17 +58,36 @@ structure CNLEntropyData (cStar ξ X : ℝ) where
   M : Nat
   shellFactor : ℝ
   Ij : ℝ
-  X_nonneg : 0 <= X
   shellFactor_nonneg : 0 <= shellFactor
   Ij_nonneg : 0 <= Ij
-  CQ_pos : 0 < CQ
   kraftSum_le :
     cleanCNLKraftSum paths BNDHeight c <= CQ ^ M
   manuscript_bound :
     CQ ^ M * shellFactor * X * Ij <= cStar * ξ * X / 6
-  manuscript_dominates :
-    cleanCNLKraftSum paths BNDHeight c * shellFactor * X * Ij <=
-      CQ ^ M * shellFactor * X * Ij
+
+/-- The Kraft bound dominates the clean CNL mass after multiplication by the
+nonnegative shell factors. -/
+theorem CNLEntropyData.manuscript_dominates
+    {cStar ξ X : ℝ}
+    (data : CNLEntropyData cStar ξ X)
+    (hX_nonneg : 0 <= X) :
+    cleanCNLKraftSum data.paths data.BNDHeight data.c *
+        data.shellFactor * X * data.Ij <=
+      data.CQ ^ data.M * data.shellFactor * X * data.Ij := by
+  have hfactor_nonneg : 0 <= data.shellFactor * X * data.Ij :=
+    mul_nonneg (mul_nonneg data.shellFactor_nonneg hX_nonneg)
+      data.Ij_nonneg
+  have hdom :
+      cleanCNLKraftSum data.paths data.BNDHeight data.c *
+          (data.shellFactor * X * data.Ij) <=
+        data.CQ ^ data.M * (data.shellFactor * X * data.Ij) :=
+    mul_le_mul_of_nonneg_right data.kraftSum_le hfactor_nonneg
+  calc cleanCNLKraftSum data.paths data.BNDHeight data.c *
+          data.shellFactor * X * data.Ij
+      = cleanCNLKraftSum data.paths data.BNDHeight data.c *
+          (data.shellFactor * X * data.Ij) := by ring
+    _ <= data.CQ ^ data.M * (data.shellFactor * X * data.Ij) := hdom
+    _ = data.CQ ^ data.M * data.shellFactor * X * data.Ij := by ring
 
 /--
 **Phase 5 deliverable: `cnlEntropy`.**
@@ -79,7 +100,8 @@ quantity.
 -/
 theorem cnlEntropy
     {cStar ξ X : ℝ}
-    (data : CNLEntropyData cStar ξ X) :
+    (data : CNLEntropyData cStar ξ X)
+    (hX_nonneg : 0 <= X) :
     ∃ CleanTerm : ℝ,
       0 <= CleanTerm ∧
       CleanTerm <= cStar * ξ * X / 6 := by
@@ -91,13 +113,13 @@ theorem cnlEntropy
   · -- Nonnegativity: product of four nonnegs.
     have hKraft := cleanCNLKraftSum_nonneg data.paths data.BNDHeight data.c
     exact mul_nonneg
-      (mul_nonneg (mul_nonneg hKraft data.shellFactor_nonneg) data.X_nonneg)
+      (mul_nonneg (mul_nonneg hKraft data.shellFactor_nonneg) hX_nonneg)
       data.Ij_nonneg
-  · -- Upper bound chain via manuscript_dominates and manuscript_bound.
+  · -- Upper bound chain via Kraft domination and manuscript_bound.
     calc cleanCNLKraftSum data.paths data.BNDHeight data.c *
             data.shellFactor * X * data.Ij
         <= data.CQ ^ data.M * data.shellFactor * X * data.Ij :=
-          data.manuscript_dominates
+          data.manuscript_dominates hX_nonneg
       _ <= cStar * ξ * X / 6 := data.manuscript_bound
 
 end

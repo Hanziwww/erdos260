@@ -63,6 +63,48 @@ theorem lemmaK1_1_endpointDisjointDensePackCover
   Finset.card_le_card hcover
 
 /--
+A pointwise `O(L)` neighbourhood cover implies the fibre-size bound used in
+K.1.2.  This is the finite-integer core behind the manuscript sentence that,
+by maximality, every dense marker lies in an `O(L)`-neighbourhood of a selected
+one.
+-/
+theorem densePack_fiber_card_le_of_dist
+    {densePackPoints : Finset Nat} {spread : Nat}
+    (assign : Nat -> Nat) (m : Nat)
+    (hdist :
+      forall x, x ∈ densePackPoints -> assign x = m ->
+        Nat.dist x m <= spread) :
+    (densePackPoints.filter fun x => assign x = m).card <= 2 * spread + 1 := by
+  classical
+  let window : Finset Nat := Finset.Icc (m - spread) (m + spread)
+  have hsub : densePackPoints.filter (fun x => assign x = m) ⊆ window := by
+    intro x hx
+    have hxmem : x ∈ densePackPoints := (Finset.mem_filter.mp hx).1
+    have hassign : assign x = m := (Finset.mem_filter.mp hx).2
+    have hxdist : Nat.dist x m <= spread := hdist x hxmem hassign
+    have hbounds : (m - spread <= x) ∧ (x <= m + spread) := by
+      constructor
+      · by_cases hxle : x <= m
+        · rw [Nat.dist_eq_sub_of_le hxle] at hxdist
+          omega
+        · have hmlx : m <= x := by omega
+          omega
+      · by_cases hxle : x <= m
+        · omega
+        · have hmlx : m <= x := by omega
+          rw [Nat.dist_comm, Nat.dist_eq_sub_of_le hmlx] at hxdist
+          omega
+    exact Finset.mem_Icc.mpr hbounds
+  have hcard :
+      (densePackPoints.filter fun x => assign x = m).card <= window.card :=
+    Finset.card_le_card hsub
+  have hwindow : window.card <= 2 * spread + 1 := by
+    dsimp [window]
+    simp
+    omega
+  exact hcard.trans hwindow
+
+/--
 **Lemma K.1.2 (DensePack support cover) — quantitative form.**
 
 If every dense-pack point is assigned to a marker (e.g. nearest marker

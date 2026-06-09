@@ -24,7 +24,8 @@ The proof has four pieces:
 real linarith sum of these four pieces.
 
 Phase 8 wraps the four pieces in a `ReturnPackageData` bundle plus the manuscript
-numerical compatibility, and produces `ReturnVal ≤ cStar · ξ · X / 6`.
+numerical compatibility, and proves the concrete return mass is
+`≤ cStar · ξ · X / 6`.
 -/
 
 namespace Erdos260
@@ -59,8 +60,6 @@ structure ReturnPackageData (cStar ξ X : ℝ) where
   s : ℝ
   ij : ℝ
   smallError : ℝ
-  hMassNonneg :
-    0 <= ordinaryShort + semiperiodic + olc + nonlocalLong
   hOrdinaryShort :
     ordinaryShort <= c1 * ξ * s * X * ij + smallError / 4
   hSemiperiodic :
@@ -75,8 +74,8 @@ structure ReturnPackageData (cStar ξ X : ℝ) where
 /--
 **Phase 8 deliverable: `nonRunReturnBound`.**
 
-Given `ReturnPackageData`, produce `ReturnVal` and the bound
-`ReturnVal ≤ cStar · ξ · X / 6`.
+Given `ReturnPackageData`, prove the concrete four-piece return mass satisfies
+the bound `≤ cStar · ξ · X / 6`.
 
 Constructed via real linarith summation of the four pieces (Proposition 23.1)
 followed by the K.4 numerical compatibility.
@@ -84,12 +83,8 @@ followed by the K.4 numerical compatibility.
 theorem nonRunReturnBound
     {cStar ξ X : ℝ}
     (data : ReturnPackageData cStar ξ X) :
-    ∃ ReturnVal : ℝ,
-      0 <= ReturnVal ∧
-      ReturnVal <= cStar * ξ * X / 6 := by
-  refine
-    ⟨data.ordinaryShort + data.semiperiodic + data.olc + data.nonlocalLong,
-     data.hMassNonneg, ?_⟩
+    data.ordinaryShort + data.semiperiodic + data.olc + data.nonlocalLong <=
+      cStar * ξ * X / 6 := by
   -- Apply Proposition 23.1 (real linarith in Return.lean).
   have hSum :=
     proposition23_1_returnPackagesLowerClean

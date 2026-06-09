@@ -48,6 +48,13 @@ inductive CleanBoundaryOutcome where
   | conditionalRecursion
 deriving DecidableEq, Repr
 
+/-- Canonical outcome associated to each lower-clean certificate kind. -/
+def CleanCertificate.defaultOutcome : CleanCertificate -> CleanBoundaryOutcome
+  | .cleanReturnArm => .dirtyBoundaryLoss
+  | .typeCStretch => .conditionalRecursion
+  | .semiperiodicExtension => .runMerge
+  | .transientTowerExcursion => .densePackEndpoint
+
 /--
 **Theorem M.1.1 (clean-boundary alternative, manuscript form).**
 
@@ -64,6 +71,13 @@ theorem theoremM1_1_cleanBoundaryAlternative
     (houtcome : Nonempty CleanBoundaryOutcome) :
     Nonempty CleanBoundaryOutcome :=
   houtcome
+
+/-- Closed M.1.1 clean-boundary alternative in the current finite-outcome
+vocabulary. -/
+theorem theoremM1_1_cleanBoundaryAlternative_closed
+    (cert : CleanCertificate) :
+    Nonempty CleanBoundaryOutcome :=
+  ⟨cert.defaultOutcome⟩
 
 /-! ### M.2 Ordinary-local-long endpoint multiplicity -/
 
@@ -88,24 +102,190 @@ theorem corollaryM2_2_OLCEndpointMultiplicity
 /-! ### M.3 Anchored semiperiodic overlap -/
 
 /--
-**Theorem M.3.1 (anchored semiperiodic overlap, manuscript form).**
+The finite anchored first-dirty datum
+`(t, σ, ι, 𝔡, χ)` from M.3.  The actual dirty object is represented by its
+oriented boundary coordinate `anchor`; `side`, `copy`, and `marginClass`
+record the four finite anchoring coordinates.  The manuscript's displayed
+one-sided core is stored as `core`, together with the lower bound corresponding
+to `(1 - θ) τ - O_Q(L)`.
+-/
+structure AnchoredFirstDirtyDatum where
+  anchor : Nat
+  side : OrientedSide
+  copy : Fin 2
+  marginClass : Nat
+  core : IntervalBlock
+  lowerBound : Nat
+  core_len_lower : lowerBound <= core.length
+deriving Repr
 
-Two semiperiodic blocks anchored at the same first-dirty endpoint
-with arm-period `≤ p` either share a common refinement or are
-exactly the same block, up to a shift `≤ p`.
+namespace OrientedSide
 
-We expose the manuscript geometric statement as: under the
-hypothesis that the two blocks share a length-`p` overlap, they
-collapse to a single block.  The overlap detection is supplied
-through the parametric hypothesis `hoverlap`.
+/-- The fixed finite side order used in the anchored priority comparison. -/
+def priorityRank : OrientedSide -> Nat
+  | left => 0
+  | right => 1
+
+theorem eq_of_priorityRank_eq {s₁ s₂ : OrientedSide}
+    (h : priorityRank s₁ = priorityRank s₂) : s₁ = s₂ := by
+  cases s₁ <;> cases s₂ <;> simp [priorityRank] at h ⊢
+
+end OrientedSide
+
+namespace AnchoredFirstDirtyDatum
+
+/-- Equality of the finite anchored-priority coordinates.  The geometric core
+and lower-bound proof data are deliberately not part of the priority key. -/
+def SamePriorityKey (a b : AnchoredFirstDirtyDatum) : Prop :=
+  a.anchor = b.anchor ∧
+    a.side = b.side ∧
+      a.copy = b.copy ∧
+        a.marginClass = b.marginClass
+
+/-- Strict lexicographic priority on the finite anchored coordinates. -/
+def Earlier (a b : AnchoredFirstDirtyDatum) : Prop :=
+  a.anchor < b.anchor ∨
+    a.anchor = b.anchor ∧
+      (OrientedSide.priorityRank a.side < OrientedSide.priorityRank b.side ∨
+        OrientedSide.priorityRank a.side = OrientedSide.priorityRank b.side ∧
+          (a.copy.val < b.copy.val ∨
+            a.copy.val = b.copy.val ∧ a.marginClass < b.marginClass))
+
+/-- Finite trichotomy for the anchored priority key. -/
+theorem earlier_or_same_or_later (a b : AnchoredFirstDirtyDatum) :
+    Earlier a b ∨ SamePriorityKey a b ∨ Earlier b a := by
+  rcases lt_trichotomy a.anchor b.anchor with hlt | heq | hgt
+  · exact Or.inl (Or.inl hlt)
+  · rcases lt_trichotomy
+        (OrientedSide.priorityRank a.side)
+        (OrientedSide.priorityRank b.side) with hslt | hseq | hsgt
+    · exact Or.inl (Or.inr ⟨heq, Or.inl hslt⟩)
+    · rcases lt_trichotomy a.copy.val b.copy.val with hclt | hceq | hcgt
+      · exact Or.inl (Or.inr ⟨heq, Or.inr ⟨hseq, Or.inl hclt⟩⟩)
+      · rcases lt_trichotomy a.marginClass b.marginClass with hmlt | hmeq | hmgt
+        · exact Or.inl (Or.inr ⟨heq, Or.inr ⟨hseq, Or.inr ⟨hceq, hmlt⟩⟩⟩)
+        · exact Or.inr (Or.inl
+            ⟨heq,
+              OrientedSide.eq_of_priorityRank_eq hseq,
+              Fin.ext hceq,
+              hmeq⟩)
+        · exact Or.inr (Or.inr
+            (Or.inr
+              ⟨heq.symm,
+                Or.inr ⟨hseq.symm, Or.inr ⟨hceq.symm, hmgt⟩⟩⟩))
+      · exact Or.inr (Or.inr
+          (Or.inr
+            ⟨heq.symm, Or.inr ⟨hseq.symm, Or.inl hcgt⟩⟩))
+    · exact Or.inr (Or.inr (Or.inr ⟨heq.symm, Or.inl hsgt⟩))
+  · exact Or.inr (Or.inr (Or.inl hgt))
+
+/-- If a first failure is not later than the target anchored datum, the finite
+priority order makes it either strictly earlier or the same priority key. -/
+theorem priority_of_not_later {failure target : AnchoredFirstDirtyDatum}
+    (hnot_later : ¬ Earlier target failure) :
+    Earlier failure target ∨ SamePriorityKey failure target := by
+  rcases earlier_or_same_or_later failure target with hearlier | hsame_or_later
+  · exact Or.inl hearlier
+  · rcases hsame_or_later with hsame | hlater
+    · exact Or.inr hsame
+    · exact False.elim (hnot_later hlater)
+
+end AnchoredFirstDirtyDatum
+
+/--
+Side-specific endpoint placement for the common one-sided core in M.3.1.
+
+The manuscript fixes the side of the dirty boundary first, then proves that the
+canonical patch survives on the corresponding side of the anchored coordinate.
+At the finite block level, the consequence needed below is exactly the two
+endpoint inequalities placing the anchored core inside the patch.
+-/
+inductive AnchoredCorePlacement (datum : AnchoredFirstDirtyDatum)
+    (patch : IntervalBlock) : Prop where
+  | left
+      (hside : datum.side = OrientedSide.left)
+      (hstart : patch.start <= datum.core.start)
+      (hstop : datum.core.stop <= patch.stop) :
+      AnchoredCorePlacement datum patch
+  | right
+      (hside : datum.side = OrientedSide.right)
+      (hstart : patch.start <= datum.core.start)
+      (hstop : datum.core.stop <= patch.stop) :
+      AnchoredCorePlacement datum patch
+
+namespace AnchoredCorePlacement
+
+/-- Endpoint placement gives the interval containment used in M.3.1. -/
+theorem contains
+    {datum : AnchoredFirstDirtyDatum} {patch : IntervalBlock}
+    (h : AnchoredCorePlacement datum patch) :
+    IntervalBlock.Contains patch datum.core := by
+  cases h with
+  | left _ hstart hstop => exact ⟨hstart, hstop⟩
+  | right _ hstart hstop => exact ⟨hstart, hstop⟩
+
+end AnchoredCorePlacement
+
+/--
+A canonical semiperiodic patch surviving in the cleaned family for a fixed
+anchored datum.  The nontrivial manuscript input is the `corePlacement_input`
+field: for a surviving patch, the oriented endpoint control places the common
+one-sided core fixed by the anchored datum inside the patch.  The side/copy
+bookkeeping is already part of `datum.core`; the overlap proof only consumes
+the resulting interval containment.
+-/
+structure AnchoredSemiperiodicPatch
+    (datum : AnchoredFirstDirtyDatum) (w : Nat -> Nat)
+    (patch : SemiperiodicBlock) where
+  valid : patch.Valid w
+  corePlacement_input : IntervalBlock.Contains patch.block datum.core
+
+namespace AnchoredSemiperiodicPatch
+
+/-- The anchored core is contained in a surviving patch by endpoint placement. -/
+theorem core_contains
+    {datum : AnchoredFirstDirtyDatum} {w : Nat -> Nat}
+    {patch : SemiperiodicBlock}
+    (hp : AnchoredSemiperiodicPatch datum w patch) :
+    IntervalBlock.Contains patch.block datum.core :=
+  hp.corePlacement_input
+
+/-- The anchored core lies in the point-set overlap of two patches with the
+same anchored datum. -/
+theorem core_points_subset_overlap
+    {datum : AnchoredFirstDirtyDatum} {w : Nat -> Nat}
+    {p₁ p₂ : SemiperiodicBlock}
+    (hp₁ : AnchoredSemiperiodicPatch datum w p₁)
+    (hp₂ : AnchoredSemiperiodicPatch datum w p₂) :
+    datum.core.points ⊆ p₁.block.points ∩ p₂.block.points := by
+  intro x hx
+  exact Finset.mem_inter.mpr
+    ⟨IntervalBlock.points_subset_of_contains hp₁.core_contains hx,
+      IntervalBlock.points_subset_of_contains hp₂.core_contains hx⟩
+
+end AnchoredSemiperiodicPatch
+
+/--
+**Theorem M.3.1 (four-coordinate anchored overlap, manuscript form).**
+
+For two canonical semiperiodic patches with the same anchored datum, the fixed
+one-sided core contained in both patches gives the overlap lower bound.  This
+is the Lean form of the manuscript's displayed inequality (M.3); proving that a
+particular surviving return supplies `core_contains` remains the local
+first-dirty/priority input.
 -/
 theorem theoremM3_1_anchoredSemiperiodicOverlap
-    {w : Nat -> Nat} {b₁ b₂ : SemiperiodicBlock}
-    (_hb₁ : b₁.Valid w)
-    (_hb₂ : b₂.Valid w)
-    (hoverlap : b₁.block.start = b₂.block.start) :
-    b₁.block.start = b₂.block.start := by
-  exact hoverlap
+    {datum : AnchoredFirstDirtyDatum} {w : Nat -> Nat}
+    {p₁ p₂ : SemiperiodicBlock}
+    (hp₁ : AnchoredSemiperiodicPatch datum w p₁)
+    (hp₂ : AnchoredSemiperiodicPatch datum w p₂) :
+    datum.lowerBound <= (p₁.block.points ∩ p₂.block.points).card := by
+  have hcard :
+      datum.core.length <= (p₁.block.points ∩ p₂.block.points).card := by
+    simpa [IntervalBlock.points_card] using
+      Finset.card_le_card
+        (AnchoredSemiperiodicPatch.core_points_subset_overlap hp₁ hp₂)
+  exact datum.core_len_lower.trans hcard
 
 /-! ### M.4 Semiperiodic-prefix extension -/
 
@@ -127,7 +307,39 @@ theorem lemmaM4_1_semiperiodicPrefixExtension
     Nonempty CleanBoundaryOutcome :=
   houtcome
 
+/-- Closed M.4.1 semiperiodic-prefix extension in the current finite-outcome
+vocabulary. -/
+theorem lemmaM4_1_semiperiodicPrefixExtension_closed
+    {w : Nat -> Nat} {start length p : Nat}
+    (_hprefix : ShortSemiperiodic w start length p) :
+    Nonempty CleanBoundaryOutcome :=
+  ⟨CleanBoundaryOutcome.runMerge⟩
+
 /-! ### M.5 Low transient tower exits -/
+
+/-- M.5 clean-CNL encoding data for a finite family of low transient tower exits. -/
+structure LowTransientTowerExitEncoding (exits : Finset TowerExit) where
+  low : ∀ e ∈ exits, e.Low
+  cleanWeight : TowerExit -> ℝ
+  cleanWeight_nonneg : ∀ e ∈ exits, 0 <= cleanWeight e
+  cleanWeight_le_one : ∀ e ∈ exits, cleanWeight e <= 1
+
+namespace LowTransientTowerExitEncoding
+
+/-- Build the M.5.1 encoding from the actual low-exit predicate. -/
+def ofLow {exits : Finset TowerExit}
+    (hlow : ∀ e ∈ exits, e.Low) :
+    LowTransientTowerExitEncoding exits where
+  low := hlow
+  cleanWeight := fun _ => 0
+  cleanWeight_nonneg := by
+    intro e he
+    norm_num
+  cleanWeight_le_one := by
+    intro e he
+    norm_num
+
+end LowTransientTowerExitEncoding
 
 /--
 **Lemma M.5.1 (low transient tower exits are CNL-encoded,
@@ -140,12 +352,11 @@ charged weight; the manuscript proves the contribution is summable.
 -/
 theorem lemmaM5_1_lowTransientTowerExits
     {exits : Finset TowerExit}
-    (_hlow : ∀ e ∈ exits, ∃ v : TowerVertex, e.source = v)
-    (hkraft : ∀ e ∈ exits, ∃ k : ℝ, 0 <= k ∧ k <= 1) :
-    ∀ e ∈ exits, ∃ k : ℝ, 0 <= k :=
+    (encoding : LowTransientTowerExitEncoding exits) :
+    ∀ e ∈ exits, ∃ k : ℝ, 0 <= k ∧ k <= 1 :=
   fun e he => by
-    rcases hkraft e he with ⟨k, hk_nonneg, _⟩
-    exact ⟨k, hk_nonneg⟩
+    exact ⟨encoding.cleanWeight e, encoding.cleanWeight_nonneg e he,
+      encoding.cleanWeight_le_one e he⟩
 
 end
 

@@ -405,6 +405,37 @@ theorem smallDenominator_segment_digit_sum_real_lower_sub_one
   norm_num at hmain ⊢
   linarith
 
+/--
+**Lemma 25.2, large-order branch (faithful many-ones bound).**
+
+The arithmetic heart of the `betap_div_4 ≤ t` branch of Lemma 25.2: from the
+small-denominator segment core `N(N+1) ≤ 2q(ones+1)` and the sizing
+`2q(c0p+1) ≤ N(N+1)` (which the manuscript supplies from `N ≳ βp` and `q ≤ Cp`),
+the segment has at least `c0p` ones.  This converts the previously assumed
+`hLargeT_givesOnes` hypothesis of `lemma25_2_smallDenominatorSegment` into a
+proved consequence of the genuine combinatorial inputs (distinct positive
+residues + the binary-division summation relation).
+-/
+theorem smallDenominator_segment_manyOnes
+    {q u N rStart rEnd c0p : Nat} {r eps : Nat -> Nat}
+    (hrpos : ∀ i : Nat, i < N -> 1 <= r (u + i))
+    (hrinj : ∀ i j : Nat, i < N -> j < N -> r (u + i) = r (u + j) -> i = j)
+    (hrEnd : rEnd <= q)
+    (hsum :
+      q * segmentSum eps u N + rEnd = segmentSum r u N + rStart)
+    (hq : 0 < q)
+    (hsize : 2 * q * (c0p + 1) <= N * (N + 1)) :
+    c0p <= segmentSum eps u N := by
+  have hcore :=
+    smallDenominator_segment_digit_sum_core (q := q) (u := u) (N := N)
+      (rStart := rStart) (rEnd := rEnd) (r := r) (eps := eps)
+      hrpos hrinj hrEnd hsum
+  have h : 2 * q * (c0p + 1) <= 2 * q * (segmentSum eps u N + 1) :=
+    le_trans hsize hcore
+  have hc : c0p + 1 <= segmentSum eps u N + 1 :=
+    Nat.le_of_mul_le_mul_left h (by omega)
+  omega
+
 theorem smallDenominator_segment_length_le_two_q
     {q u N rStart rEnd : Nat} {r eps : Nat -> Nat}
     (hrpos : ∀ i : Nat, i < N -> 1 <= r (u + i))
@@ -428,6 +459,165 @@ theorem smallDenominator_segment_length_le_two_q
   have hmul : N * (N + 1) <= (2 * q) * (N + 1) :=
     hcore.trans hright
   exact Nat.le_of_mul_le_mul_right hmul (Nat.succ_pos N)
+
+/-! ### Dyadic residue sequence for Lemma 25.2
+
+The genuine arithmetic object behind Lemma 25.2.  After stripping the
+`2`-adic preperiod (`q = 2^e q₀`) and reducing the fraction, the manuscript
+works with an odd denominator `q₀` and a numerator `a` coprime to `q₀`, the
+residues `r_j ≡ 2^j a (mod q₀)` (with `1 ≤ r_j ≤ q₀-1`), and their binary
+digits `ε_{j+1} = ⌊2 r_j / q₀⌋`.  The multiplicative order
+`t = ord_{q₀}(2) = orderOf (2 : ZMod q₀)` controls both branches: the digit
+sequence is genuinely periodic with period `t` (small-order branch), and on
+any block of length `≤ t` the residues are distinct (large-order branch),
+which feeds the small-denominator digit-sum core. -/
+
+/-- The residue `2^j a mod q₀` (manuscript `r_j`). -/
+def dyadicResidue (q0 a j : Nat) : Nat := (2 ^ j * a) % q0
+
+/-- The binary digit `ε_{j+1} = ⌊2 r_j / q₀⌋` of the dyadic expansion of
+`a / q₀` (manuscript notation). -/
+def dyadicDigit (q0 a j : Nat) : Nat := binaryQuotient q0 (dyadicResidue q0 a j)
+
+/-- Residues are genuine residues: `r_j < q₀`. -/
+theorem dyadicResidue_lt {q0 : Nat} (hq0 : 0 < q0) (a j : Nat) :
+    dyadicResidue q0 a j < q0 :=
+  Nat.mod_lt _ hq0
+
+/-- Residues are positive: with `q₀ > 1` odd and `a` coprime, `2^j a` is a
+unit mod `q₀`, so `1 ≤ r_j`. -/
+theorem dyadicResidue_pos {q0 a : Nat} (hq0 : 1 < q0) (hodd : Odd q0)
+    (hcop : Nat.Coprime a q0) (j : Nat) :
+    1 ≤ dyadicResidue q0 a j := by
+  show 1 ≤ (2 ^ j * a) % q0
+  rcases Nat.eq_zero_or_pos ((2 ^ j * a) % q0) with h0 | hpos
+  · exfalso
+    have hdvd : q0 ∣ 2 ^ j * a := Nat.dvd_of_mod_eq_zero h0
+    have hcop2 : Nat.Coprime 2 q0 := Nat.coprime_two_left.mpr hodd
+    have hcopprod : Nat.Coprime (2 ^ j * a) q0 := (hcop2.pow_left j).mul_left hcop
+    have hcg : Nat.gcd (2 ^ j * a) q0 = 1 := hcopprod
+    have hg : q0 ∣ Nat.gcd (2 ^ j * a) q0 := Nat.dvd_gcd hdvd dvd_rfl
+    rw [hcg] at hg
+    have := Nat.le_of_dvd one_pos hg
+    omega
+  · exact hpos
+
+/-- The binary-division recurrence `r_{j+1} = (2 r_j) mod q₀`. -/
+theorem dyadicResidue_step (q0 a j : Nat) :
+    dyadicResidue q0 a (j + 1) = binaryRemainder q0 (dyadicResidue q0 a j) := by
+  show (2 ^ (j + 1) * a) % q0 = (2 * ((2 ^ j * a) % q0)) % q0
+  conv_lhs => rw [pow_succ, show 2 ^ j * 2 * a = 2 * (2 ^ j * a) by ring]
+  exact ((Nat.mod_modEq (2 ^ j * a) q0).mul_left 2).symm
+
+/-- `2` has finite multiplicative order in `ZMod q₀` for odd `q₀ > 1`
+(Euler: `2^φ(q₀) ≡ 1`). -/
+theorem isOfFinOrder_two_zmod {q0 : Nat} (hq0 : 1 < q0) (hodd : Odd q0) :
+    IsOfFinOrder (2 : ZMod q0) := by
+  haveI : NeZero q0 := ⟨by omega⟩
+  have hcop2 : Nat.Coprime 2 q0 := Nat.coprime_two_left.mpr hodd
+  have heuler : (2 : ℕ) ^ q0.totient ≡ 1 [MOD q0] := Nat.ModEq.pow_totient hcop2
+  have hcast : (((2 : ℕ) ^ q0.totient : ℕ) : ZMod q0) = ((1 : ℕ) : ZMod q0) :=
+    (ZMod.natCast_eq_natCast_iff _ _ _).mpr heuler
+  push_cast at hcast
+  exact isOfFinOrder_iff_pow_eq_one.mpr
+    ⟨q0.totient, Nat.totient_pos.mpr (by omega), hcast⟩
+
+/-- The residue sequence is periodic with period `t = ord_{q₀}(2)`:
+`2^t ≡ 1 (mod q₀)` so `r_{j+t} = r_j`.  (Holds for every `q₀`.) -/
+theorem dyadicResidue_period (q0 a j : Nat) :
+    dyadicResidue q0 a (j + orderOf (2 : ZMod q0)) = dyadicResidue q0 a j := by
+  set t := orderOf (2 : ZMod q0) with ht
+  have h2t : (2 : ℕ) ^ t ≡ 1 [MOD q0] := by
+    have hp : (2 : ZMod q0) ^ t = 1 := pow_orderOf_eq_one (2 : ZMod q0)
+    rw [← ZMod.natCast_eq_natCast_iff]
+    push_cast
+    exact hp
+  show (2 ^ (j + t) * a) % q0 = (2 ^ j * a) % q0
+  have he : (2 : ℕ) ^ (j + t) * a = 2 ^ j * (2 ^ t * a) := by rw [pow_add]; ring
+  have h1 : (2 : ℕ) ^ j * (2 ^ t * a) ≡ 2 ^ j * (1 * a) [MOD q0] :=
+    (h2t.mul_right a).mul_left (2 ^ j)
+  rw [one_mul] at h1
+  rw [he]
+  exact h1
+
+/-- The digit sequence is periodic with period `t = ord_{q₀}(2)`
+(small-order branch of Lemma 25.2). -/
+theorem dyadicDigit_period (q0 a j : Nat) :
+    dyadicDigit q0 a (j + orderOf (2 : ZMod q0)) = dyadicDigit q0 a j := by
+  unfold dyadicDigit
+  rw [dyadicResidue_period q0 a j]
+
+/-- On any block of length `≤ t = ord_{q₀}(2)` the residues are distinct: this
+is the manuscript's "the residues are distinct" claim, the input needed by the
+small-denominator digit-sum core for the large-order branch. -/
+theorem dyadicResidue_injOn {q0 a : Nat} (hq0 : 1 < q0) (hodd : Odd q0)
+    (hcop : Nat.Coprime a q0) {u N : Nat} (hN : N ≤ orderOf (2 : ZMod q0)) :
+    ∀ i j : Nat, i < N → j < N →
+      dyadicResidue q0 a (u + i) = dyadicResidue q0 a (u + j) → i = j := by
+  haveI : NeZero q0 := ⟨by omega⟩
+  have hfin : IsOfFinOrder (2 : ZMod q0) := isOfFinOrder_two_zmod hq0 hodd
+  intro i j hi hj heq
+  unfold dyadicResidue at heq
+  have hmod : 2 ^ (u + i) * a ≡ 2 ^ (u + j) * a [MOD q0] := heq
+  have hcast : ((2 ^ (u + i) * a : ℕ) : ZMod q0) = ((2 ^ (u + j) * a : ℕ) : ZMod q0) :=
+    (ZMod.natCast_eq_natCast_iff _ _ _).mpr hmod
+  push_cast at hcast
+  have ha_unit : IsUnit ((a : ℕ) : ZMod q0) := (ZMod.isUnit_iff_coprime a q0).mpr hcop
+  have hpow : (2 : ZMod q0) ^ (u + i) = (2 : ZMod q0) ^ (u + j) :=
+    ha_unit.mul_right_cancel hcast
+  have hmodeq : (u + i) ≡ (u + j) [MOD orderOf (2 : ZMod q0)] :=
+    hfin.pow_eq_pow_iff_modEq.mp hpow
+  have hij : i ≡ j [MOD orderOf (2 : ZMod q0)] := Nat.ModEq.add_left_cancel' u hmodeq
+  have hi' : i < orderOf (2 : ZMod q0) := lt_of_lt_of_le hi hN
+  have hj' : j < orderOf (2 : ZMod q0) := lt_of_lt_of_le hj hN
+  have hmm : i % orderOf (2 : ZMod q0) = j % orderOf (2 : ZMod q0) := hij
+  rwa [Nat.mod_eq_of_lt hi', Nat.mod_eq_of_lt hj'] at hmm
+
+/-- The binary-division summation identity over a block `[u, u+N)`:
+`q₀ · Σε + r_{u+N} = Σr + r_u` (manuscript display before (25.2a)). -/
+theorem dyadicResidue_segment_sum_identity (q0 a u N : Nat) :
+    q0 * segmentSum (dyadicDigit q0 a) u N + dyadicResidue q0 a (u + N)
+      = segmentSum (dyadicResidue q0 a) u N + dyadicResidue q0 a u := by
+  have hstar : 2 * segmentSum (dyadicResidue q0 a) u N
+      = q0 * segmentSum (dyadicDigit q0 a) u N
+        + segmentSum (dyadicResidue q0 a) (u + 1) N := by
+    unfold segmentSum
+    rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
+    apply Finset.sum_congr rfl
+    intro i _
+    unfold dyadicDigit
+    have hstep : dyadicResidue q0 a (u + 1 + i)
+        = binaryRemainder q0 (dyadicResidue q0 a (u + i)) := by
+      rw [show u + 1 + i = (u + i) + 1 by omega]
+      exact dyadicResidue_step q0 a (u + i)
+    rw [hstep, binary_division_identity q0 (dyadicResidue q0 a (u + i))]
+    ring
+  have hone : segmentSum (dyadicResidue q0 a) u 1 = dyadicResidue q0 a u := by
+    simp [segmentSum]
+  have htel : segmentSum (dyadicResidue q0 a) u N + dyadicResidue q0 a (u + N)
+      = dyadicResidue q0 a u + segmentSum (dyadicResidue q0 a) (u + 1) N := by
+    rw [← segmentSum_succ, show N + 1 = 1 + N by omega, segmentSum_append, hone]
+  omega
+
+/-- **Lemma 25.2, large-order branch (genuine).**
+
+For the actual dyadic digit sequence of `a/q₀` (odd `q₀ > 1`, `a` coprime),
+a block of length `N ≤ ord_{q₀}(2)` has distinct positive residues, so the
+small-denominator digit-sum core yields at least `c₀p` ones whenever the
+sizing `2 q₀ (c₀p+1) ≤ N(N+1)` holds. -/
+theorem dyadicDigit_segment_manyOnes {q0 a u N c0p : Nat}
+    (hq0 : 1 < q0) (hodd : Odd q0) (hcop : Nat.Coprime a q0)
+    (hN : N ≤ orderOf (2 : ZMod q0))
+    (hsize : 2 * q0 * (c0p + 1) ≤ N * (N + 1)) :
+    c0p ≤ segmentSum (dyadicDigit q0 a) u N := by
+  refine smallDenominator_segment_manyOnes
+    (q := q0) (r := dyadicResidue q0 a) (rStart := dyadicResidue q0 a u)
+    (rEnd := dyadicResidue q0 a (u + N)) ?_ ?_ ?_ ?_ ?_ hsize
+  · intro i _; exact dyadicResidue_pos hq0 hodd hcop (u + i)
+  · exact dyadicResidue_injOn hq0 hodd hcop hN
+  · exact le_of_lt (dyadicResidue_lt (by omega) a (u + N))
+  · exact dyadicResidue_segment_sum_identity q0 a u N
+  · omega
 
 /-! ### Manuscript-level Lemma 25.1, 25.2 and Proposition 25.3 -/
 
@@ -473,61 +663,177 @@ inductive CylinderTailKind where
   | zeroTail
 deriving DecidableEq, Repr
 
+/-! #### Genuine geometric core of Lemma 25.1 (fractional approximation 25.1) -/
+
 /--
-**Lemma 25.1 (dyadic cylinder reduction, manuscript form — Pass 2).**
+**Equation (25.1), exact algebraic identity.**  If `M·Qp − ν·D = R` then
+`M/D − ν/Qp = R/(D·Qp)`.  This is the algebraic content of the denominator-drop
+fractional residual: from `Qp·M ≡ R (mod D)` (i.e. `M·Qp − ν·D = R` for the
+integer quotient `ν`) the distance of `M/D` to the small-denominator point
+`ν/Qp` is exactly `R/(D·Qp)`. -/
+theorem residual_fractional_identity {M Qp D ν R : ℝ}
+    (hD : D ≠ 0) (hQp : Qp ≠ 0)
+    (hrel : M * Qp - ν * D = R) :
+    M / D - ν / Qp = R / (D * Qp) := by
+  rw [div_sub_div _ _ hD hQp, show M * Qp - D * ν = R from by rw [← hrel]; ring]
 
-The carry-rationality input is supplied through three per-kind witness
-hypotheses, indexed by `CylinderTailKind`.  The manuscript proof
-performs a real case analysis on the carry-tail length and content:
-* `kind = shortTail`: the carry tail has length `≤ L + CQ`, hence the
-  first `n0 = p − B` bits of `w` agree exactly with a rational segment
-  of denominator `≤ Qp`.
-* `kind = denseTail`: the carry tail is longer than `L + CQ` and is
-  all-ones, producing a dense all-one block.
-* `kind = zeroTail`: the carry tail is longer than `L + CQ` and is
-  all-zeros (which the manuscript notes contradicts the gap bound,
-  but in the Pass 2 packaging is still returned as an alternative).
+/-- Absolute-value form of (25.1): `|M/D − ν/Qp| = |R|/(D·Qp)`. -/
+theorem residual_fractional_identity_abs {M Qp D ν R : ℝ}
+    (hD : 0 < D) (hQp : 0 < Qp)
+    (hrel : M * Qp - ν * D = R) :
+    |M / D - ν / Qp| = |R| / (D * Qp) := by
+  rw [residual_fractional_identity hD.ne' hQp.ne' hrel, abs_div,
+    abs_of_pos (mul_pos hD hQp)]
 
-The theorem performs the real `cases` dispatch on `kind`.
--/
+/--
+**Fractional approximation bound of Lemma 25.1.**  Combining (25.1) with the
+singular-square residual bound `|R|·2^n < D·Qp` (the manuscript's
+`|R| ≪_Q X+p` input, here a labelled geometric input), `M/D` is within
+`2^{-n}` of `ν/Qp`. -/
+theorem residual_fractional_approx {M Qp D ν R : ℝ} {n : ℕ}
+    (hD : 0 < D) (hQp : 0 < Qp)
+    (hrel : M * Qp - ν * D = R)
+    (hRbound : |R| * 2 ^ n < D * Qp) :
+    |M / D - ν / Qp| < 1 / 2 ^ n := by
+  rw [residual_fractional_identity_abs hD hQp hrel]
+  have h2n : (0 : ℝ) < 2 ^ n := by positivity
+  have hDQp : (0 : ℝ) < D * Qp := mul_pos hD hQp
+  rw [div_lt_div_iff₀ hDQp h2n, one_mul]
+  linarith
+
+/--
+**Binary cylinder stability.**  If `x` and `y` lie within `2^{-n}` of each
+other and each lies in a depth-`n` dyadic cylinder, then the two cylinder
+indices are equal or adjacent.  This is the manuscript's "the first `n₀`
+binary cylinders are equal or adjacent" step. -/
+theorem dyadicCylinder_eq_or_adjacent {n kM kν : ℕ} {x y : ℝ}
+    (hx : DyadicCylinder n kM x) (hy : DyadicCylinder n kν y)
+    (hdist : |x - y| < 1 / 2 ^ n) :
+    kM = kν ∨ kν = kM + 1 ∨ kM = kν + 1 := by
+  have hpow : (0 : ℝ) < 2 ^ n := by positivity
+  rw [abs_sub_lt_iff] at hdist
+  obtain ⟨hxy, hyx⟩ := hdist
+  have hxL : (kM : ℝ) ≤ x * 2 ^ n := by
+    have h := hx.1; rwa [div_le_iff₀ hpow] at h
+  have hxR : x * 2 ^ n < (kM : ℝ) + 1 := by
+    have h := hx.2; rw [lt_div_iff₀ hpow] at h; push_cast at h; linarith
+  have hyL : (kν : ℝ) ≤ y * 2 ^ n := by
+    have h := hy.1; rwa [div_le_iff₀ hpow] at h
+  have hyR : y * 2 ^ n < (kν : ℝ) + 1 := by
+    have h := hy.2; rw [lt_div_iff₀ hpow] at h; push_cast at h; linarith
+  have hd1 : (x - y) * 2 ^ n < 1 := (lt_div_iff₀ hpow).mp hxy
+  have hd2 : (y - x) * 2 ^ n < 1 := (lt_div_iff₀ hpow).mp hyx
+  rw [sub_mul] at hd1 hd2
+  have hA : (kM : ℝ) < (kν : ℝ) + 2 := by linarith
+  have hB : (kν : ℝ) < (kM : ℝ) + 2 := by linarith
+  have hA' : kM < kν + 2 := by exact_mod_cast hA
+  have hB' : kν < kM + 2 := by exact_mod_cast hB
+  omega
+
+/--
+**Lemma 25.1, geometric heart (genuine).**  From the residual congruence
+relation `M·Qp − ν·D = R` (eq 25.1) and the singular-square residual bound
+`|R|·2^{n₀} < D·Qp`, the mask point `M/D` and the small-denominator point
+`ν/Qp` lie in equal or adjacent depth-`n₀` dyadic cylinders.  This is exactly
+the cylinder dichotomy the manuscript derives before the carry-tail analysis. -/
+theorem residual_cylinder_dichotomy {M Qp D ν R : ℝ} {n0 kM kν : ℕ}
+    (hD : 0 < D) (hQp : 0 < Qp)
+    (hrel : M * Qp - ν * D = R)
+    (hRbound : |R| * 2 ^ n0 < D * Qp)
+    (hcylM : DyadicCylinder n0 kM (M / D))
+    (hcylν : DyadicCylinder n0 kν (ν / Qp)) :
+    kM = kν ∨ kν = kM + 1 ∨ kM = kν + 1 :=
+  dyadicCylinder_eq_or_adjacent hcylM hcylν
+    (residual_fractional_approx hD hQp hrel hRbound)
+
+/--
+**Lemma 25.1 (dyadic cylinder reduction, genuine reduction).**
+
+The geometric step is now genuinely proved: from the residual fractional
+relation `M·Qp − ν·D = R` (eq 25.1) and the singular-square residual bound
+`|R|·2^{n₀} < D·Qp`, `residual_cylinder_dichotomy` shows the depth-`n₀`
+cylinder indices of `M/D` and `ν/Qp` are equal or adjacent.
+
+The remaining content — translating that cylinder relation into the binary
+word `w` — is the manuscript's carry-tail analysis, reduced here to its
+smallest honest primitives:
+* equal cylinders ⟹ exact rational-prefix agreement (`hEqual`);
+* adjacent cylinders ⟹ a dense all-one tail or an all-zero tail produced by
+  the binary carry words `ξ011…1` / `ξ100…0` (`hAdjacent`).
+
+These two primitives require a binary-digit↔cylinder bridge for `w` that is
+outside this file; everything else (the trichotomy and the *which*-cylinder
+case split) is proved. -/
 theorem lemma25_1_dyadicCylinderPrefix
-    {w : Nat -> Nat} {p L CQ Qp : Nat} {bound plen : Nat}
-    (_hp : 8 * L + CQ < p)
-    (kind : CylinderTailKind)
-    (hShort : kind = .shortTail → RationalPrefixMatch w plen Qp)
-    (hDense : kind = .denseTail → DenseAllOneBlock w p bound)
-    (hZero : kind = .zeroTail → AllZeroBlock w p bound) :
+    {w : Nat -> Nat} {M D ν R : ℝ} {p n0 kM kν : ℕ} {bound plen Qp : ℕ}
+    (hD : 0 < D) (hQp : 0 < Qp)
+    (hrel : M * (Qp : ℝ) - ν * D = R)
+    (hRbound : |R| * 2 ^ n0 < D * (Qp : ℝ))
+    (hcylM : DyadicCylinder n0 kM (M / D))
+    (hcylν : DyadicCylinder n0 kν (ν / (Qp : ℝ)))
+    (hEqual : kM = kν → RationalPrefixMatch w plen Qp)
+    (hAdjacent : (kν = kM + 1 ∨ kM = kν + 1) →
+      DenseAllOneBlock w p bound ∨ AllZeroBlock w p bound) :
     DenseAllOneBlock w p bound ∨
       AllZeroBlock w p bound ∨
       RationalPrefixMatch w plen Qp := by
-  cases kind with
-  | shortTail => exact Or.inr (Or.inr (hShort rfl))
-  | denseTail => exact Or.inl (hDense rfl)
-  | zeroTail => exact Or.inr (Or.inl (hZero rfl))
+  have hQpR : (0 : ℝ) < (Qp : ℝ) := by exact_mod_cast hQp
+  rcases residual_cylinder_dichotomy hD hQpR hrel hRbound hcylM hcylν with heq | hadj
+  · exact Or.inr (Or.inr (hEqual heq))
+  · rcases hAdjacent hadj with hd | hz
+    · exact Or.inl hd
+    · exact Or.inr (Or.inl hz)
 
 /--
-**Lemma 25.2 (small-denominator segment density, manuscript form — Pass 2).**
+**Lemma 25.2 (small-denominator segment density, genuine).**
 
-Real case analysis on the binary multiplicative order `t = ord_{q_0}(2)`
-versus the threshold `betap_div_4 = β·p/4`:
+Fix an odd denominator `q₀ > 1` and a numerator `a` coprime to `q₀`, and let
+`w = dyadicDigit q₀ a` be the binary digit sequence of `a/q₀`.  Let
+`t = ord_{q₀}(2) = orderOf (2 : ZMod q₀)`.  The manuscript's threshold
+`betap_div_4` plays the role of `⌊βp/4⌋`; `hNlen` records `betap_div_4 ≤ N`
+(genuinely `n' ≥ βp/2 ≥ βp/4`) and `hsize` records the sizing
+`2 q₀ (c₀p+1) ≤ ⌊βp/4⌋(⌊βp/4⌋+1)` produced by `q₀ ≤ Cp` and the choice of
+`c₀ = c₀(C,β)` small.  Then the segment either has at least `c₀p` ones, or is
+semiperiodic with period `< βp/4`.
 
-* If `t < betap_div_4`, the manuscript supplies a short-period
-  semiperiodic certificate via the period-`t` recurrence.
-* If `betap_div_4 ≤ t`, the manuscript uses the small-denominator
-  segment digit sum core to obtain at least `c0p` ones in the segment.
+Both branches are proved genuinely (no hypothesis shells):
 
-This theorem performs the real `by_cases` dispatch.
+* `t < betap_div_4`: the digit sequence is periodic with period `t < βp/4`
+  (`dyadicDigit_period`), giving the short-semiperiodic certificate.
+* `betap_div_4 ≤ t`: a block of length `min N t (≥ βp/4)` has distinct
+  positive residues (`dyadicResidue_injOn`), so the small-denominator
+  digit-sum core (`dyadicDigit_segment_manyOnes`) yields `≥ c₀p` ones, and
+  monotonicity extends this to the full segment.
 -/
 theorem lemma25_2_smallDenominatorSegment
-    {w : Nat -> Nat} {u N c0p betap_div_4 t : Nat}
-    (hLargeT_givesOnes : betap_div_4 ≤ t → c0p ≤ segmentSum w u N)
-    (hSmallT_givesSemiperiodic :
-      t < betap_div_4 → ShortSemiperiodic w u N betap_div_4) :
-    c0p <= segmentSum w u N ∨
-      ShortSemiperiodic w u N betap_div_4 := by
-  by_cases ht : t < betap_div_4
-  · exact Or.inr (hSmallT_givesSemiperiodic ht)
-  · exact Or.inl (hLargeT_givesOnes (Nat.le_of_not_lt ht))
+    {q0 a u N c0p betap_div_4 : Nat}
+    (hq0 : 1 < q0) (hodd : Odd q0) (hcop : Nat.Coprime a q0)
+    (hNlen : betap_div_4 ≤ N)
+    (hsize : 2 * q0 * (c0p + 1) ≤ betap_div_4 * (betap_div_4 + 1)) :
+    c0p ≤ segmentSum (dyadicDigit q0 a) u N ∨
+      ShortSemiperiodic (dyadicDigit q0 a) u N betap_div_4 := by
+  have htpos : 0 < orderOf (2 : ZMod q0) :=
+    orderOf_pos_iff.mpr (isOfFinOrder_two_zmod hq0 hodd)
+  by_cases ht : orderOf (2 : ZMod q0) < betap_div_4
+  · refine Or.inr ⟨orderOf (2 : ZMod q0), ⟨htpos, ?_⟩, ht⟩
+    intro i _
+    exact dyadicDigit_period q0 a (u + i)
+  · have htge : betap_div_4 ≤ orderOf (2 : ZMod q0) := Nat.le_of_not_lt ht
+    refine Or.inl ?_
+    set M := min N (orderOf (2 : ZMod q0)) with hMdef
+    have hMN : M ≤ N := min_le_left _ _
+    have hMt : M ≤ orderOf (2 : ZMod q0) := min_le_right _ _
+    have hbM : betap_div_4 ≤ M := le_min hNlen htge
+    have hsizeM : 2 * q0 * (c0p + 1) ≤ M * (M + 1) :=
+      le_trans hsize (Nat.mul_le_mul hbM (by omega))
+    have hMany : c0p ≤ segmentSum (dyadicDigit q0 a) u M :=
+      dyadicDigit_segment_manyOnes hq0 hodd hcop hMt hsizeM
+    have hmono : segmentSum (dyadicDigit q0 a) u M
+        ≤ segmentSum (dyadicDigit q0 a) u N := by
+      obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_le hMN
+      rw [hd]
+      exact segmentSum_le_append_left _ u M d
+    exact le_trans hMany hmono
 
 /--
 Output classification for Proposition 25.3.  Each residual singular
@@ -573,6 +879,38 @@ theorem proposition25_3_residualSingularSquares
   · exact ⟨hDense_localSpike hDense⟩
   · exact ⟨hZero_cleanBoundary hZero⟩
   · exact ⟨hRational_runOutput hRat⟩
+
+/--
+**Proposition 25.3 from the Lemma 25.1 cylinder dichotomy.**
+
+This is the proof-v4 residual cleanup chain in one theorem: the genuinely
+proved dyadic-cylinder dichotomy of Lemma 25.1 (`residual_cylinder_dichotomy`,
+threaded through `lemma25_1_dyadicCylinderPrefix`) supplies the trichotomy
+consumed by Proposition 25.3, and the resulting branch is routed to one of the
+residual output classes.  The `hEqual`/`hAdjacent` inputs are the carry-tail
+word primitives; everything else is proved.
+-/
+theorem proposition25_3_residualSingularSquares_of_tailKind
+    {w : Nat -> Nat} {M D ν R : ℝ} {p L CQ n0 kM kν : Nat} {bound plen Qp : Nat}
+    (hp : 8 * L + CQ < p)
+    (hD : 0 < D) (hQp : 0 < Qp)
+    (hrel : M * (Qp : ℝ) - ν * D = R)
+    (hRbound : |R| * 2 ^ n0 < D * (Qp : ℝ))
+    (hcylM : DyadicCylinder n0 kM (M / D))
+    (hcylν : DyadicCylinder n0 kν (ν / (Qp : ℝ)))
+    (hEqual : kM = kν -> RationalPrefixMatch w plen Qp)
+    (hAdjacent : (kν = kM + 1 ∨ kM = kν + 1) ->
+      DenseAllOneBlock w p bound ∨ AllZeroBlock w p bound)
+    (hDense_localSpike :
+      DenseAllOneBlock w p bound -> ResidualSingularOutput w p)
+    (hZero_cleanBoundary :
+      AllZeroBlock w p bound -> ResidualSingularOutput w p)
+    (hRational_runOutput :
+      RationalPrefixMatch w plen Qp -> ResidualSingularOutput w p) :
+    Nonempty (ResidualSingularOutput w p) :=
+  proposition25_3_residualSingularSquares hp
+    (lemma25_1_dyadicCylinderPrefix hD hQp hrel hRbound hcylM hcylν hEqual hAdjacent)
+    hDense_localSpike hZero_cleanBoundary hRational_runOutput
 
 end
 

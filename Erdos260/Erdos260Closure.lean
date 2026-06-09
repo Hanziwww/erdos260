@@ -75,9 +75,9 @@ structure Erdos260PerFailureCertificate (cPr cStar ξ X : ℝ) where
   Manuscript pressure lower bound (Phases 2--3 via Lemma 21.1):
   the sum of the six witness reals is at least `cPr · X`.
 
-  The six witnesses are the ones produced by `chernoffPathSpace`,
-  `cnlEntropy`, `towerPackageBound`, `densePackBound`,
-  `nonRunReturnBound`, `runBound` respectively.
+  The six witnesses are the concrete phase-mass terms bounded by
+  `chernoffPathSpace`, `cnlEntropy`, `towerPackageBound`, `densePackBound`,
+  `nonRunReturnBound`, and `runBound` respectively.
   -/
   pressureLowerBound :
     cPr * X <=
@@ -103,10 +103,10 @@ pressure lower bound.
 -/
 theorem atomicWitnessProp_of_perFailure
     {cPr cStar ξ X : ℝ}
-    (cert : Erdos260PerFailureCertificate cPr cStar ξ X) :
-    AtomicWitnessProp cPr cStar ξ X := by
+    (cert : Erdos260PerFailureCertificate cPr cStar ξ X)
+    (hX_nonneg : 0 <= X) :
+  AtomicWitnessProp cPr cStar ξ X := by
   classical
-  haveI : DecidableEq cert.chernoff.α := cert.chernoff.decEq
   refine ⟨
     weightedMass
       (highCostSet cert.chernoff.paths cert.chernoff.cost cert.chernoff.Y)
@@ -137,7 +137,7 @@ theorem atomicWitnessProp_of_perFailure
     calc cleanCNLKraftSum cert.cnl.paths cert.cnl.BNDHeight cert.cnl.c *
             cert.cnl.shellFactor * X * cert.cnl.Ij
         <= cert.cnl.CQ ^ cert.cnl.M * cert.cnl.shellFactor * X * cert.cnl.Ij :=
-          cert.cnl.manuscript_dominates
+          cert.cnl.manuscript_dominates hX_nonneg
       _ <= cStar * ξ * X / 6 := cert.cnl.manuscript_bound
   · -- Tower ≤ cStar ξ X / 6
     have hTower :=
@@ -178,10 +178,14 @@ makes `Erdos260AnalyticInputsAtomic` real.
 -/
 structure Erdos260ClosureCertificate where
   cQ : ℝ
+  /-- **Round Α2 (manuscript-strict)**: failure threshold `c_0 > 0`. -/
+  c0 : ℝ
   cPr : ℝ
   cStar : ℝ
   ξ : ℝ
   cQ_pos : 0 < cQ
+  c0_pos : 0 < c0
+  c0_le_cQ : c0 ≤ cQ
   cPr_pos : 0 < cPr
   cStar_pos : 0 < cStar
   ξ_pos : 0 < ξ
@@ -194,7 +198,8 @@ structure Erdos260ClosureCertificate where
       (∃ P : Int, realWeightedValue (natBinaryAsReal d) = (P : ℝ) / (Q : ℝ)) ->
         Nat
   /-- For every failing dyadic `X ≥ startThreshold Q d`, the
-  per-failure certificate exists.  This is the residual manuscript
+  per-failure certificate exists.  **Round Α2**: failure hypothesis
+  uses strict `c_0` rather than `c_Q`.  This is the residual manuscript
   content. -/
   perFailure :
     ∀ (Q : Nat) (d : Nat -> Nat)
@@ -204,7 +209,7 @@ structure Erdos260ClosureCertificate where
         ∃ P : Int, realWeightedValue (natBinaryAsReal d) = (P : ℝ) / (Q : ℝ)),
       ∀ X : Nat, Dyadic X ->
         startThreshold Q d hQ hd hnonterm hrational ≤ X ->
-        ((supportShell d X).card : ℝ) < cQ * (X : ℝ) ->
+        ((supportShell d X).card : ℝ) < c0 * (X : ℝ) ->
           Erdos260PerFailureCertificate cPr cStar ξ (X : ℝ)
 
 /--
@@ -217,10 +222,13 @@ def Erdos260AnalyticInputsAtomic.ofCertificate
     (cert : Erdos260ClosureCertificate) :
     Erdos260AnalyticInputsAtomic where
   cQ := cert.cQ
+  c0 := cert.c0
   cPr := cert.cPr
   cStar := cert.cStar
   ξ := cert.ξ
   cQ_pos := cert.cQ_pos
+  c0_pos := cert.c0_pos
+  c0_le_cQ := cert.c0_le_cQ
   cPr_pos := cert.cPr_pos
   cStar_pos := cert.cStar_pos
   ξ_pos := cert.ξ_pos
@@ -229,8 +237,11 @@ def Erdos260AnalyticInputsAtomic.ofCertificate
     intro Q d hQ hd hnonterm hrational
     refine ⟨cert.startThreshold Q d hQ hd hnonterm hrational,
             fun X hXdyadic hXge hfail => ?_⟩
+    have hX_nonneg : 0 <= (X : ℝ) := by
+      exact_mod_cast Nat.zero_le X
     exact atomicWitnessProp_of_perFailure
       (cert.perFailure Q d hQ hd hnonterm hrational X hXdyadic hXge hfail)
+      hX_nonneg
 
 /-! ### Final unconditional theorems modulo the manuscript certificate -/
 

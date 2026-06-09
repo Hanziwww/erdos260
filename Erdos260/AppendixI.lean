@@ -257,6 +257,120 @@ theorem theoremI7_finalFiniteDescent
     _ = cleanError₀ + Cη * cleanError₁ + P₀ + Cη * P₁ + D₀ + Cη * D₁ := by ring
     _ <= Cstar * ξ * r * X * I0 + smallError := hSum_bound
 
+/-! ### I.7-I.10 Full `M`-step truncated descent
+
+Theorem I.7 above iterates the truncated charged recurrence twice.  The
+manuscript actually iterates it down to a terminal order where the high-excess
+mass vanishes (I.10 "terminal tail empty").  The two lemmas below formalize the
+descent at arbitrary depth `M`, with the geometric error accumulation that the
+manuscript's two-step constant `C_η^2` is the `M = 2` case of.
+-/
+
+/--
+**Telescoped charged descent.**  If `𝒜 k ≤ C_η · 𝒜 (k+1) + b k` holds at every
+level with `C_η ≥ 0`, then for every depth `M`,
+`𝒜 0 ≤ C_η^M · 𝒜 M + ∑_{k<M} C_η^k · b k`.  This is the exact telescoping of
+the per-level recurrence (Proposition I.2.1) along the truncated variable-block
+iteration of Appendix H.4. -/
+theorem finiteDescent_telescope {𝒜 b : ℕ -> ℝ} {Cη : ℝ}
+    (hCη_nonneg : 0 <= Cη)
+    (hstep : ∀ k, 𝒜 k <= Cη * 𝒜 (k + 1) + b k) :
+    ∀ M, 𝒜 0 <= Cη ^ M * 𝒜 M + ∑ k ∈ Finset.range M, Cη ^ k * b k := by
+  intro M
+  induction M with
+  | zero => simp
+  | succ n ih =>
+      have hpow_nonneg : 0 <= Cη ^ n := pow_nonneg hCη_nonneg n
+      have hexp :
+          Cη ^ n * (Cη * 𝒜 (n + 1) + b n) =
+            Cη ^ (n + 1) * 𝒜 (n + 1) + Cη ^ n * b n := by
+        rw [pow_succ]; ring
+      rw [Finset.sum_range_succ]
+      calc 𝒜 0 <= Cη ^ n * 𝒜 n + ∑ k ∈ Finset.range n, Cη ^ k * b k := ih
+        _ <= Cη ^ n * (Cη * 𝒜 (n + 1) + b n) +
+              ∑ k ∈ Finset.range n, Cη ^ k * b k := by
+            have := mul_le_mul_of_nonneg_left (hstep n) hpow_nonneg
+            linarith
+        _ = Cη ^ (n + 1) * 𝒜 (n + 1) +
+              (∑ k ∈ Finset.range n, Cη ^ k * b k + Cη ^ n * b n) := by
+            rw [hexp]; ring
+
+/--
+**Theorem I.7-I.10 (`M`-step final finite descent), real form.**
+
+With a per-level truncated recurrence `𝒜 k ≤ C_η · 𝒜 (k+1) + b k` (`0 ≤ C_η`)
+and the terminal tail `𝒜 M ≤ 0` (manuscript I.10: the high-excess mass at the
+terminal order is empty), the order-`0` high-excess mass is bounded by the
+geometric error sum `∑_{k<M} C_η^k · b k`.
+
+This is the unconditional descent skeleton at arbitrary depth; the manuscript
+analytic inputs are exactly the per-level recurrences `b k` and the terminal
+nullification, which Appendices I.2-I.6 supply. -/
+theorem finiteDescent_le {𝒜 b : ℕ -> ℝ} {Cη : ℝ} {M : ℕ}
+    (hCη_nonneg : 0 <= Cη)
+    (hstep : ∀ k, 𝒜 k <= Cη * 𝒜 (k + 1) + b k)
+    (hterminal : 𝒜 M <= 0) :
+    𝒜 0 <= ∑ k ∈ Finset.range M, Cη ^ k * b k := by
+  have h := finiteDescent_telescope hCη_nonneg hstep M
+  have hpow_nonneg : 0 <= Cη ^ M := pow_nonneg hCη_nonneg M
+  have hterm : Cη ^ M * 𝒜 M <= 0 :=
+    mul_nonpos_of_nonneg_of_nonpos hpow_nonneg hterminal
+  linarith
+
+/-! ### I.9 reindexing: analytic high-excess mass = stopped-branch mass
+
+The stopped induction (H.1–H.3) and the branch ledger (J.1) realize the analytic
+high-excess mass `∑_k windowExcess` as the stopped-branch weighted mass: each
+high-excess starting index `k` indexes a stopped branch carrying that index's
+window excess as its weight.  The reindexing below is the **faithful sum
+identity** (`Finset.sum_image`); the injectivity of the indexing (distinct starts
+give distinct branches) and the per-branch weight identity are the conditional
+stopped-tree construction inputs (H.1 / J.1).
+
+This is the seam between the analytic high-excess world (`Pressure.highExcessMass`)
+and the charged-ledger world (`StoppedInduction.branchWeightedMass` /
+`chargedMass`): composed with `stoppedRecurrence_with_chargedLedger` it sends the
+H.1–H.3 charged decomposition onto `highExcessMass`, feeding the central charge
+bridge `highExcessMass ... ≤ ClosurePhaseMass`. -/
+
+/-- **I.9 reindexing identity.**  Under the stopped-tree identification — the map
+`branchOf` is injective on the high-excess starts (`hinj`) and the branch weight
+of `branchOf k` is exactly the window excess at `k` (`hweight`) — the analytic
+high-excess mass equals the stopped-branch weighted mass over the branch image. -/
+theorem highExcessMass_eq_branchWeightedMass
+    {starts : Finset Nat} {g : Nat -> Nat} {r : Nat} {Tr Yr : ℝ}
+    {branchWeight : StoppedBranch -> ℝ}
+    (branchOf : Nat -> StoppedBranch)
+    (hinj : ∀ k ∈ highExcessStarts starts g r Tr Yr,
+        ∀ l ∈ highExcessStarts starts g r Tr Yr, branchOf k = branchOf l -> k = l)
+    (hweight : ∀ k ∈ highExcessStarts starts g r Tr Yr,
+        branchWeight (branchOf k) = windowExcess g k r Tr) :
+    highExcessMass (highExcessStarts starts g r Tr Yr) g r Tr
+      = branchWeightedMass ((highExcessStarts starts g r Tr Yr).image branchOf)
+          branchWeight := by
+  unfold highExcessMass branchWeightedMass weightedMass
+  rw [Finset.sum_image hinj]
+  exact Finset.sum_congr rfl fun k hk => (hweight k hk).symm
+
+/-- **I.9 → branch bound.**  Any upper bound on the stopped-branch weighted mass
+(e.g. the charged-ledger bound of `stoppedRecurrence_with_chargedLedger`)
+transfers to the analytic high-excess mass.  This is how the stopped-induction /
+charged-ledger estimates feed the central charge bridge. -/
+theorem highExcessMass_le_of_branchBound
+    {starts : Finset Nat} {g : Nat -> Nat} {r : Nat} {Tr Yr : ℝ}
+    {branchWeight : StoppedBranch -> ℝ} {bound : ℝ}
+    (branchOf : Nat -> StoppedBranch)
+    (hinj : ∀ k ∈ highExcessStarts starts g r Tr Yr,
+        ∀ l ∈ highExcessStarts starts g r Tr Yr, branchOf k = branchOf l -> k = l)
+    (hweight : ∀ k ∈ highExcessStarts starts g r Tr Yr,
+        branchWeight (branchOf k) = windowExcess g k r Tr)
+    (hbound :
+      branchWeightedMass ((highExcessStarts starts g r Tr Yr).image branchOf)
+          branchWeight <= bound) :
+    highExcessMass (highExcessStarts starts g r Tr Yr) g r Tr <= bound := by
+  rw [highExcessMass_eq_branchWeightedMass branchOf hinj hweight]
+  exact hbound
+
 end
 
 end Erdos260

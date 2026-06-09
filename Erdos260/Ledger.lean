@@ -34,6 +34,88 @@ inductive PriorityClass where
   | tp
 deriving DecidableEq, Fintype, Repr
 
+/-! ### v4 output classes (Appendix N rolling-window variation-drop closure)
+
+`proof_v4.tex` replaces the v3 same-threshold compression by the Appendix N
+event-fibre map `(b,T,ζ) ↦ Θ_T^0(b,ζ)` whose target is the six-class disjoint
+union
+
+```
+𝔒_D ⊔ 𝔒_P ⊔ 𝔒_E ⊔ 𝔒_CNL ⊔ 𝔒_bdd ⊔ 𝔒_V,
+```
+
+with the new variation-drop output `𝔒_V` (Lemma N.2.2).  We encode this target
+as `OutputClassV4`.  The existing `PackageKind` is retained for the current
+reduction; the routing of terminal non-drop outputs into D/P/E/CNL/bdd
+(Lemma N.1.0 / N.3.3) and the variation-drop bound `VarDrop ≤ o(sX|I_j|)`
+(Lemma N.2.2) are formalized in roadmap Phases B–E. -/
+inductive OutputClassV4 where
+  | densePack
+  | progress
+  | endpoint
+  | cnl
+  | bdd
+  | varDrop
+deriving DecidableEq, Fintype, Repr
+
+/-- The variation-drop output class `𝔒_V`. -/
+def OutputClassV4.IsVariationDrop (c : OutputClassV4) : Prop :=
+  c = OutputClassV4.varDrop
+
+instance : DecidablePred OutputClassV4.IsVariationDrop := by
+  intro c
+  unfold OutputClassV4.IsVariationDrop
+  infer_instance
+
+theorem OutputClassV4.isVariationDrop_iff (c : OutputClassV4) :
+    c.IsVariationDrop ↔ c = OutputClassV4.varDrop := Iff.rfl
+
+theorem OutputClassV4.varDrop_isVariationDrop :
+    OutputClassV4.varDrop.IsVariationDrop := rfl
+
+theorem OutputClassV4.not_isVariationDrop_of_ne {c : OutputClassV4}
+    (h : c ≠ OutputClassV4.varDrop) : ¬ c.IsVariationDrop := h
+
+/-- There are exactly six v4 output classes (`𝔒_D, 𝔒_P, 𝔒_E, 𝔒_CNL, 𝔒_bdd, 𝔒_V`). -/
+theorem OutputClassV4.card_eq_six : Fintype.card OutputClassV4 = 6 := by decide
+
+/-- A v4 charged output object: a class tag with support/threshold coordinates. -/
+structure OutputObjectV4 where
+  cls : OutputClassV4
+  supportId : Nat
+  thresholdLayer : Nat
+deriving DecidableEq, Repr
+
+/-- Residual variation-drop mass `VarDrop` (Lemma N.2.2): total weight of the
+variation-drop outputs in a finite collection.  Phase C bounds this by
+`C_Q · Y · V_s = o(s X |I_j|)`. -/
+def variationDropMass (objects : Finset OutputObjectV4)
+    (weight : OutputObjectV4 → ℝ) : ℝ :=
+  ∑ o ∈ objects.filter (fun o => o.cls = OutputClassV4.varDrop), weight o
+
+theorem variationDropMass_nonneg {objects : Finset OutputObjectV4}
+    {weight : OutputObjectV4 → ℝ} (hw : ∀ o ∈ objects, 0 ≤ weight o) :
+    0 ≤ variationDropMass objects weight := by
+  unfold variationDropMass
+  refine Finset.sum_nonneg ?_
+  intro o ho
+  exact hw o (Finset.mem_filter.mp ho).1
+
+theorem variationDropMass_le_total {objects : Finset OutputObjectV4}
+    {weight : OutputObjectV4 → ℝ} (hw : ∀ o ∈ objects, 0 ≤ weight o) :
+    variationDropMass objects weight ≤ ∑ o ∈ objects, weight o := by
+  unfold variationDropMass
+  refine Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _) ?_
+  intro o ho _
+  exact hw o ho
+
+theorem variationDropMass_eq_zero_of_no_varDrop {objects : Finset OutputObjectV4}
+    {weight : OutputObjectV4 → ℝ}
+    (h : ∀ o ∈ objects, o.cls ≠ OutputClassV4.varDrop) :
+    variationDropMass objects weight = 0 := by
+  unfold variationDropMass
+  rw [Finset.filter_false_of_mem h, Finset.sum_empty]
+
 /-- A stopped branch edge with an explicit shell cost and threshold layer. -/
 structure BranchEdge where
   source : Nat
@@ -1108,6 +1190,25 @@ theorem propositionJ6_1_chargedLedgerClosure
         o ∈ branchOutputsOf branches Φ kind ->
           j < o.thresholdLayer :=
   chargedLedgerClosure_skeleton hC hweight hpoint hfree
+
+/--
+**J.6.1 corollary (feedback-free at the current layer).**
+
+In a feedback-free charged ledger at layer `j`, no branch output that sits
+*at* the current threshold layer `j` can be a feedback package: feedback
+packages are forced strictly above `j`.  This is the closure invariant that
+prevents same-layer feedback in the threshold descent (Appendix J.6 / I.6),
+an unconditional consequence of `BranchOutputsFeedbackFree`. -/
+theorem no_feedback_at_threshold_layer
+    {branches : Finset StoppedBranch} {Φ : PriorityMap} {j : Nat}
+    (hfree : BranchOutputsFeedbackFree branches Φ j)
+    {o : OutputObject} (ho : o ∈ branchOutputs branches Φ)
+    (hlayer : o.thresholdLayer = j) :
+    ¬ IsFeedbackPackage o.package := by
+  intro hfb
+  have hgt : j < o.thresholdLayer :=
+    branchFeedback_output_thresholdLayer_gt hfree ho hfb
+  omega
 
 end
 

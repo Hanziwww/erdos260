@@ -70,6 +70,9 @@ TheoremAStatement` regardless.
 structure Erdos260AnalyticInputs where
   /-- The positive-density constant `c_Q > 0`. -/
   cQ : ℝ
+  /-- **Round Α2 (manuscript-strict)**: the failure threshold `c_0 > 0`,
+  satisfying `c_0 ≤ c_Q`.  All failure analysis uses `c_0`, not `c_Q`. -/
+  c0 : ℝ
   /-- The pressure-lower-bound constant `c_pr > 0` from Appendix H.5. -/
   cPr : ℝ
   /-- The descent-upper-bound constant `C_* > 0` from Appendix H.4. -/
@@ -77,6 +80,8 @@ structure Erdos260AnalyticInputs where
   /-- The smallness parameter `ξ > 0` chosen in Appendix H.3 / H.5. -/
   ξ : ℝ
   cQ_pos : 0 < cQ
+  c0_pos : 0 < c0
+  c0_le_cQ : c0 ≤ cQ
   cPr_pos : 0 < cPr
   cStar_pos : 0 < cStar
   ξ_pos : 0 < ξ
@@ -84,16 +89,16 @@ structure Erdos260AnalyticInputs where
   constantsCompatible : cStar * ξ < cPr
   /-- The H.4 vs H.5 witness mass.  For each rational-target binary
   nonterminating sequence `d` and each sufficiently large dyadic `X`,
-  if the positive-density failure `shell.card < cQ · X` holds, then
-  there is a real witness mass `M` simultaneously satisfying
-  `cPr · X ≤ M` (Lemma 21.1 / H.5) and `M ≤ cStar · ξ · X`
-  (Theorem I.7 / H.4). -/
+  if the positive-density failure `shell.card < c_0 · X` holds
+  (**Round Α2**: now strict `c_0` rather than `c_Q`), then there is a
+  real witness mass `M` simultaneously satisfying `cPr · X ≤ M`
+  (Lemma 21.1 / H.5) and `M ≤ cStar · ξ · X` (Theorem I.7 / H.4). -/
   failureMass :
     ∀ (Q : Nat) (d : Nat -> Nat),
       0 < Q -> BinaryDigits d -> ¬ EventuallyZero d ->
       (∃ P : Int, realWeightedValue (natBinaryAsReal d) = (P : ℝ) / (Q : ℝ)) ->
       ∃ X0 : Nat, ∀ X : Nat, Dyadic X -> X0 ≤ X ->
-        ((supportShell d X).card : ℝ) < cQ * (X : ℝ) ->
+        ((supportShell d X).card : ℝ) < c0 * (X : ℝ) ->
           ∃ M : ℝ,
             cPr * (X : ℝ) ≤ M ∧
               M ≤ cStar * ξ * (X : ℝ)
@@ -117,11 +122,13 @@ theorem theoremA_of_analytic_inputs
     (inputs : Erdos260AnalyticInputs) :
     TheoremAStatement := by
   intro Q d hQ hd hnonterm hrational
-  refine ⟨inputs.cQ, inputs.cQ_pos, ?_⟩
+  -- **Round Α2**: output density constant is `c0` (strict manuscript value),
+  -- giving `c0 · X ≤ K` for sufficiently large X.
+  refine ⟨inputs.c0, inputs.c0_pos, ?_⟩
   rcases inputs.failureMass Q d hQ hd hnonterm hrational with ⟨X0, hX⟩
   refine ⟨X0, fun X hXdyadic hXge => ?_⟩
   by_contra hfail
-  have hfail' : ((supportShell d X).card : ℝ) < inputs.cQ * (X : ℝ) :=
+  have hfail' : ((supportShell d X).card : ℝ) < inputs.c0 * (X : ℝ) :=
     lt_of_not_ge hfail
   rcases hX X hXdyadic hXge hfail' with ⟨M, hLower, hUpper⟩
   have hXpos : 0 < (X : ℝ) := by
@@ -189,23 +196,28 @@ manuscript's compatibility condition as the ninth field.
 -/
 structure Erdos260AnalyticInputsAtomic where
   cQ : ℝ
+  /-- **Round Α2 (manuscript-strict)**: failure threshold `c_0 > 0`. -/
+  c0 : ℝ
   cPr : ℝ
   cStar : ℝ
   ξ : ℝ
   cQ_pos : 0 < cQ
+  c0_pos : 0 < c0
+  c0_le_cQ : c0 ≤ cQ
   cPr_pos : 0 < cPr
   cStar_pos : 0 < cStar
   ξ_pos : 0 < ξ
   /-- (Field 9) Numerical compatibility from Appendix H.3 / H.5. -/
   constantsCompatible : cStar * ξ < cPr
   /-- (Fields 1–8) Per-instance atomic witness producing the eight
-  inequalities (six upper bounds + the combined pressure lower bound). -/
+  inequalities (six upper bounds + the combined pressure lower bound).
+  **Round Α2**: failure hypothesis uses strict `c_0` rather than `c_Q`. -/
   atomicWitness :
     ∀ (Q : Nat) (d : Nat -> Nat),
       0 < Q -> BinaryDigits d -> ¬ EventuallyZero d ->
       (∃ P : Int, realWeightedValue (natBinaryAsReal d) = (P : ℝ) / (Q : ℝ)) ->
       ∃ X0 : Nat, ∀ X : Nat, Dyadic X -> X0 ≤ X ->
-        ((supportShell d X).card : ℝ) < cQ * (X : ℝ) ->
+        ((supportShell d X).card : ℝ) < c0 * (X : ℝ) ->
           AtomicWitnessProp cPr cStar ξ (X : ℝ)
 
 /--
@@ -223,10 +235,13 @@ def Erdos260AnalyticInputs.ofAtomic
     (atomic : Erdos260AnalyticInputsAtomic) :
     Erdos260AnalyticInputs where
   cQ := atomic.cQ
+  c0 := atomic.c0
   cPr := atomic.cPr
   cStar := atomic.cStar
   ξ := atomic.ξ
   cQ_pos := atomic.cQ_pos
+  c0_pos := atomic.c0_pos
+  c0_le_cQ := atomic.c0_le_cQ
   cPr_pos := atomic.cPr_pos
   cStar_pos := atomic.cStar_pos
   ξ_pos := atomic.ξ_pos
