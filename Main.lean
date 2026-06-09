@@ -1,4 +1,4 @@
 import Erdos260
 
 def main : IO Unit :=
-  IO.println s!"Hello, {hello}!"
+  IO.println "Erdos260: unconditional-closure endpoint compiled."

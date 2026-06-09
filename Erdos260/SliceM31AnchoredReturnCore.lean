@@ -321,6 +321,54 @@ def AnchoredLongReturnFamily.ofSurvivorFamily {ctx : ActualFailureContext} {key 
     have h := S.start_lt_core x hx
     simpa using h
 
+/-- **The anchored long-return datum from the older common clean-run witness (PROVED).**  This is the
+direct bridge from wave-20's `AnchoredCleanRun` formulation to the newer lowered M.3.1 surface: use
+the clean run's common core `[anchor, anchor + coreLen)` as the anchored patch, period `1`, over the
+actual word `ctx.d`.  The M.4 validity is supplied by the clean-run zero digits, while the M.1.1
+complete-return arm is reconstructed from `completeReturnArm_iff_zeroRun`. -/
+def AnchoredLongReturnFamily.ofAnchoredCleanRun {ctx : ActualFailureContext} {key : ℕ → ℕ}
+    {y : ℕ} (R : AnchoredCleanRun ctx key y) : AnchoredLongReturnFamily ctx key y where
+  anchor := R.anchor
+  margin := 0
+  coreLen := R.coreLen
+  coreLen_pos := R.coreLen_pos
+  patch := fun _ => ⟨⟨R.anchor, R.coreLen⟩, 1⟩
+  armBlock := fun x => ⟨x, (R.anchor + R.coreLen) - x⟩
+  patch_anchored := fun x hx => rfl
+  patch_long := fun x hx => by
+    show 0 + R.coreLen ≤ R.coreLen
+    omega
+  patch_valid := fun x hx => by
+    show PeriodicOn ctx.d R.anchor R.coreLen 1
+    refine PeriodicOn.of_constant (c := 0) Nat.one_pos ?_
+    intro i hi
+    have hxa : x < R.anchor := R.start_lt x hx
+    exact R.clean x hx (R.anchor + i) (by omega) (by omega)
+  arm_start := fun x hx => rfl
+  arm_complete := fun x hx => by
+    have hxa : x < R.anchor := R.start_lt x hx
+    have hxle : x ≤ (⟨x, (R.anchor + R.coreLen) - x⟩ : IntervalBlock).stop - 1 := by
+      simp only [IntervalBlock.stop]
+      omega
+    refine (completeReturnArm_iff_zeroRun ctx hxle).2 ?_
+    intro j hj1 hj2
+    exact R.clean x hx j hj1 (by
+      simp only [IntervalBlock.stop] at hj2
+      omega)
+  arm_contains_patch := fun x hx => by
+    have hxa : x < R.anchor := R.start_lt x hx
+    simp only [IntervalBlock.Contains, IntervalBlock.stop]
+    omega
+  start_lt_core := fun x hx => by
+    have h := R.start_lt x hx
+    simpa using h
+
+/-- **The older clean-run existence supplies the lowered anchored long-return residual (PROVED).** -/
+theorem nonempty_anchoredLongReturnFamily_of_anchoredCleanRun {ctx : ActualFailureContext}
+    {key : ℕ → ℕ} {y : ℕ} (h : Nonempty (AnchoredCleanRun ctx key y)) :
+    Nonempty (AnchoredLongReturnFamily ctx key y) :=
+  h.elim (fun R => ⟨AnchoredLongReturnFamily.ofAnchoredCleanRun R⟩)
+
 /-- **The anchored long-return existence is exactly the survivor-family existence (PROVED).** -/
 theorem nonempty_anchoredLongReturnFamily_iff_survivorFamily (ctx : ActualFailureContext)
     (key : ℕ → ℕ) (y : ℕ) :
@@ -451,6 +499,12 @@ def sliceM31AnchoredReturnResiduals : List String :=
       "core.start, valid since ctx.d = 0 on the clean core). It assumes NONE of CleanReturnPlacement / " ++
       "SliceCompleteReturns / AnchoredSurvivorFamily / AnchoredArmCoreOverlap: the M.3.1 overlap those " ++
       "carry as data is here a theorem.",
+    "CLOSED (bridge from older clean-run surface) — AnchoredLongReturnFamily.ofAnchoredCleanRun / " ++
+      "nonempty_anchoredLongReturnFamily_of_anchoredCleanRun: wave-20's AnchoredCleanRun common-anchor " ++
+      "zero-run datum directly builds the newer lowered anchored-long-return residual, using the common " ++
+      "clean core as a period-1 actual-word patch and deriving the M.1.1 CompleteReturnArm from " ++
+      "completeReturnArm_iff_zeroRun. Thus any upstream proof of the clean-run-to-anchor datum now " ++
+      "feeds V4's anchoredLongReturnFamily field without detouring through SliceCompleteReturns.",
     "NON-VACUOUS / TEETH — anchoredLongReturnFamily_overlap_card fires " ++
       "theoremM3_1_anchoredSemiperiodicOverlap on the ACTUAL distinct surviving patches " ++
       "(coreLen <= |P(J1) cap P(J2)|, the displayed eq M.3); anchoredLongReturnFamily_patch_anchored / " ++
@@ -488,6 +542,8 @@ theorem sliceM31AnchoredReturnResiduals_nonempty : sliceM31AnchoredReturnResidua
 #print axioms cleanReturnPlacement_of_nonempty_anchoredLongReturnFamily
 #print axioms sliceCompleteReturns_of_nonempty_anchoredLongReturnFamily
 #print axioms AnchoredLongReturnFamily.ofSurvivorFamily
+#print axioms AnchoredLongReturnFamily.ofAnchoredCleanRun
+#print axioms nonempty_anchoredLongReturnFamily_of_anchoredCleanRun
 #print axioms nonempty_anchoredLongReturnFamily_iff_survivorFamily
 #print axioms nonempty_anchoredLongReturnFamily_iff_armCoreOverlap
 #print axioms nonempty_anchoredLongReturnFamily_iff_actualPatchExtraction

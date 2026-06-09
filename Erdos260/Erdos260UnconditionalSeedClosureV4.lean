@@ -1,7 +1,7 @@
 import Erdos260.Erdos260UnconditionalSeedClosureV3
 import Erdos260.RhoDQFrontierDischargeCore
 import Erdos260.DescentDepthNoLargeRunCore
-import Erdos260.SliceM31OverlapClosureCore
+import Erdos260.SliceM31AnchoredReturnCore
 
 /-!
 # Erdos #260 -- wave-23/24 integration capstone (`SeedClosureV4`)
@@ -16,9 +16,10 @@ integration gap without pretending that the sharper facts derive all six V3 clas
 The V4 residual therefore:
 
 * stores an explicit `Erdos260MinimalResidualV3`, used for the final theorem;
-* records `UpperBandMatchData ctx`, whose `hband` field discharges the descent-window match;
-* records the M.3.1 survivor-family existence on the V3 return slices, which discharges
-  `CleanReturnPlacement` and `SliceCompleteReturns`;
+* records `UpperBandMatchSource ctx`, whose descent-window match, coprimality, and depth fields derive
+  `UpperBandMatchData ctx`;
+* records the raw M.2.1/M.3.1 anchored long-return existence on the V3 return slices, which derives
+  the survivor-family residual and then discharges `CleanReturnPlacement` and `SliceCompleteReturns`;
 * records the small geometric inputs needed to run `frontierDensityDischarge_rhoDQ`, making the
   Q-correct density atoms globally visible.
 
@@ -60,13 +61,9 @@ provide projection lemmas below for the concrete subgoals they discharge. -/
 structure Erdos260MinimalResidualV4 where
   /-- The actual final-theorem consumer surface from V3. -/
   toV3 : Erdos260MinimalResidualV3
-  /-- Wave-24 upper-band data for the actual descent windows. Its `hband` field is the sharp
-  center-free residue-band residual; `hdens`/`hpb` are the carried density/calibration fields. -/
-  upperBand : forall ctx : ActualFailureContext, UpperBandMatchData ctx
-  /-- Coprimality of the upper-band centre numerators, used by the Q-correct density discharge. -/
-  upperBandCoprime : forall ctx : ActualFailureContext,
-    forall k, Membership.mem (genuineDensePackStarts ctx) k ->
-      Nat.Coprime (upperBandCenter ctx k) (canonicalCenter ctx).q0
+  /-- Sharper §25.3 source data for the upper-band route: a descent-window match plus coprimality,
+  small-denominator depth, and the carried density/calibration fields. -/
+  upperBandSource : forall ctx : ActualFailureContext, UpperBandMatchSource ctx
   /-- Lower containment of the genuine descent windows in the shell support interval. -/
   denseWindowLo : forall ctx : ActualFailureContext,
     forall k, Membership.mem (genuineDensePackStarts ctx) k -> ctx.shell.X < k + ctx.n24CarryData.r
@@ -74,10 +71,14 @@ structure Erdos260MinimalResidualV4 where
   denseWindowHi : forall ctx : ActualFailureContext,
     forall k, Membership.mem (genuineDensePackStarts ctx) k ->
       (k + ctx.n24CarryData.r) + proofV4DensePackSpread ctx.shell <= 2 * ctx.shell.X
-  /-- Wave-24 M.3.1 survivor-family existence on the V3 return slices. -/
-  survivorFamily : forall ctx : ActualFailureContext,
+  /-- Wave-25 raw M.2.1/M.3.1 anchored long-return existence on the V3 return slices.
+
+  This is strictly below the survivor-family packaging: the four-coordinate core containment carried
+  by `AnchoredSurvivorFamily.anchored_patch` is derived from the long-return endpoint pinning and
+  longness fields in `AnchoredLongReturnFamily`. -/
+  anchoredLongReturnFamily : forall ctx : ActualFailureContext,
     forall y, Membership.mem ((olcFibre ctx).image (toV3.returnCharge ctx).key) y ->
-      Nonempty (AnchoredSurvivorFamily ctx (toV3.returnCharge ctx).key y)
+      Nonempty (AnchoredLongReturnFamily ctx (toV3.returnCharge ctx).key y)
 
 namespace Erdos260MinimalResidualV4
 
@@ -93,12 +94,34 @@ def budget (R : Erdos260MinimalResidualV4) :
 /-- Wave-24 upper-band membership discharges the concrete `DescentWindowMatch` residual. -/
 def descentWindowMatch (R : Erdos260MinimalResidualV4) (ctx : ActualFailureContext) :
     DescentWindowMatch ctx :=
-  (R.upperBand ctx).toDescentWindowMatch
+  (R.upperBandSource ctx).toUpperBandMatchData.toDescentWindowMatch
+
+/-- The sharper §25.3 source record projects to the older upper-band package. -/
+def upperBand (R : Erdos260MinimalResidualV4) (ctx : ActualFailureContext) :
+    UpperBandMatchData ctx :=
+  (R.upperBandSource ctx).toUpperBandMatchData
+
+/-- Coprimality of the projected upper-band floor witnesses. -/
+theorem upperBandCoprime (R : Erdos260MinimalResidualV4) (ctx : ActualFailureContext) :
+    forall k, Membership.mem (genuineDensePackStarts ctx) k ->
+      Nat.Coprime (upperBandCenter ctx k) (canonicalCenter ctx).q0 := by
+  intro k hk
+  rw [upperBandCenter_eq_of_descentWindowMatch ctx (R.upperBandSource ctx).W
+    (R.upperBandSource ctx).hcop (R.upperBandSource ctx).hdepth k hk]
+  exact (R.upperBandSource ctx).hcop k hk
 
 /-- The same upper-band data discharges the older semiperiodic-window match surface. -/
 theorem matchedDescentWindows (R : Erdos260MinimalResidualV4) (ctx : ActualFailureContext) :
     MatchedDescentWindows ctx :=
   (R.upperBand ctx).toMatchedDescentWindows
+
+/-- The V4 descent package already supplies the DensePack endpoint-density input:
+upper-band data gives matched descent windows, and the explicit V4 support-window
+containment fields feed the K.1 coarea hit-density bridge. -/
+theorem densePackEndpointDensity (R : Erdos260MinimalResidualV4) (ctx : ActualFailureContext) :
+    densePackEndpointDensity ctx :=
+  densePackEndpointDensity_of_matchedDescentWindows ctx
+    (R.denseWindowLo ctx) (R.denseWindowHi ctx) (R.matchedDescentWindows ctx)
 
 /-- The same upper-band data discharges the section-25.1 cylinder-match residual. -/
 theorem section251CylinderMatch (R : Erdos260MinimalResidualV4) (ctx : ActualFailureContext) :
@@ -110,17 +133,48 @@ def singularSquareCertificate (R : Erdos260MinimalResidualV4) (ctx : ActualFailu
     SingularSquareCertificate ctx :=
   (R.upperBand ctx).toSingularSquareCertificate
 
-/-- Wave-24 survivor-family existence discharges `CleanReturnPlacement` on each V3 return slice. -/
+/-- The raw M.2.1/M.3.1 long-return existence derives the old survivor-family residual on each V3
+return slice. -/
+theorem survivorFamily (R : Erdos260MinimalResidualV4) (ctx : ActualFailureContext)
+    {y : Nat} (hy : Membership.mem ((olcFibre ctx).image (R.toV3.returnCharge ctx).key) y) :
+    Nonempty (AnchoredSurvivorFamily ctx (R.toV3.returnCharge ctx).key y) :=
+  nonempty_survivorFamily_of_anchoredLongReturnFamily (R.anchoredLongReturnFamily ctx y hy)
+
+/-- Wave-25 anchored long-return existence discharges `CleanReturnPlacement` on each V3 return slice. -/
 theorem cleanReturnPlacement (R : Erdos260MinimalResidualV4) (ctx : ActualFailureContext)
     {y : Nat} (hy : Membership.mem ((olcFibre ctx).image (R.toV3.returnCharge ctx).key) y) :
     CleanReturnPlacement ctx (R.toV3.returnCharge ctx).key y :=
-  cleanReturnPlacement_of_nonempty_survivorFamily (R.survivorFamily ctx y hy)
+  cleanReturnPlacement_of_nonempty_anchoredLongReturnFamily (R.anchoredLongReturnFamily ctx y hy)
 
-/-- Wave-24 survivor-family existence also discharges `SliceCompleteReturns` on each V3 return slice. -/
+/-- Wave-25 anchored long-return existence also discharges `SliceCompleteReturns` on each V3 return
+slice. -/
 theorem sliceCompleteReturns (R : Erdos260MinimalResidualV4) (ctx : ActualFailureContext)
     {y : Nat} (hy : Membership.mem ((olcFibre ctx).image (R.toV3.returnCharge ctx).key) y) :
     SliceCompleteReturns ctx (R.toV3.returnCharge ctx).key y :=
-  sliceCompleteReturns_of_nonempty_survivorFamily (R.survivorFamily ctx y hy)
+  sliceCompleteReturns_of_nonempty_anchoredLongReturnFamily (R.anchoredLongReturnFamily ctx y hy)
+
+/-- The V4 long-return witness exposes the concrete all-pairs zero digit-run `(Z)` on the V3 return
+slice. -/
+theorem zeroRunAllPairs (R : Erdos260MinimalResidualV4) (ctx : ActualFailureContext)
+    {y : Nat} (hy : Membership.mem ((olcFibre ctx).image (R.toV3.returnCharge ctx).key) y) :
+    ∀ x ∈ olcSlice ctx (R.toV3.returnCharge ctx).key y,
+      ∀ z ∈ olcSlice ctx (R.toV3.returnCharge ctx).key y, x < z →
+        ∀ j, x < j → j ≤ z → ctx.d j = 0 :=
+  zeroRunAllPairs_of_completeReturns ctx (R.toV3.returnCharge ctx).key y
+    (R.sliceCompleteReturns ctx hy)
+
+/-- The V4 long-return witness supplies the M.2.1 per-slice `OlcSliceData` consumed by the Return
+charge, once the standard shell bound and consecutive lift-gap divisibility are provided. -/
+def olcSliceData (R : Erdos260MinimalResidualV4) (ctx : ActualFailureContext)
+    {y : Nat} (hy : Membership.mem ((olcFibre ctx).image (R.toV3.returnCharge ctx).key) y)
+    (hbound : ∀ k ∈ olcSlice ctx (R.toV3.returnCharge ctx).key y, carryVal2 ctx k ≤ ctx.shell.X)
+    (hgap : ∀ x ∈ olcSlice ctx (R.toV3.returnCharge ctx).key y,
+      ∀ z ∈ olcSlice ctx (R.toV3.returnCharge ctx).key y, x < z →
+        (∀ c ∈ olcSlice ctx (R.toV3.returnCharge ctx).key y, x < c → z ≤ c) →
+          2 ^ carryVal2 ctx x ∣ (z - x)) :
+    OlcSliceData ctx (R.toV3.returnCharge ctx).key y :=
+  OlcSliceData.ofAnchoredLongReturnFamily ctx (R.toV3.returnCharge ctx).key y hbound
+    (Classical.choice (R.anchoredLongReturnFamily ctx y hy)) hgap
 
 /-- The Q-correct frontier density atoms discharged from the upper-band descent match.
 
@@ -144,7 +198,7 @@ theorem rhoDQFrontierDensity (R : Erdos260MinimalResidualV4) (ctx : ActualFailur
     (fun k hk => R.upperBandCoprime ctx k hk)
     (R.denseWindowLo ctx)
     (R.denseWindowHi ctx)
-    (fun _ _ => (R.upperBand ctx).hpb)
+    (fun _ _ => (R.upperBandSource ctx).hpb)
 
 end Erdos260MinimalResidualV4
 
@@ -163,15 +217,17 @@ theorem erdos260_of_minimalResidualV4 (R : Erdos260MinimalResidualV4) : Erdos260
 def erdos260UnconditionalSeedClosureV4Residuals : List String :=
   [ "V4 is an honest capstone, not a full replacement for V3: it still carries toV3 : " ++
       "Erdos260MinimalResidualV3, so the final theorem uses erdos260_of_minimalResidualV3.",
-    "ADDED (descent depth) -- upperBand ctx : UpperBandMatchData ctx. Its hband field yields " ++
-      "DescentWindowMatch via DescentWindowMatch.ofUpperBandData, MatchedDescentWindows via " ++
-      "UpperBandMatchData.toMatchedDescentWindows, Section251CylinderMatchResidual via " ++
-      "UpperBandMatchData.toSection251, and SingularSquareCertificate via toSingularSquareCertificate.",
-    "ADDED (return placement) -- survivorFamily on the V3 returnCharge key. For every V3 return slice, " ++
-      "Nonempty (AnchoredSurvivorFamily ctx key y) yields CleanReturnPlacement and SliceCompleteReturns.",
-    "ADDED (Q-correct density) -- upperBandCoprime, denseWindowLo, denseWindowHi, and upperBand.hpb " ++
-      "feed frontierDensityDischarge_rhoDQ, exposing the cert hdens atom, the real support floor, and " ++
-      "the floored coarea endpoint floor at rhoDQ (canonicalCenter ctx).q0.",
+    "REDUCED (descent depth) -- upperBandSource ctx : UpperBandMatchSource ctx. Its DescentWindowMatch " ++
+      "+ coprimality + q0 <= 2^(spread+1) fields derive UpperBandMatchData via " ++
+      "UpperBandMatchSource.toUpperBandMatchData; the derived package then yields MatchedDescentWindows, " ++
+      "Section251CylinderMatchResidual, and SingularSquareCertificate.",
+    "ADDED (return placement) -- anchoredLongReturnFamily on the V3 returnCharge key. For every V3 " ++
+      "return slice, Nonempty (AnchoredLongReturnFamily ctx key y) derives the old survivor-family " ++
+      "residual, with M.3.1 core containment proved from endpoint pinning + longness, and then yields " ++
+      "CleanReturnPlacement and SliceCompleteReturns.",
+    "ADDED (Q-correct density) -- upperBandSource.hcop, denseWindowLo, denseWindowHi, and " ++
+      "upperBandSource.hpb feed frontierDensityDischarge_rhoDQ, exposing the cert hdens atom, the real " ++
+      "support floor, and the floored coarea endpoint floor at rhoDQ (canonicalCenter ctx).q0.",
     "REMAINING V3 SURFACE -- towerCount, runChain, returnCharge, Chernoff matched area charge, CNL " ++
       "matched Kraft charge, and DensePack coarea support are still explicit V3 fields. V4 does not fake " ++
       "a derivation of those six bundles from hband or survivor-family existence." ]
@@ -184,12 +240,19 @@ theorem erdos260UnconditionalSeedClosureV4Residuals_nonempty :
 
 #print axioms DescentWindowMatch.ofUpperBandData
 #print axioms UpperBandMatchData.toDescentWindowMatch
+#print axioms UpperBandMatchSource.toUpperBandMatchData
 #print axioms Erdos260MinimalResidualV4.descentWindowMatch
+#print axioms Erdos260MinimalResidualV4.upperBand
+#print axioms Erdos260MinimalResidualV4.upperBandCoprime
 #print axioms Erdos260MinimalResidualV4.matchedDescentWindows
+#print axioms Erdos260MinimalResidualV4.densePackEndpointDensity
 #print axioms Erdos260MinimalResidualV4.section251CylinderMatch
 #print axioms Erdos260MinimalResidualV4.singularSquareCertificate
+#print axioms Erdos260MinimalResidualV4.survivorFamily
 #print axioms Erdos260MinimalResidualV4.cleanReturnPlacement
 #print axioms Erdos260MinimalResidualV4.sliceCompleteReturns
+#print axioms Erdos260MinimalResidualV4.zeroRunAllPairs
+#print axioms Erdos260MinimalResidualV4.olcSliceData
 #print axioms Erdos260MinimalResidualV4.rhoDQFrontierDensity
 #print axioms erdos260_of_minimalResidualV4
 

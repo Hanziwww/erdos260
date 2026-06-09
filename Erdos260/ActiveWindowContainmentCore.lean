@@ -324,6 +324,24 @@ def Class1CNLSeedCore.ofWindowInterior
   hwin := R.cnlHwin
   hbudget := hbudget
 
+/--
+**Build the full class-1 clean-CNL injection from the shared interior
+residual.**  This is the provider-facing version of
+`Class1CNLSeedCore.ofWindowInterior`: the active-window containment field is
+discharged by `WindowInteriorResidual.cnlHwin`, while the two genuinely CNL
+inputs remain explicit: the L.1.2 count `hcard` and the G.35 scalar budget
+`hbudget`.
+-/
+def Class1CNLInjection.ofWindowInteriorCountBudget
+    (budget : ∀ ctx : ActualFailureContext, SeparatedPhaseRoutedBudget ctx)
+    (hcard : ∀ ctx : ActualFailureContext,
+      (routedFibre ctx.n24CarryData (budget ctx).route 1).card
+        ≤ (selectedTransitions (liftTransitionsOfShell ctx)).card)
+    (hbudget : ∀ ctx : ActualFailureContext, cnlActiveMult ctx ≤ cnlMinKraftRate ctx)
+    (R : WindowInteriorResidual budget) :
+    Class1CNLInjection budget :=
+  Class1CNLInjection.ofShellWindowCountBudget budget hcard R.cnlHwin hbudget
+
 /-- **Build the full DensePack class-3 seed from the interior residual.**  Supply the K.1.3/K.1.4
 endpoint-disjoint cover (`cover`) and the K.1.2 active-floor calibration (`hScale`); the
 active-window reach/containment is discharged from the interior residual, with the maximal uniform
@@ -418,10 +436,11 @@ def activeWindowContainmentResiduals : List String :=
       "class stay r+1 below the top of the shell window (k + r + 1 < i + K). chernoffHwin / cnlHwin / " ++
       "densePackContain DISCHARGE the exact original field shapes from it (windowing + general lemma).",
     "PRODUCED (full-core builders) — Class0ChernoffSeedCore.ofWindowInterior / " ++
-      "Class1CNLSeedCore.ofWindowInterior / DensePackK11Seed.ofWindowInterior: supply the orthogonal " ++
-      "fields (charge map / count / cap / cover / scale) plus the one interior residual to build the " ++
-      "complete seed core, with the active-window field discharged. DensePack uses the maximal uniform " ++
-      "reach windowReach = K − 1 (densePackWindowReach_add_one_le).",
+      "Class1CNLSeedCore.ofWindowInterior / Class1CNLInjection.ofWindowInteriorCountBudget / " ++
+      "DensePackK11Seed.ofWindowInterior: supply the orthogonal fields (charge map / count / cap / " ++
+      "cover / scale) plus the one interior residual to build the complete seed core or C1 provider, " ++
+      "with the active-window field discharged. DensePack uses the maximal uniform reach " ++
+      "windowReach = K − 1 (densePackWindowReach_add_one_le).",
     "PROVED (boundary term quantified) — windowBoundary_card_le: the failing set (starts whose " ++
       "descent window overruns the shell window) has ≤ r + 1 elements — the manuscript K.1 " ++
       "endpoint-enlargement / coarea boundary term (o(sX|I_j|), §K.1 lines ≈3918–3965), the mass " ++
@@ -452,6 +471,7 @@ theorem activeWindowContainmentResiduals_nonempty :
 #print axioms WindowInteriorResidual.densePackContain
 #print axioms Class0ChernoffSeedCore.ofWindowInterior
 #print axioms Class1CNLSeedCore.ofWindowInterior
+#print axioms Class1CNLInjection.ofWindowInteriorCountBudget
 #print axioms DensePackK11Seed.ofWindowInterior
 #print axioms windowBoundary_card_le
 

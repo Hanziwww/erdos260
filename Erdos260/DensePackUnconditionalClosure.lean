@@ -243,6 +243,7 @@ theorem densePackRegime_genuine_inhabited (shell : FailingDyadicShell)
     Nonempty (DensePackRegimeInput shell) :=
   ⟨densePackRegime_genuine shell hcQ hpin hlarge⟩
 
+open Classical in
 /--
 **Total DensePack field built genuinely on the whole carry-large regime.**
 
@@ -250,7 +251,6 @@ Under the manuscript K.4 pin (every `cQ`-shell has `c0 = κ/64`), this inhabits 
 field `∀ shell, shell.cQ = … → DensePackRegimeInput shell`, using the **genuine** in-regime datum on
 every above-threshold shell and the faithful fallback **only** on sub-threshold shells (where the
 in-regime conditions provably fail, so no large-scale packing exists). -/
-open Classical in
 def densePackRegime_field_of_pin
     (hpin : ∀ s : FailingDyadicShell, s.cQ = erdos260Constants.cQ → s.c0 = manuscriptC0) :
     ∀ shell : FailingDyadicShell, shell.cQ = erdos260Constants.cQ → DensePackRegimeInput shell :=

@@ -164,6 +164,93 @@ theorem carry_adjacent_of_residue_lower {d : ℕ → ℕ} {s n q0 : ℕ} (hq0 : 
     Nat.div_eq_of_lt (by omega : q0 - (windowCylinderValue d s n * q0) % 2 ^ n < q0),
     Nat.add_zero, Nat.sub_add_cancel hMpos]
 
+/-! ## Part C' — extracting the upper band from an equal-cylinder match -/
+
+/--
+**Equal cylinder + coprime odd centre ⟹ strict upper residue band.**
+
+If `M` is the depth-`n` cylinder index of a reduced odd-denominator centre `a/q₀`, and
+`q₀ ≤ 2ⁿ`, then the centre-free residue of `M` lies in the strict upper band.  Moreover the
+upper-band floor witness `(M*q₀)/2ⁿ+1` is exactly the original numerator `a`.
+
+This is the arithmetic converse to the upper-band construction above: writing
+`2ⁿ*a = q₀*M + r`, coprimality forces `0 < r < q₀`, so
+`M*q₀ ≡ -r ≡ 2ⁿ-r (mod 2ⁿ)`.
+-/
+theorem residue_upper_and_witness_eq_of_cylinderIndex_eq {n M q0 a : ℕ}
+    (hq0 : 1 < q0) (hodd : Odd q0) (hcop : Nat.Coprime a q0)
+    (hdepth : q0 ≤ 2 ^ n)
+    (heq : cylinderIndex n ((a : ℝ) / (q0 : ℝ)) = M) :
+    2 ^ n - q0 < (M * q0) % 2 ^ n ∧ (M * q0) / 2 ^ n + 1 = a := by
+  have hq0pos : 0 < q0 := by omega
+  have hPpos : 0 < 2 ^ n := by positivity
+  have hcop2 : Nat.Coprime 2 q0 := Nat.coprime_two_left.mpr hodd
+  have hcopprod : Nat.Coprime (2 ^ n * a) q0 := (hcop2.pow_left n).mul_left hcop
+  have hnotdvd : ¬ q0 ∣ 2 ^ n * a := by
+    intro hdvd
+    have hg : q0 ∣ Nat.gcd (2 ^ n * a) q0 := Nat.dvd_gcd hdvd dvd_rfl
+    have hcg : Nat.gcd (2 ^ n * a) q0 = 1 := hcopprod
+    rw [hcg] at hg
+    have hle := Nat.le_of_dvd (by norm_num : 0 < 1) hg
+    omega
+  have hapos : 1 ≤ a := by
+    rcases Nat.eq_zero_or_pos a with ha0 | hpos
+    · have hcg : Nat.gcd a q0 = 1 := hcop
+      rw [ha0, Nat.gcd_zero_left] at hcg
+      omega
+    · exact hpos
+  set r := (2 ^ n * a) % q0 with hr
+  have hrlt : r < q0 := by
+    rw [hr]
+    exact Nat.mod_lt _ hq0pos
+  have hrpos : 0 < r := by
+    rcases Nat.eq_zero_or_pos r with hzero | hpos
+    · exfalso
+      apply hnotdvd
+      rw [Nat.dvd_iff_mod_eq_zero, ← hr]
+      exact hzero
+    · exact hpos
+  have hrltP : r < 2 ^ n := lt_of_lt_of_le hrlt hdepth
+  have hM : M = (2 ^ n * a) / q0 := by
+    rw [cylinderIndex_ratCast] at heq
+    exact heq.symm
+  have hsum : M * q0 + r = 2 ^ n * a := by
+    rw [hM, Nat.mul_comm ((2 ^ n * a) / q0) q0, hr]
+    exact Nat.div_add_mod (2 ^ n * a) q0
+  have hPa : 2 ^ n * a = 2 ^ n * (a - 1) + 2 ^ n := by
+    rw [← Nat.mul_succ]
+    exact congrArg (fun t => 2 ^ n * t) (Nat.sub_add_cancel hapos).symm
+  have hrepr : M * q0 = 2 ^ n * (a - 1) + (2 ^ n - r) := by
+    rw [hPa] at hsum
+    omega
+  have hmod : (M * q0) % 2 ^ n = 2 ^ n - r := by
+    rw [hrepr, Nat.add_comm, Nat.add_mul_mod_self_left,
+      Nat.mod_eq_of_lt (by omega : 2 ^ n - r < 2 ^ n)]
+  have hdiv : (M * q0) / 2 ^ n = a - 1 := by
+    rw [hrepr, Nat.add_comm, Nat.add_mul_div_left _ _ hPpos,
+      Nat.div_eq_of_lt (by omega : 2 ^ n - r < 2 ^ n), Nat.zero_add]
+  constructor
+  · rw [hmod]
+    omega
+  · rw [hdiv]
+    omega
+
+/-- A descent-depth match with coprime numerator extracts the centre-free strict upper band. -/
+theorem residue_upper_of_matches_coprime {d : ℕ → ℕ} {s n q0 a : ℕ}
+    (hq0 : 1 < q0) (hodd : Odd q0) (ha : a < q0) (hcop : Nat.Coprime a q0)
+    (hdepth : q0 ≤ 2 ^ n)
+    (hmatch : MatchesCompletion d s n q0 a) :
+    2 ^ n - q0 < (windowCylinderValue d s n * q0) % 2 ^ n :=
+  (residue_upper_and_witness_eq_of_cylinderIndex_eq hq0 hodd hcop hdepth
+    (M := windowCylinderValue d s n)
+    (windowValue_eq_cylinderIndex_of_matches (by omega : 0 < q0) ha hmatch).symm).1
+
+/-!
+The previous lemma is the formal §25.3 cleanup point: once the denominator is small enough for the
+chosen descent depth, the already-proved equal-cylinder/descent agreement determines not just a
+singular-square bound but the strict *upper* residue band and the same floor witness.
+-/
+
 /-! ## Part C — the (D2)-from-selection verdict: `runClsOfShell = 1` is window-excess only -/
 
 /--
@@ -279,6 +366,93 @@ structure UpperBandMatchData (ctx : ActualFailureContext) where
   hpb : Classical.choose ctx.shell.hXdyadic + orderOf (2 : ZMod (canonicalCenter ctx).q0)
       ≤ proofV4DensePackSpread ctx.shell + 2
 
+/-- The strict upper-band field extracted from descent-window agreement, coprimality, and depth. -/
+theorem upperBand_hband_of_descentWindowMatch (ctx : ActualFailureContext)
+    (W : DescentWindowMatch ctx)
+    (hcop : ∀ k ∈ genuineDensePackStarts ctx, Nat.Coprime (W.a k) (canonicalCenter ctx).q0)
+    (hdepth : (canonicalCenter ctx).q0 ≤ 2 ^ (proofV4DensePackSpread ctx.shell + 1)) :
+    ∀ k ∈ genuineDensePackStarts ctx,
+      2 ^ (proofV4DensePackSpread ctx.shell + 1) - (canonicalCenter ctx).q0
+        < (windowCylinderValue ctx.shell.d (k + ctx.n24CarryData.r)
+              (proofV4DensePackSpread ctx.shell + 1) * (canonicalCenter ctx).q0)
+          % 2 ^ (proofV4DensePackSpread ctx.shell + 1) := by
+  intro k hk
+  exact residue_upper_of_matches_coprime
+    (s := k + ctx.n24CarryData.r)
+    (n := proofV4DensePackSpread ctx.shell + 1)
+    (q0 := (canonicalCenter ctx).q0)
+    (a := W.a k)
+    (runFOfShell_q0_gt_one ctx) (runFOfShell_q0_odd ctx) (W.ha k hk) (hcop k hk)
+    hdepth (W.hmatch k hk)
+
+/-- Under the same hypotheses, the upper-band floor witness is the matched centre numerator. -/
+theorem upperBandCenter_eq_of_descentWindowMatch (ctx : ActualFailureContext)
+    (W : DescentWindowMatch ctx)
+    (hcop : ∀ k ∈ genuineDensePackStarts ctx, Nat.Coprime (W.a k) (canonicalCenter ctx).q0)
+    (hdepth : (canonicalCenter ctx).q0 ≤ 2 ^ (proofV4DensePackSpread ctx.shell + 1))
+    (k : ℕ) (hk : Membership.mem (genuineDensePackStarts ctx) k) :
+    upperBandCenter ctx k = W.a k := by
+  unfold upperBandCenter
+  exact (residue_upper_and_witness_eq_of_cylinderIndex_eq
+    (n := proofV4DensePackSpread ctx.shell + 1)
+    (M := windowCylinderValue ctx.shell.d (k + ctx.n24CarryData.r)
+      (proofV4DensePackSpread ctx.shell + 1))
+    (q0 := (canonicalCenter ctx).q0)
+    (a := W.a k)
+    (runFOfShell_q0_gt_one ctx) (runFOfShell_q0_odd ctx) (hcop k hk) hdepth
+    (windowValue_eq_cylinderIndex_of_matches (canonicalCenter ctx).q0_pos
+      (W.ha k hk) (W.hmatch k hk)).symm).2
+
+/--
+Build `UpperBandMatchData` from a descent-window match once the §25.3 small-denominator depth
+inequality and coprimality are available.  The `hband` field is no longer supplied independently:
+it is extracted from the equal-cylinder match by `upperBand_hband_of_descentWindowMatch`.
+-/
+def UpperBandMatchData.ofDescentWindowMatch (ctx : ActualFailureContext)
+    (W : DescentWindowMatch ctx)
+    (hcop : ∀ k ∈ genuineDensePackStarts ctx, Nat.Coprime (W.a k) (canonicalCenter ctx).q0)
+    (hdepth : (canonicalCenter ctx).q0 ≤ 2 ^ (proofV4DensePackSpread ctx.shell + 1))
+    (hdens : ∀ k ∈ genuineDensePackStarts ctx,
+      manuscriptRhoD * (orderOf (2 : ZMod (canonicalCenter ctx).q0) : ℝ)
+        ≤ (windowWeight (dyadicDigit (canonicalCenter ctx).q0 (W.a k)) 0
+            (orderOf (2 : ZMod (canonicalCenter ctx).q0)) : ℝ))
+    (hpb : Classical.choose ctx.shell.hXdyadic + orderOf (2 : ZMod (canonicalCenter ctx).q0)
+        ≤ proofV4DensePackSpread ctx.shell + 2) :
+    UpperBandMatchData ctx where
+  hband := upperBand_hband_of_descentWindowMatch ctx W hcop hdepth
+  hdens := fun k hk => by
+    rw [upperBandCenter_eq_of_descentWindowMatch ctx W hcop hdepth k hk]
+    exact hdens k hk
+  hpb := hpb
+
+/--
+The genuinely remaining §25.3 source data for the upper-band route.
+
+Compared with `UpperBandMatchData`, this record no longer asks for the centre-free upper residue band
+directly.  The new bridge extracts that band from a descent-window match plus coprimality and the
+small-denominator depth inequality; the density floor and period calibration are carried verbatim.
+-/
+structure UpperBandMatchSource (ctx : ActualFailureContext) where
+  /-- The §25.1 descent-window agreement source. -/
+  W : DescentWindowMatch ctx
+  /-- The matched numerators are reduced modulo the canonical odd denominator. -/
+  hcop : ∀ k ∈ genuineDensePackStarts ctx, Nat.Coprime (W.a k) (canonicalCenter ctx).q0
+  /-- The canonical denominator is small enough for the chosen descent depth. -/
+  hdepth : (canonicalCenter ctx).q0 ≤ 2 ^ (proofV4DensePackSpread ctx.shell + 1)
+  /-- The §24 period-density floor on the matched orbit word. -/
+  hdens : ∀ k ∈ genuineDensePackStarts ctx,
+    manuscriptRhoD * (orderOf (2 : ZMod (canonicalCenter ctx).q0) : ℝ)
+      ≤ (windowWeight (dyadicDigit (canonicalCenter ctx).q0 (W.a k)) 0
+          (orderOf (2 : ZMod (canonicalCenter ctx).q0)) : ℝ)
+  /-- The bounded-period calibration. -/
+  hpb : Classical.choose ctx.shell.hXdyadic + orderOf (2 : ZMod (canonicalCenter ctx).q0)
+      ≤ proofV4DensePackSpread ctx.shell + 2
+
+/-- Project the sharper §25.3 source record to the upper-band package consumed downstream. -/
+def UpperBandMatchSource.toUpperBandMatchData {ctx : ActualFailureContext}
+    (S : UpperBandMatchSource ctx) : UpperBandMatchData ctx :=
+  UpperBandMatchData.ofDescentWindowMatch ctx S.W S.hcop S.hdepth S.hdens S.hpb
+
 /-- The §25.1 cylinder-match data, built at the upper-band floor-witness centre — no `NoLargeRun`. -/
 def UpperBandMatchData.toDescentCylinderMatchData {ctx : ActualFailureContext}
     (D : UpperBandMatchData ctx) : DescentCylinderMatchData ctx :=
@@ -355,14 +529,13 @@ def descentDepthNoLargeRunResiduals : List String :=
       "MatchData). toSection251 discharges Section251CylinderMatchResidual ctx; toSingular" ++
       "SquareCertificate assembles the FULL certificate with BOTH (D1) hbound and (D2) hcarry PROVED " ++
       "(the NoLargeRun → … field ignores its hypothesis).",
-    "RESIDUAL (the single explicit field, strictly more primitive than (D1) and (D2)) — " ++
-      "UpperBandMatchData.hband: the CENTRE-FREE upper residue-band membership 2ⁿ−q₀ < (M_k·q₀) mod " ++
-      "2ⁿ of each ACTUAL descent-window value M_k = windowCylinderValue ctx.shell.d (k+r) (spread+1). " ++
-      "A single arithmetic inequality on M_k — no centre word, no digit agreement, no NoLargeRun. It " ++
-      "subsumes (D1) hbound (it IS the (D1) satisfiability condition, wave-23 exists_descentBound_iff_" ++
-      "residueBand) and makes (D2) hcarry automatic. Where the §25.3 low-density failure must be " ++
-      "invoked: the failing shell forces the actual window value into this admissible band, against a " ++
-      "generic depth-n cylinder being singular-square-free.",
+    "DERIVED (upper band from sharper sources) — UpperBandMatchSource.toUpperBandMatchData: " ++
+      "a DescentWindowMatch plus coprimality of W.a k and q0 <= 2^(spread+1) extracts the strict " ++
+      "upper residue band 2ⁿ−q₀ < (M_k·q₀) mod 2ⁿ and identifies upperBandCenter ctx k = W.a k. " ++
+      "So the V4 global surface need not carry UpperBandMatchData.hband as a primitive.",
+    "RESIDUAL (now exposed source facts) — UpperBandMatchSource carries exactly W : DescentWindowMatch " ++
+      "ctx, hcop for W.a k, hdepth : q0 <= 2^(spread+1), and the hdens/hpb calibrations. Proving these " ++
+      "from §25.3 low-density failure remains the genuine source task.",
     "FLAGGED (calibration, not blocking) — UpperBandMatchData.hdens / hpb are the §24 period-density " ++
       "floor (1/(4Q) ρ_D calibration) and the bounded-period calibration, consumed verbatim; the " ++
       "construction is parametric in manuscriptRhoD.",
@@ -387,6 +560,7 @@ theorem descentDepthNoLargeRunResiduals_nonempty : descentDepthNoLargeRunResidua
 #print axioms cylinderIndex_upperBandCenter
 #print axioms dyadicCylinder_upperBandCenter
 #print axioms UpperBandMatchData.toDescentCylinderMatchData
+#print axioms UpperBandMatchSource.toUpperBandMatchData
 #print axioms UpperBandMatchData.toMatchedDescentWindows
 #print axioms UpperBandMatchData.toSection251
 #print axioms UpperBandMatchData.toSingularSquareCertificate
