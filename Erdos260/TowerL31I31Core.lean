@@ -468,7 +468,134 @@ theorem towerClsOfShell_budget_of_densePackFraction (ctx : ActualFailureContext)
       ≤ erdos260Constants.cStar * erdos260Constants.ξ * (ctx.shell.X : ℝ) / 6 :=
   towerBudget_of_densePackFraction ctx (towerClsOfShell ctx) hDP
 
-/-! ## 7. Axiom-cleanliness audit -/
+/-! ## 7. The genuine Proposition I.3.1 tower-output-estimate leaf endpoint
+(from a single-class routed sub-mass)
+
+The manuscript-shaped Tower separated local leaf `TowerSeparatedLocalLeafInputData`
+(the L.3/I.3.1 endpoint that the global assembly's `tower` slot ultimately consumes) is
+inhabited *non-synthetically* from the genuine single-class routed sub-mass datum
+`routedClassMassOf … route 2 ≤ ξ·X/6` — the exact shape of the smallest honest Tower
+core (`Class2ActiveFloorCount.htowerSubMass`, `TowerRunSeedClosureData.htowerSubMass`):
+
+* the charged entry/exit family is the genuine class-`2` tower fibre
+  `routedFibre … route 2` re-indexed by the genuine injection `towerExitOf`, charged by
+  the actual carry-window excess (`towerRoutedFibre_windowExcess_image_sum`: its total
+  charged mass IS `routedClassMassOf … route 2`);
+* the recurrent-cycle witness is the genuine shell-closed E.2–E.4 cycle
+  `(towerCycleOfFailingShellClosed …).D`;
+* only the single class-2 routed fraction is charged — never the full high-excess carry
+  mass that `towerBudget_residual_forces_X_nonpos` refutes.
+
+This is the route-parametric core of `PhaseCapacityCore.towerLeafOfRouted` carried at the
+sharper `ξ·X/6` (sub-slot) budget, kept Tower-local so the endpoint is available directly
+in this module. -/
+
+/-- The Tower phase sub-slot `ξ·X/6` lies inside the full manuscript phase slot
+`c⋆·ξ·X/6` (since the pinned `c⋆ = 31/16 ≥ 1` and `X ≥ 0`).  This is the algebraic
+step that lifts the genuine class-2 routed sub-mass bound `routedClassMassOf … 2 ≤ ξ·X/6`
+(the smallest honest Tower core, `Class2ActiveFloorCount.htowerSubMass`) to the Tower
+slot `c⋆·ξ·X/6` consumed by the L.3/I.3.1 separated-leaf endpoint. -/
+theorem towerXiSlot_le_cStarSlot {X : ℝ} (hX : 0 ≤ X) :
+    erdos260Constants.ξ * X / 6
+      ≤ erdos260Constants.cStar * erdos260Constants.ξ * X / 6 := by
+  have hcs : erdos260Constants.cStar = (31 : ℝ) / 16 := rfl
+  have hxi : erdos260Constants.ξ = (1 : ℝ) / 16 := rfl
+  rw [hcs, hxi]
+  nlinarith [hX]
+
+/-- The genuine charged tower-exit weight: the carry-window excess recorded in the
+`layerBound` slot of a tower exit (identical to the weight of `towerExitRoutingOfShell`). -/
+def towerExitWindowWeight (ctx : ActualFailureContext) (b : TowerExit) :
+    {x : ℝ // 0 ≤ x} :=
+  ⟨windowExcess (hitGap ctx.n24CarryData.a) b.layerBound ctx.n24CarryData.r
+      ctx.n24CarryData.T,
+    windowExcess_nonneg _ _ _ _⟩
+
+@[simp] theorem towerExitWindowWeight_val (ctx : ActualFailureContext) (b : TowerExit) :
+    (towerExitWindowWeight ctx b : ℝ)
+      = windowExcess (hitGap ctx.n24CarryData.a) b.layerBound ctx.n24CarryData.r
+          ctx.n24CarryData.T := rfl
+
+/-- **The charged mass of the re-indexed routed Tower fibre IS the routed class mass.**
+Re-indexing the high-excess starts routed to the Tower class (`route k = 2`) through the
+genuine injection `towerExitOf` and charging each by its window excess yields a
+tower-exit family whose total charged mass is *exactly* `routedClassMassOf … route 2` —
+the genuine Tower fraction, never the whole high-excess mass.  Proved by
+`Finset.sum_image` (injectivity of `towerExitOf`). -/
+theorem towerRoutedFibre_windowExcess_image_sum (ctx : ActualFailureContext)
+    (route : ℕ → Fin 7) :
+    (∑ b ∈ (routedFibre ctx.n24CarryData route 2).image towerExitOf,
+        (towerExitWindowWeight ctx b : ℝ))
+      = routedClassMassOf ctx.n24CarryData route 2 := by
+  rw [Finset.sum_image (fun x _ y _ h => towerExitOf_injective h),
+    routedClassMassOf_eq_sum_fibre]
+  apply Finset.sum_congr rfl
+  intro k _hk
+  rw [towerExitWindowWeight_val, towerExitOf_layerBound]
+
+/-- **The genuine Proposition I.3.1 Tower separated local leaf, from a routed sub-mass.**
+
+The manuscript-shaped `TowerSeparatedLocalLeafInputData` (the L.3/I.3.1 endpoint) for a
+failure context, built from the genuine single-class routed sub-mass datum
+`hsub : routedClassMassOf … route 2 ≤ ξ·X/6`.  No empty/full-mass witness: the entry/exit
+family is the genuine class-`2` tower fibre re-indexed by `towerExitOf`, the cycle is the
+genuine shell-closed E.2–E.4 cycle, and the final smallness is the single class-2 routed
+fraction inside the Tower slot (`towerXiSlot_le_cStarSlot`). -/
+def towerSeparatedLocalLeafOfRoutedSubMass (ctx : ActualFailureContext)
+    (route : ℕ → Fin 7)
+    (hsub : routedClassMassOf ctx.n24CarryData route 2
+      ≤ erdos260Constants.ξ * (ctx.shell.X : ℝ) / 6) :
+    TowerSeparatedLocalLeafInputData erdos260Constants.cStar erdos260Constants.ξ
+      (ctx.shell.X : ℝ) where
+  entryExitSet := (routedFibre ctx.n24CarryData route 2).image towerExitOf
+  chargedWeight := towerExitWindowWeight ctx
+  outputBoundConstant := 1
+  nextLayerMass := 0
+  smallError := routedClassMassOf ctx.n24CarryData route 2
+  routedRun := 0
+  routedReturn := 0
+  routedDensePack := 0
+  routedCNLTail := 0
+  absorbedRun := 0
+  absorbedReturn := 0
+  absorbedDensePack := 0
+  absorbedCNLTail := 0
+  cycle :=
+    (towerCycleOfFailingShellClosed ctx.shell ctx.shell.hrational.choose
+      ctx.shell.hrational.choose_spec).D
+  routing :=
+    { routed := by
+        have h := towerRoutedFibre_windowExcess_image_sum ctx route
+        linarith [h] }
+  absorption :=
+    { run := { absorbRun := le_refl 0 }
+      returnPkg := { absorbReturn := le_refl 0 }
+      densePack := { absorbDensePack := le_refl 0 }
+      cnlTail := { absorbCNLTail := le_refl 0 }
+      budget := { absorbedTotal := by norm_num } }
+  smallness :=
+    { hSmall := by
+        rw [mul_zero, zero_add]
+        exact le_trans hsub (towerXiSlot_le_cStarSlot ctx.shell.X_nonneg_real) }
+
+/-- **Sanity (the I.3.1 tower output estimate).**  The total charged tower-exit mass of
+the genuine routed-sub-mass leaf is the genuine class-2 routed fraction and fits the Tower
+slot `c⋆·ξ·X/6` — the manuscript `termTower` bound, never the full high-excess mass. -/
+theorem towerSeparatedLocalLeafOfRoutedSubMass_tower_bound (ctx : ActualFailureContext)
+    (route : ℕ → Fin 7)
+    (hsub : routedClassMassOf ctx.n24CarryData route 2
+      ≤ erdos260Constants.ξ * (ctx.shell.X : ℝ) / 6) :
+    (∑ b ∈ (towerSeparatedLocalLeafOfRoutedSubMass ctx route hsub).entryExitSet,
+        ((towerSeparatedLocalLeafOfRoutedSubMass ctx route hsub).chargedWeight b : ℝ))
+      ≤ erdos260Constants.cStar * erdos260Constants.ξ * (ctx.shell.X : ℝ) / 6 :=
+  (towerSeparatedLocalLeafOfRoutedSubMass ctx route hsub).tower_bound
+
+/-! ## 8. Axiom-cleanliness audit -/
+
+#print axioms towerXiSlot_le_cStarSlot
+#print axioms towerRoutedFibre_windowExcess_image_sum
+#print axioms towerSeparatedLocalLeafOfRoutedSubMass
+#print axioms towerSeparatedLocalLeafOfRoutedSubMass_tower_bound
 
 -- Core 1 (classifier + L.2.4 disjointness) and Core 2 (budget reduction + K.4)
 -- depend only on the standard `[propext, Classical.choice, Quot.sound]`.

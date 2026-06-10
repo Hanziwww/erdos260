@@ -378,6 +378,180 @@ theorem faithful_card_eq_sum_side (ctx : ActualFailureContext) :
       ∑ s : OrientedSide, (crossingsOfSide (faithfulDirtyFamily ctx) s).card :=
   crossings_card_eq_sum_side _
 
+/-! ## Part H — the faithful K.2.5 leaf and strict dirty provider for an
+ARBITRARY failing shell
+
+Parts A–G state the faithful, absolute-`C = 1` family for an
+`ActualFailureContext`.  The strict proof-v4 dirty provider
+`GlobalAppendixNProofV4DirectDirtyProvider`, however, must inhabit the leaf for
+an *arbitrary* `FailingDyadicShell` together with the Appendix N start
+threshold (it does **not** carry a global failure context).  We therefore
+repackage the *same* faithful machinery at the bare dyadic exponent
+`L := Classical.choose shell.hXdyadic`, deriving the only largeness fact it
+needs (`25 ≤ L`, hence `16 ≤ L`) from the start threshold via
+`carryLarge_of_appendixNChainCompressionStartThreshold_le`.
+
+The family `faithfulFamilyOfL L` is literally `faithfulDirtyFamily` evaluated at
+`L` (its `ctx`-tied form is the special case `L = shellExp ctx`); it is the same
+genuine, non-degenerate, arm/period-separated image of the self-referential J.4
+nesting chain, and its per-`(τ,P)` fibre bound is the *proved* inverse-tower
+count `IsLiftChain.card_le` (Lemma M.2.1 / §J.4), with absolute `C = 1` and the
+genuine `O(log* L)` envelope `logStar := liftLevelBound`. No `sorry`/`axiom`/
+`admit`/`native_decide`. -/
+
+/-- The faithful dirty family at a bare dyadic exponent `L`: the injective image
+of `(grid ×ˢ grid) ×ˢ shellLevels L` under `faithfulCrossing`, with arm/period
+scales genuinely separated.  (`faithfulDirtyFamily ctx` is the special case
+`L = shellExp ctx`.) -/
+def faithfulFamilyOfL (L : ℕ) : Finset DirtyCrossing :=
+  ((Finset.range ((Nat.log 2 L) ^ 2) ×ˢ Finset.range ((Nat.log 2 L) ^ 2)) ×ˢ
+      shellLevels L).image (fun p => faithfulCrossing p.1 p.2)
+
+/-- The dyadic-pair scale grid at a bare exponent `L`. -/
+def faithfulScaleSetOfL (L : ℕ) : Finset (ℕ × ℕ) :=
+  Finset.range ((Nat.log 2 L) ^ 2) ×ˢ Finset.range ((Nat.log 2 L) ^ 2)
+
+/-- Every crossing of the bare-exponent faithful family has scale in the grid. -/
+theorem faithfulScale_mem_OfL (L : ℕ) :
+    ∀ c, c ∈ faithfulFamilyOfL L → faithfulScale c ∈ faithfulScaleSetOfL L := by
+  intro c hc
+  unfold faithfulFamilyOfL at hc
+  rw [Finset.mem_image] at hc
+  obtain ⟨p, hp, rfl⟩ := hc
+  rw [Finset.mem_product] at hp
+  simpa only [faithfulScale_faithfulCrossing, faithfulScaleSetOfL] using hp.1
+
+/-- **K.2.5 dyadic-pair range count** at a bare exponent: `≤ (log₂ L)^4`. -/
+theorem faithfulScaleSetOfL_card_le (L : ℕ) :
+    (faithfulScaleSetOfL L).card ≤ (Nat.log 2 L) ^ 4 := by
+  unfold faithfulScaleSetOfL
+  rw [Finset.card_product, Finset.card_range]
+  exact le_of_eq (by ring)
+
+/-- **The absolute-`C = 1` per-dyadic-pair fibre bound at a bare exponent.**
+Each `(τ,P)`-fibre is the injective image (under the anchor map) of a subset of
+the self-referential J.4 nesting chain `shellLevels L`, so its cardinality is
+`≤ liftLevelBound L = (liftLevelBound L)^1` by the *proved* `IsLiftChain.card_le`
+(`shellLevels_card_le`). -/
+theorem faithfulFibre_le_OfL (L : ℕ) (y : ℕ × ℕ) :
+    ((faithfulFamilyOfL L).filter (fun c => faithfulScale c = y)).card ≤
+      liftLevelBound L := by
+  refine le_trans
+    (Finset.card_le_card (t := (shellLevels L).image (faithfulCrossing y)) ?_)
+    (le_trans Finset.card_image_le (shellLevels_card_le L))
+  intro c hc
+  obtain ⟨hcF, hcy⟩ := Finset.mem_filter.mp hc
+  unfold faithfulFamilyOfL at hcF
+  rw [Finset.mem_image] at hcF
+  obtain ⟨p, hp, rfl⟩ := hcF
+  rw [Finset.mem_product] at hp
+  rw [Finset.mem_image]
+  refine ⟨p.2, hp.2, ?_⟩
+  simp only [faithfulScale_faithfulCrossing] at hcy
+  show faithfulCrossing y p.2 = faithfulCrossing p.1 p.2
+  rw [hcy]
+
+/-- `liftLevelBound L ≥ 1` for every `L`: `liftLevel 0 = 0` never exceeds `L`, so
+the least index `k` with `L < liftLevel k` is positive.  This makes the
+`(log* L)^C` fibre-coding target nonempty. -/
+theorem liftLevelBound_pos (L : ℕ) : 0 < liftLevelBound L := by
+  rcases Nat.eq_zero_or_pos (liftLevelBound L) with h | h
+  · exfalso
+    have hspec := liftLevelBound_spec L
+    rw [h, liftLevel_zero] at hspec
+    exact absurd hspec (Nat.not_lt_zero L)
+  · exact h
+
+/-- **The closed bound-level K.2.5 manuscript record for an arbitrary failing
+shell**, built from the faithful absolute-`C = 1` family at
+`L = Classical.choose shell.hXdyadic`. -/
+def faithfulClosedK25OfShell (shell : FailingDyadicShell)
+    (hL : 16 ≤ Classical.choose shell.hXdyadic) :
+    DirtyMultiplicityClosedK25ClassicalBoundInputData shell :=
+  DirtyMultiplicityClosedK25ClassicalBoundInputData.ofScaleSetFibreBound
+    (faithfulFamilyOfL (Classical.choose shell.hXdyadic))
+    liftLevelBound 1 faithfulScale
+    (faithfulScaleSetOfL (Classical.choose shell.hXdyadic))
+    (faithfulScale_mem_OfL _)
+    (faithfulScaleSetOfL_card_le _)
+    (by
+      intro y _hy
+      rw [pow_one, Finset.filter_congr_decidable]
+      exact faithfulFibre_le_OfL _ y)
+    (liftLevelBound_le_log hL)
+
+/-- The Appendix N start threshold forces `25 ≤ L` (hence `16 ≤ L`) at a bare
+shell, via the K.4 large-carry inequality
+`carryLarge_of_appendixNChainCompressionStartThreshold_le`. -/
+theorem shellExp_ge_of_startThreshold (shell : FailingDyadicShell)
+    (hXge :
+      appendixNChainCompressionStartThreshold shell.Q shell.d shell.hd
+          shell.hnonterm ≤ shell.X) :
+    25 ≤ Classical.choose shell.hXdyadic := by
+  have h := carryLarge_of_appendixNChainCompressionStartThreshold_le hXge
+  omega
+
+/-- **The faithful Dirty K.2.5 leaf for an arbitrary failing shell** — the
+bound-level provider surface `DirtyMultiplicityProofV4ShellFibreInputData shell`
+consumed by the KM dirty-multiplicity envelope.  No residual hypothesis: the
+genuine non-degenerate family, its `(log L)^4` dyadic-pair range count, the
+absolute-`C = 1` fibre bound, and the `log* L ≤ log L` envelope are all proved. -/
+def dirtyFaithfulLeafOfShell (shell : FailingDyadicShell)
+    (hXge :
+      appendixNChainCompressionStartThreshold shell.Q shell.d shell.hd
+          shell.hnonterm ≤ shell.X) :
+    DirtyMultiplicityProofV4ShellFibreInputData shell :=
+  DirtyMultiplicityClosedK25ClassicalBoundInputData.toDirtyMultiplicityProofV4ShellFibreInputData
+    hXge
+    (faithfulClosedK25OfShell shell
+      (by have := shellExp_ge_of_startThreshold shell hXge; omega))
+
+/-- **The strict (fibre-coding) faithful Dirty K.2.5 leaf for an arbitrary
+failing shell** — the preferred strict-endpoint surface
+`DirtyMultiplicityProofV4ShellFibreCodingInputData shell`.  The per-scale
+injections into `Fin ((log* L)^1)` are chosen noncomputably from the cardinal
+fibre bound; target nonemptiness is `liftLevelBound_pos`. -/
+def dirtyFaithfulLeafCodingOfShell (shell : FailingDyadicShell)
+    (hXge :
+      appendixNChainCompressionStartThreshold shell.Q shell.d shell.hd
+          shell.hnonterm ≤ shell.X) :
+    DirtyMultiplicityProofV4ShellFibreCodingInputData shell :=
+  DirtyMultiplicityClosedK25ClassicalBoundInputData.toDirtyMultiplicityProofV4ShellFibreCodingInputData
+    hXge
+    (faithfulClosedK25OfShell shell
+      (by have := shellExp_ge_of_startThreshold shell hXge; omega))
+    (pow_pos (liftLevelBound_pos (Classical.choose shell.hXdyadic)) 1)
+
+/-- The strict dirty provider written at its spelled-out Pi type (the manuscript
+smallness gate `c0 ≤ κ/16` is not needed by the dirty leaf; the start threshold
+supplies all largeness facts). -/
+def dirtyFaithfulProviderImpl :
+    ∀ (shell : FailingDyadicShell)
+      (_hc0Small : shell.c0 ≤ manuscriptKappa / 16)
+      (_hXge :
+        appendixNChainCompressionStartThreshold shell.Q shell.d shell.hd
+            shell.hnonterm ≤ shell.X),
+      DirtyMultiplicityProofV4ShellFibreInputData shell :=
+  fun shell _hc0Small hXge => dirtyFaithfulLeafOfShell shell hXge
+
+/-- **The genuine strict proof-v4 Dirty K.2.5 provider, inhabited
+unconditionally for every failing dyadic shell** by the faithful absolute-`C = 1`
+family.  This is the strict open provider leaf
+`GlobalAppendixNProofV4DirectDirtyProvider`, written here at its spelled-out Pi
+type (definitionally the abbrev).  The abbrev itself is declared in the
+downstream chain-compression certificate module, which this upstream
+construction module does not import; the explicit Pi is the exact unfolding, so
+`dirtyFaithfulProvider` still inhabits `GlobalAppendixNProofV4DirectDirtyProvider`
+by definitional equality.  No `sorry`/`axiom`/`admit`/`native_decide`. -/
+def dirtyFaithfulProvider :
+    ∀ (shell : FailingDyadicShell)
+      (_hc0Small : shell.c0 ≤ manuscriptKappa / 16)
+      (_hXge :
+        appendixNChainCompressionStartThreshold shell.Q shell.d shell.hd
+            shell.hnonterm ≤ shell.X),
+      DirtyMultiplicityProofV4ShellFibreInputData shell :=
+  dirtyFaithfulProviderImpl
+
 end
 
 /-! ## Axiom audit — the faithful absolute-`C` K.2.5 package is axiom-clean. -/
@@ -392,5 +566,10 @@ end
 #print axioms faithfulDirtyLeaf
 #print axioms faithful_fineWilf_chain
 #print axioms faithful_card_eq_sum_side
+#print axioms faithfulFibre_le_OfL
+#print axioms faithfulClosedK25OfShell
+#print axioms dirtyFaithfulLeafOfShell
+#print axioms dirtyFaithfulLeafCodingOfShell
+#print axioms dirtyFaithfulProvider
 
 end Erdos260

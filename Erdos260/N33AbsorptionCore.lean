@@ -260,6 +260,190 @@ def erdos260IrreducibleCoresV2_ofInterfaces
   n33Cores :=
     erdos260N33CoresV2_ofInterfaces hterm hD hP hE hCNL hbdd hbddBudget
 
+/-! ## §7 — the genuine-shell N.24′ aggregate absorption and provider input
+
+The two results below realize Lemma N.3.3 (eq. N.24′) on the **genuine** failing
+shell, against the real N.5e routing of the carry start atoms
+(`AppendixN33LeafFromShell` / `AppendixN2N3Cores`), with every intra-phase step
+proved and the obligation reduced to the *sharpest possible* named cross-phase
+residuals.
+
+`appendixN33_shell_aggregate_absorption` is the manuscript inequality (N.24′)
+"the composed terminal non-drop mass routes into the five output classes
+`𝔒_D/P/E/CNL/bdd`": the C1-VD terminal mass is dominated by the sum of the five
+phase budgets.  Internally it uses the genuine five-class partition
+(`AppendixN.terminalMassV4_nonDrop_eq`, i.e. *no residual TRT term and no `𝔒_V`*,
+because the N.5e routing table never targets the drop class) together with the
+genuine `∑ wt = |starts|` / `classMassᶜ = |route⁻¹ c|` reductions.  The remaining
+inputs are exactly the **count-vs-budget** comparisons, which are intrinsically
+cross-phase (Lemma I.4.1 / I.4.2 / L.1 / N.3.2 supply the budgets from the
+DensePack/Chernoff/Return/CNL/Tower leaves).
+
+`actualRawTerminalLowPaidDataOfShell` packages the genuine shell family directly
+into the proof-v4 provider input `ActualRawTerminalLowPaidData` consumed by the
+`erdos260_final_actual_*` endpoints.  The event fibre, the N.5e routing table,
+the support/threshold labels, and the unit charge are the **genuine** objects of
+`appendixN33EventFibre` — *not* empty / singleton / `PEmpty` / zero.  The
+obligation collapses to the five count-vs-budget comparisons plus the literal
+L.6.1/L.6.2/L.6.3 low/paid split for the bounded-dirty-return class (the latter
+coupling to the Chernoff stopped family, hence supplied as a typed input). -/
+
+/-- **Lemma N.3.3 (eq. N.24′), genuine-shell aggregate absorption.**
+
+For the genuine carry-start terminal family routed by the N.5e table, the C1-VD
+terminal mass `termMass` is absorbed into the five non-drop output-class budgets:
+`termMass ≤ O_D + O_P + O_E + O_CNL + O_bdd`.
+
+This is the actual manuscript statement of Lemma N.3.3 on the real shell.  The
+five-class partition (no residual TRT summand, no `𝔒_V`) is discharged inside
+`ClassicalTerminalN33SeparatedLeafData.termMass_le_classes`
+(`AppendixN.terminalMassV4_nonDrop_eq`).  The hypotheses are the **sharpest**
+residual form: the N.1.0 terminal-mass count `termMass ≤ |starts|` and the five
+N.24 routed-atom count budgets `|route⁻¹ c| ≤ O_⟨c⟩`, instantiated downstream at
+the assembled phase masses `termDensePack/Chernoff/Return/Cnl/Tower`. -/
+theorem appendixN33_shell_aggregate_absorption
+    (ctx : ActualFailureContext)
+    {termMass O_D O_P O_E O_CNL O_bdd : ℝ}
+    (hterm : termMass ≤ ((appendixN33Atoms ctx).card : ℝ))
+    (hD :
+      (((appendixN33Atoms ctx).filter
+          (fun e => (appendixN33Row e).outputClass = OutputClassV4.densePack)).card : ℝ)
+        ≤ O_D)
+    (hP :
+      (((appendixN33Atoms ctx).filter
+          (fun e => (appendixN33Row e).outputClass = OutputClassV4.progress)).card : ℝ)
+        ≤ O_P)
+    (hE :
+      (((appendixN33Atoms ctx).filter
+          (fun e => (appendixN33Row e).outputClass = OutputClassV4.endpoint)).card : ℝ)
+        ≤ O_E)
+    (hCNL :
+      (((appendixN33Atoms ctx).filter
+          (fun e => (appendixN33Row e).outputClass = OutputClassV4.cnl)).card : ℝ)
+        ≤ O_CNL)
+    (hbdd :
+      (((appendixN33Atoms ctx).filter
+          (fun e => (appendixN33Row e).outputClass = OutputClassV4.bdd)).card : ℝ)
+        ≤ O_bdd) :
+    termMass ≤ O_D + O_P + O_E + O_CNL + O_bdd :=
+  ((appendixN33LeafOfShell ctx termMass O_D O_P O_E O_CNL O_bdd
+        (appendixN33_terminalMass_le_of_card_le ctx hterm)
+        (appendixN33_hD_of_card_le ctx hD)
+        (appendixN33_hP_of_card_le ctx hP)
+        (appendixN33_hE_of_card_le ctx hE)
+        (appendixN33_hCNL_of_card_le ctx hCNL)
+        (appendixN33_hbdd_of_card_le ctx hbdd)).toClassicalTableRoutedDirectFiveClassTerminalAbsorptionData).termMass_le_classes
+
+/-- **Genuine-shell proof-v4 N.3.3 terminal provider input.**
+
+Builds `ActualRawTerminalLowPaidData` — the proof-v4 raw N.3.3 terminal /
+five-class / L.6 low-paid record fed to the `erdos260_final_actual_*` provider
+endpoints — from the **genuine** failing-shell event fibre `appendixN33EventFibre`
+and the N.5e routing table.  The fibre and routing are the real I.9 carry
+stopped-branch objects (non-synthetic).
+
+The N.1.0 terminal mass domination and the four non-bounded N.24 class budgets
+are taken in their sharpest **routed-atom count** form; the bounded-dirty-return
+class is supplied by the literal proof-v4 L.6 low/paid split for `chernoffLeaf`
+(the Chernoff stopped family of the carry shell, owned by the Chernoff leaf). -/
+def actualRawTerminalLowPaidDataOfShell
+    (ctx : ActualFailureContext)
+    (chernoffLeaf :
+      RegularShellPaidChernoff22_1AInputData erdos260Constants.cStar
+        erdos260Constants.ξ (ctx.shell.X : ℝ))
+    {O_V : ℝ}
+    (variation :
+      AppendixNVariationClosedN21N22InputData ctx.n24CarryLocal ctx.hc0Small
+        ctx.n24SupportCount_pos O_V)
+    {O_D O_P O_E O_CNL O_bdd : ℝ}
+    (hterm :
+      (GroundedC1VDSplitData.ofVariation
+        variation.toVariationClassData.toVariationClassData).termMass
+        ≤ ((appendixN33Atoms ctx).card : ℝ))
+    (hD :
+      (((appendixN33Atoms ctx).filter
+          (fun e => (appendixN33Row e).outputClass = OutputClassV4.densePack)).card : ℝ)
+        ≤ O_D)
+    (hP :
+      (((appendixN33Atoms ctx).filter
+          (fun e => (appendixN33Row e).outputClass = OutputClassV4.progress)).card : ℝ)
+        ≤ O_P)
+    (hE :
+      (((appendixN33Atoms ctx).filter
+          (fun e => (appendixN33Row e).outputClass = OutputClassV4.endpoint)).card : ℝ)
+        ≤ O_E)
+    (hCNL :
+      (((appendixN33Atoms ctx).filter
+          (fun e => (appendixN33Row e).outputClass = OutputClassV4.cnl)).card : ℝ)
+        ≤ O_CNL)
+    (bddLowPaid :
+      ShellPaidBddClassBoundData.LowPaidSplitData chernoffLeaf
+        (appendixN33Outputs ctx) appendixN33Weight O_bdd) :
+    ActualRawTerminalLowPaidData ctx chernoffLeaf variation
+      O_D O_P O_E O_CNL O_bdd where
+  sigma := StoppedBranch
+  iota := ℕ
+  linIota := inferInstance
+  E := appendixN33EventFibre ctx
+  row := appendixN33Row
+  supp := appendixN33Supp
+  thr := appendixN33Thr
+  terminalWeight := appendixN33Weight
+  hterm := appendixN33_terminalMass_le_of_card_le ctx hterm
+  hD := appendixN33_hD_of_card_le ctx hD
+  hP := appendixN33_hP_of_card_le ctx hP
+  hE := appendixN33_hE_of_card_le ctx hE
+  hCNL := appendixN33_hCNL_of_card_le ctx hCNL
+  bddLowPaid := bddLowPaid
+
+/-- **Provider-slot specialization.**  The genuine-shell N.3.3 provider input with
+the five class budgets pinned to the assembled phase masses — exactly the shape
+of the `terminal` field of `GlobalAssemblyActualRawCNLRRRawTerminalLowPaidInputs`
+(which feeds `erdos260_final_actual_rawCNLRRRawTerminalLowPaid : Erdos260Statement`).
+
+This witnesses that `actualRawTerminalLowPaidDataOfShell` plugs directly into the
+proof-v4 provider route: the obligation is reduced to the five routed-atom
+count-vs-phase-mass comparisons `|route⁻¹ c| ≤ term⟨c⟩ phase`, the N.1.0 terminal
+count `termMass ≤ |starts|`, and the literal L.6 low/paid bounded-class split. -/
+def actualRawTerminalLowPaidDataOfShellAtPhaseMasses
+    (ctx : ActualFailureContext)
+    (chernoffLeaf :
+      RegularShellPaidChernoff22_1AInputData erdos260Constants.cStar
+        erdos260Constants.ξ (ctx.shell.X : ℝ))
+    {O_V : ℝ}
+    (variation :
+      AppendixNVariationClosedN21N22InputData ctx.n24CarryLocal ctx.hc0Small
+        ctx.n24SupportCount_pos O_V)
+    {cStar ξ X : ℝ} (phase : ClosurePhaseData cStar ξ X)
+    (hterm :
+      (GroundedC1VDSplitData.ofVariation
+        variation.toVariationClassData.toVariationClassData).termMass
+        ≤ ((appendixN33Atoms ctx).card : ℝ))
+    (hD :
+      (((appendixN33Atoms ctx).filter
+          (fun e => (appendixN33Row e).outputClass = OutputClassV4.densePack)).card : ℝ)
+        ≤ termDensePack phase)
+    (hP :
+      (((appendixN33Atoms ctx).filter
+          (fun e => (appendixN33Row e).outputClass = OutputClassV4.progress)).card : ℝ)
+        ≤ termChernoff phase)
+    (hE :
+      (((appendixN33Atoms ctx).filter
+          (fun e => (appendixN33Row e).outputClass = OutputClassV4.endpoint)).card : ℝ)
+        ≤ termReturn phase)
+    (hCNL :
+      (((appendixN33Atoms ctx).filter
+          (fun e => (appendixN33Row e).outputClass = OutputClassV4.cnl)).card : ℝ)
+        ≤ termCnl phase)
+    (bddLowPaid :
+      ShellPaidBddClassBoundData.LowPaidSplitData chernoffLeaf
+        (appendixN33Outputs ctx) appendixN33Weight (termTower phase)) :
+    ActualRawTerminalLowPaidData ctx chernoffLeaf variation
+      (termDensePack phase) (termChernoff phase) (termReturn phase)
+      (termCnl phase) (termTower phase) :=
+  actualRawTerminalLowPaidDataOfShell ctx chernoffLeaf variation
+    hterm hD hP hE hCNL bddLowPaid
+
 end
 
 /-! ## Axiom audit -/
@@ -271,5 +455,8 @@ end
 #print axioms erdos260N2CoresV2_ofWindowBudget
 #print axioms erdos260N33CoresV2_ofInterfaces
 #print axioms erdos260IrreducibleCoresV2_ofInterfaces
+#print axioms appendixN33_shell_aggregate_absorption
+#print axioms actualRawTerminalLowPaidDataOfShell
+#print axioms actualRawTerminalLowPaidDataOfShellAtPhaseMasses
 
 end Erdos260

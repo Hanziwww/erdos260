@@ -656,20 +656,216 @@ theorem erdos260Statement_of_v4TowerSDR_runBaseArea_returnSeeds_descentDensity_w
       towerSDR stageOf len hmaps hhalf baseArea returnSeed upperBandSource denseWindowLo
       denseWindowHi chernoff cnl windowInterior hScale anchoredLongReturnFamily)
 
+/-- A family of anchored Return seeds supplies the V4 long-return field on the induced
+V3 return-charge key. -/
+theorem anchoredLongReturnFamily_ofAnchoredSeeds
+    (anchoredReturn : ∀ ctx : ActualFailureContext, ReturnClass4AnchoredSeed ctx) :
+    ∀ ctx : ActualFailureContext,
+      ∀ y, Membership.mem ((olcFibre ctx).image ((returnChargeOfAnchoredSeeds anchoredReturn ctx).key)) y →
+        Nonempty (AnchoredLongReturnFamily ctx ((returnChargeOfAnchoredSeeds anchoredReturn ctx).key) y) := by
+  intro ctx y hy
+  have hy' : Membership.mem ((olcFibre ctx).image (anchoredReturn ctx).key) y := by
+    simpa [returnChargeOfAnchoredSeeds, ReturnClass4AnchoredSeed.toCharge,
+      ReturnClass4AnchoredSeed.toSliceChargeSeed, Class4ReturnSliceChargeSeed.toCharge] using hy
+  simpa [returnChargeOfAnchoredSeeds, ReturnClass4AnchoredSeed.toCharge,
+    ReturnClass4AnchoredSeed.toSliceChargeSeed, Class4ReturnSliceChargeSeed.toCharge] using
+      (show Nonempty (AnchoredLongReturnFamily ctx (anchoredReturn ctx).key y) from
+        ⟨(anchoredReturn ctx).family y hy'⟩)
+
+/-- Build the V4 residual with Return supplied by the end-to-end anchored Return seed.
+
+This merges the older separate `returnSeed` and `anchoredLongReturnFamily` inputs: the
+anchored seed produces the M.2.1 slice-charge seed and also carries the M.3.1 long-return
+family on the same key. -/
+def erdos260MinimalResidualV4_ofTowerSDR_runBaseArea_anchoredReturn_descentDensity_windowInterior
+    (towerSDR : ∀ ctx : ActualFailureContext, Class2IndexSDR ctx)
+    (stageOf : ActualFailureContext → ℕ → ℕ)
+    (len : ActualFailureContext → ℕ)
+    (hmaps : ∀ ctx : ActualFailureContext,
+      ∀ k ∈ routedFibre ctx.n24CarryData (genuineChargeRoute ctx) 5, stageOf ctx k < len ctx)
+    (hhalf : ∀ ctx : ActualFailureContext,
+      ∀ i, stageMassOf ctx (stageOf ctx) (i + 1) ≤ (1 / 2) * stageMassOf ctx (stageOf ctx) i)
+    (baseArea : ∀ ctx : ActualFailureContext, RunBaseAreaCover ctx (stageOf ctx))
+    (anchoredReturn : ∀ ctx : ActualFailureContext, ReturnClass4AnchoredSeed ctx)
+    (upperBandSource : ∀ ctx : ActualFailureContext, UpperBandMatchSource ctx)
+    (denseWindowLo : ∀ ctx : ActualFailureContext,
+      ∀ k, Membership.mem (genuineDensePackStarts ctx) k → ctx.shell.X < k + ctx.n24CarryData.r)
+    (denseWindowHi : ∀ ctx : ActualFailureContext,
+      ∀ k, Membership.mem (genuineDensePackStarts ctx) k →
+        (k + ctx.n24CarryData.r) + proofV4DensePackSpread ctx.shell ≤ 2 * ctx.shell.X)
+    (chernoff : Class0ChernoffInjection
+      (v3Budget (towerCount_ofIndexSDR towerSDR)
+        (runChain_ofBaseAreaCoverProvider stageOf len hmaps hhalf baseArea)
+        (returnChargeOfAnchoredSeeds anchoredReturn)))
+    (cnl : Class1CNLInjection
+      (v3Budget (towerCount_ofIndexSDR towerSDR)
+        (runChain_ofBaseAreaCoverProvider stageOf len hmaps hhalf baseArea)
+        (returnChargeOfAnchoredSeeds anchoredReturn)))
+    (windowInterior : WindowInteriorResidual
+      (v3Budget (towerCount_ofIndexSDR towerSDR)
+        (runChain_ofBaseAreaCoverProvider stageOf len hmaps hhalf baseArea)
+        (returnChargeOfAnchoredSeeds anchoredReturn)))
+    (hScale : ∀ ctx : ActualFailureContext,
+      ((ctx.n24CarryData.r : ℝ) + 1) * (densePackDyadicG0 ctx : ℝ) - ctx.n24CarryData.T ≤ 1) :
+    Erdos260MinimalResidualV4 :=
+  erdos260MinimalResidualV4_ofTowerSDR_runBaseArea_returnSeeds_descentDensity_windowInterior
+    towerSDR stageOf len hmaps hhalf baseArea
+    (fun ctx => (anchoredReturn ctx).toSliceChargeSeed)
+    upperBandSource denseWindowLo denseWindowHi chernoff cnl windowInterior hScale
+    (anchoredLongReturnFamily_ofAnchoredSeeds anchoredReturn)
+
+/-- Erdos #260 from the sharp connected V4 boundary with Return reduced to the
+end-to-end anchored Return seed. -/
+theorem erdos260Statement_of_v4TowerSDR_runBaseArea_anchoredReturn_descentDensity_windowInterior
+    (towerSDR : ∀ ctx : ActualFailureContext, Class2IndexSDR ctx)
+    (stageOf : ActualFailureContext → ℕ → ℕ)
+    (len : ActualFailureContext → ℕ)
+    (hmaps : ∀ ctx : ActualFailureContext,
+      ∀ k ∈ routedFibre ctx.n24CarryData (genuineChargeRoute ctx) 5, stageOf ctx k < len ctx)
+    (hhalf : ∀ ctx : ActualFailureContext,
+      ∀ i, stageMassOf ctx (stageOf ctx) (i + 1) ≤ (1 / 2) * stageMassOf ctx (stageOf ctx) i)
+    (baseArea : ∀ ctx : ActualFailureContext, RunBaseAreaCover ctx (stageOf ctx))
+    (anchoredReturn : ∀ ctx : ActualFailureContext, ReturnClass4AnchoredSeed ctx)
+    (upperBandSource : ∀ ctx : ActualFailureContext, UpperBandMatchSource ctx)
+    (denseWindowLo : ∀ ctx : ActualFailureContext,
+      ∀ k, Membership.mem (genuineDensePackStarts ctx) k → ctx.shell.X < k + ctx.n24CarryData.r)
+    (denseWindowHi : ∀ ctx : ActualFailureContext,
+      ∀ k, Membership.mem (genuineDensePackStarts ctx) k →
+        (k + ctx.n24CarryData.r) + proofV4DensePackSpread ctx.shell ≤ 2 * ctx.shell.X)
+    (chernoff : Class0ChernoffInjection
+      (v3Budget (towerCount_ofIndexSDR towerSDR)
+        (runChain_ofBaseAreaCoverProvider stageOf len hmaps hhalf baseArea)
+        (returnChargeOfAnchoredSeeds anchoredReturn)))
+    (cnl : Class1CNLInjection
+      (v3Budget (towerCount_ofIndexSDR towerSDR)
+        (runChain_ofBaseAreaCoverProvider stageOf len hmaps hhalf baseArea)
+        (returnChargeOfAnchoredSeeds anchoredReturn)))
+    (windowInterior : WindowInteriorResidual
+      (v3Budget (towerCount_ofIndexSDR towerSDR)
+        (runChain_ofBaseAreaCoverProvider stageOf len hmaps hhalf baseArea)
+        (returnChargeOfAnchoredSeeds anchoredReturn)))
+    (hScale : ∀ ctx : ActualFailureContext,
+      ((ctx.n24CarryData.r : ℝ) + 1) * (densePackDyadicG0 ctx : ℝ) - ctx.n24CarryData.T ≤ 1) :
+    Erdos260Statement :=
+  erdos260_of_minimalResidualV4
+    (erdos260MinimalResidualV4_ofTowerSDR_runBaseArea_anchoredReturn_descentDensity_windowInterior
+      towerSDR stageOf len hmaps hhalf baseArea anchoredReturn upperBandSource denseWindowLo
+      denseWindowHi chernoff cnl windowInterior hScale)
+
+/-- Final-assembly bridge for the narrowed CNL provider: the shared active-window
+interior residual supplies the old `hwin` field, so C1 now exposes only the L.1.2
+count bound and the G.35 scalar Kraft budget. -/
+def cnlInjection_ofWindowInteriorCountBudgetProvider
+    (budget : ∀ ctx : ActualFailureContext, SeparatedPhaseRoutedBudget ctx)
+    (hcard : ∀ ctx : ActualFailureContext,
+      (routedFibre ctx.n24CarryData (budget ctx).route 1).card
+        ≤ (selectedTransitions (liftTransitionsOfShell ctx)).card)
+    (hbudget : ∀ ctx : ActualFailureContext, cnlActiveMult ctx ≤ cnlMinKraftRate ctx)
+    (windowInterior : WindowInteriorResidual budget) :
+    Class1CNLInjection budget :=
+  Class1CNLInjection.ofWindowInteriorCountBudget budget hcard hbudget windowInterior
+
+/-- Build the V4 residual with CNL reduced from a full injection to its count/Kraft
+provider, reusing the already-present shared `WindowInteriorResidual` for active-window
+containment. -/
+def erdos260MinimalResidualV4_ofTowerSDR_runBaseArea_anchoredReturn_cnlCountBudget_descentDensity_windowInterior
+    (towerSDR : ∀ ctx : ActualFailureContext, Class2IndexSDR ctx)
+    (stageOf : ActualFailureContext → ℕ → ℕ)
+    (len : ActualFailureContext → ℕ)
+    (hmaps : ∀ ctx : ActualFailureContext,
+      ∀ k ∈ routedFibre ctx.n24CarryData (genuineChargeRoute ctx) 5, stageOf ctx k < len ctx)
+    (hhalf : ∀ ctx : ActualFailureContext,
+      ∀ i, stageMassOf ctx (stageOf ctx) (i + 1) ≤ (1 / 2) * stageMassOf ctx (stageOf ctx) i)
+    (baseArea : ∀ ctx : ActualFailureContext, RunBaseAreaCover ctx (stageOf ctx))
+    (anchoredReturn : ∀ ctx : ActualFailureContext, ReturnClass4AnchoredSeed ctx)
+    (upperBandSource : ∀ ctx : ActualFailureContext, UpperBandMatchSource ctx)
+    (denseWindowLo : ∀ ctx : ActualFailureContext,
+      ∀ k, Membership.mem (genuineDensePackStarts ctx) k → ctx.shell.X < k + ctx.n24CarryData.r)
+    (denseWindowHi : ∀ ctx : ActualFailureContext,
+      ∀ k, Membership.mem (genuineDensePackStarts ctx) k →
+        (k + ctx.n24CarryData.r) + proofV4DensePackSpread ctx.shell ≤ 2 * ctx.shell.X)
+    (chernoff : Class0ChernoffInjection
+      (v3Budget (towerCount_ofIndexSDR towerSDR)
+        (runChain_ofBaseAreaCoverProvider stageOf len hmaps hhalf baseArea)
+        (returnChargeOfAnchoredSeeds anchoredReturn)))
+    (hcnlCard : ∀ ctx : ActualFailureContext,
+      (routedFibre ctx.n24CarryData
+        ((v3Budget (towerCount_ofIndexSDR towerSDR)
+          (runChain_ofBaseAreaCoverProvider stageOf len hmaps hhalf baseArea)
+          (returnChargeOfAnchoredSeeds anchoredReturn) ctx).route) 1).card
+        ≤ (selectedTransitions (liftTransitionsOfShell ctx)).card)
+    (hcnlBudget : ∀ ctx : ActualFailureContext, cnlActiveMult ctx ≤ cnlMinKraftRate ctx)
+    (windowInterior : WindowInteriorResidual
+      (v3Budget (towerCount_ofIndexSDR towerSDR)
+        (runChain_ofBaseAreaCoverProvider stageOf len hmaps hhalf baseArea)
+        (returnChargeOfAnchoredSeeds anchoredReturn)))
+    (hScale : ∀ ctx : ActualFailureContext,
+      ((ctx.n24CarryData.r : ℝ) + 1) * (densePackDyadicG0 ctx : ℝ) - ctx.n24CarryData.T ≤ 1) :
+    Erdos260MinimalResidualV4 :=
+  erdos260MinimalResidualV4_ofTowerSDR_runBaseArea_anchoredReturn_descentDensity_windowInterior
+    towerSDR stageOf len hmaps hhalf baseArea anchoredReturn upperBandSource denseWindowLo
+    denseWindowHi chernoff
+    (cnlInjection_ofWindowInteriorCountBudgetProvider
+      (v3Budget (towerCount_ofIndexSDR towerSDR)
+        (runChain_ofBaseAreaCoverProvider stageOf len hmaps hhalf baseArea)
+        (returnChargeOfAnchoredSeeds anchoredReturn))
+      hcnlCard hcnlBudget windowInterior)
+    windowInterior hScale
+
+/-- Erdos #260 from the narrowed V4 boundary with CNL supplied by the L.1.2
+count bound plus the G.35 scalar Kraft budget. -/
+theorem erdos260Statement_of_v4TowerSDR_runBaseArea_anchoredReturn_cnlCountBudget_descentDensity_windowInterior
+    (towerSDR : ∀ ctx : ActualFailureContext, Class2IndexSDR ctx)
+    (stageOf : ActualFailureContext → ℕ → ℕ)
+    (len : ActualFailureContext → ℕ)
+    (hmaps : ∀ ctx : ActualFailureContext,
+      ∀ k ∈ routedFibre ctx.n24CarryData (genuineChargeRoute ctx) 5, stageOf ctx k < len ctx)
+    (hhalf : ∀ ctx : ActualFailureContext,
+      ∀ i, stageMassOf ctx (stageOf ctx) (i + 1) ≤ (1 / 2) * stageMassOf ctx (stageOf ctx) i)
+    (baseArea : ∀ ctx : ActualFailureContext, RunBaseAreaCover ctx (stageOf ctx))
+    (anchoredReturn : ∀ ctx : ActualFailureContext, ReturnClass4AnchoredSeed ctx)
+    (upperBandSource : ∀ ctx : ActualFailureContext, UpperBandMatchSource ctx)
+    (denseWindowLo : ∀ ctx : ActualFailureContext,
+      ∀ k, Membership.mem (genuineDensePackStarts ctx) k → ctx.shell.X < k + ctx.n24CarryData.r)
+    (denseWindowHi : ∀ ctx : ActualFailureContext,
+      ∀ k, Membership.mem (genuineDensePackStarts ctx) k →
+        (k + ctx.n24CarryData.r) + proofV4DensePackSpread ctx.shell ≤ 2 * ctx.shell.X)
+    (chernoff : Class0ChernoffInjection
+      (v3Budget (towerCount_ofIndexSDR towerSDR)
+        (runChain_ofBaseAreaCoverProvider stageOf len hmaps hhalf baseArea)
+        (returnChargeOfAnchoredSeeds anchoredReturn)))
+    (hcnlCard : ∀ ctx : ActualFailureContext,
+      (routedFibre ctx.n24CarryData
+        ((v3Budget (towerCount_ofIndexSDR towerSDR)
+          (runChain_ofBaseAreaCoverProvider stageOf len hmaps hhalf baseArea)
+          (returnChargeOfAnchoredSeeds anchoredReturn) ctx).route) 1).card
+        ≤ (selectedTransitions (liftTransitionsOfShell ctx)).card)
+    (hcnlBudget : ∀ ctx : ActualFailureContext, cnlActiveMult ctx ≤ cnlMinKraftRate ctx)
+    (windowInterior : WindowInteriorResidual
+      (v3Budget (towerCount_ofIndexSDR towerSDR)
+        (runChain_ofBaseAreaCoverProvider stageOf len hmaps hhalf baseArea)
+        (returnChargeOfAnchoredSeeds anchoredReturn)))
+    (hScale : ∀ ctx : ActualFailureContext,
+      ((ctx.n24CarryData.r : ℝ) + 1) * (densePackDyadicG0 ctx : ℝ) - ctx.n24CarryData.T ≤ 1) :
+    Erdos260Statement :=
+  erdos260_of_minimalResidualV4
+    (erdos260MinimalResidualV4_ofTowerSDR_runBaseArea_anchoredReturn_cnlCountBudget_descentDensity_windowInterior
+      towerSDR stageOf len hmaps hhalf baseArea anchoredReturn upperBandSource denseWindowLo
+      denseWindowHi chernoff hcnlCard hcnlBudget windowInterior hScale)
+
 /-- The remaining V4 open obligations, grouped by parallel workstream (the shrinking gap
 set).  Each entry is a strong, shell-faithful `∀ ctx` field of `Erdos260MinimalResidualV4`
 (or its embedded `toV3`).  When this list is empty the endpoint is unconditional. -/
 def erdos260V4OpenObligations : List String :=
   [ "C0 Chernoff (class 0): Class0ChernoffInjection (v3Budget towerCount runChain returnCharge) -- the J.1.7/22.1A charge map, membership, injectivity, and area-positive cap.",
-    "C1 CNL (class 1): Class1CNLInjection (v3Budget towerCount runChain returnCharge) -- the L.1.2/G.35 codeword map, membership, injectivity, and Kraft domination.",
+    "C1 CNL (class 1): hcnlCard + hcnlBudget -- Class1CNLInjection now derives from the L.1.2 count bound, the G.35 scalar Kraft budget, and the shared WindowInteriorResidual.",
     "C3 DensePack (class 3): windowInterior + hScale -- endpoint density derives from upperBandSource + denseWindowLo/Hi, and windowReach/hReach/hContain derive from WindowInteriorResidual.",
     "C2 Tower (class 2): towerSDR -- Class2IndexSDR, feeding Class2ActiveFloorCount through towerCount_ofIndexSDR / the SDR ownership chain.",
-    "C4 Return (class 4): returnSeed -- Class4ReturnSliceChargeSeed, the M.2.1 per-slice geometry + active-window containment + M_L*X smallness; toCharge discharges Class4ReturnPerSliceCharge.",
+    "C4 Return (class 4): anchoredReturn -- ReturnClass4AnchoredSeed, merging the M.2.1 per-slice charge seed with the M.3.1 anchored long-return family on the same key.",
     "C5 Run (class 5): stageOf / len / hmaps / hhalf / baseArea -- the §26 base-area provider feeding RunClass5StageChain via runChain_ofBaseAreaCoverProvider.",
-    "D Sec 25.3 descent: upperBandSource / denseWindowLo / denseWindowHi -- DescentWindowMatch + coprimality + depth source for the upper residue band and Q-correct density geometry (tex Sec 8).",
-    "C4' M.3.1: anchoredLongReturnFamily -- Nonempty (AnchoredLongReturnFamily) on each V3 return slice; derives survivorFamily, CleanReturnPlacement, and SliceCompleteReturns (tex Appendix M)." ]
+    "D Sec 25.3 descent: upperBandSource / denseWindowLo / denseWindowHi -- DescentWindowMatch + coprimality + depth source for the upper residue band and Q-correct density geometry (tex Sec 8)." ]
 
-theorem erdos260V4OpenObligations_length : erdos260V4OpenObligations.length = 8 := by
+theorem erdos260V4OpenObligations_length : erdos260V4OpenObligations.length = 7 := by
   simp [erdos260V4OpenObligations]
 
 /-- Re-export of the honest endpoint, the Phase-3 integration target: once a

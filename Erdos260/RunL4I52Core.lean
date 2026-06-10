@@ -346,6 +346,203 @@ theorem runLeafOfShellGenuine_runMass_bound (ctx : ActualFailureContext)
     (runTwoNegcYOfShell ctx) (runIjOfShell ctx) (runSmallErrorOfShell ctx)
     (runSmallErrorNonnegOfShell ctx) (runChainRootOfShell ctx) (runBudgetOfShell ctx h)
 
+/-! ## Part F2 — discharging `RunMassWithinBudget` from the §26 positive-density run-area cover
+
+The single residual `RunMassWithinBudget` is the high-excess run mass fitting `cStar·ξ·X/6`.
+Here we discharge it from the **same** K.1.1 cover + I.4.1 packing + K.4 smallness data that proves
+the Tower class-2 sub-mass (`class2_activeFloorCount_of_denseMarkerCover`) and the base run-area
+bound (`RunBaseAreaCover.harea`), now on the *actual* high-excess run fibre and at the I.5.2
+run-slot budget `cStar·ξ/6`, genuinely consuming the positive-density failure `ctx.hfailure`.  This
+pins the package-track Run leaf's last residual to the genuine §26 manuscript cover geometry — the
+same irreducible analytic input class the proved Tower class-2 sub-mass rests on. -/
+
+/-- **The high-excess run fibre of the actual shell.**  All carry starts whose window excess clears
+the active floor `Y`.  The three `runClsOfShell` trichotomy classes partition it (the chain class
+being empty), so its total window-excess mass is exactly the high-excess run mass
+`routed 0 + routed 1 + routed 2`. -/
+def runHighExcessFibre (ctx : ActualFailureContext) : Finset ℕ :=
+  highExcessStarts ctx.n24CarryData.starts (hitGap ctx.n24CarryData.a)
+    ctx.n24CarryData.r ctx.n24CarryData.T ctx.n24CarryData.Y
+
+/-- **The high-excess run mass equals the sum of the three trichotomy class masses.**  Mass
+conservation (`highExcessMass_eq_sum_routedClassMassOf`) over the four `Fin 4` classes, with the
+empty chain class `runClsOfShell_routed3_zero`. -/
+theorem runHighExcessMass_eq (ctx : ActualFailureContext) :
+    highExcessMass (runHighExcessFibre ctx) (hitGap ctx.n24CarryData.a)
+        ctx.n24CarryData.r ctx.n24CarryData.T
+      = routedClassMassOf ctx.n24CarryData (runClsOfShell ctx) 0
+          + routedClassMassOf ctx.n24CarryData (runClsOfShell ctx) 1
+          + routedClassMassOf ctx.n24CarryData (runClsOfShell ctx) 2 := by
+  unfold runHighExcessFibre
+  rw [highExcessMass_eq_sum_routedClassMassOf ctx.n24CarryData (runClsOfShell ctx),
+    Fin.sum_univ_four, runClsOfShell_routed3_zero, add_zero]
+
+/--
+**The §26 positive-density run-area cover of the high-excess run fibre.**
+
+The genuine analytic datum behind `RunMassWithinBudget`, in the exact shape of the *proved* Tower
+class-2 residual `Class2DenseMarkerCover` (modulo the I.5.2 budget `ξ/6 ↦ cStar·ξ/6` and the free
+K.1.2/L.20 multiplier):
+
+* `mult`/`hmult_nonneg`/`hpoint` — the K.1.2/L.20 run window-excess multiplier bounding every
+  high-excess-start window excess;
+* `hcover` — the K.1.1 endpoint-disjoint cover `#fibre ≤ |𝒟₀|·(2·spread+1)`;
+* `hpack` — the I.4.1 dense-marker hit packing `|𝒟₀|·ρ_D L ≤ #supportShell`;
+* `hsmall` — the K.4 numerical smallness `(c₀/ρ_D L)·(2·spread+1)·mult ≤ cStar·ξ/6`.
+-/
+structure RunHighExcessAreaCover (ctx : ActualFailureContext) where
+  /-- The K.1.2/L.20 run window-excess multiplier on the high-excess run fibre. -/
+  mult : ℝ
+  /-- The multiplier is nonnegative. -/
+  hmult_nonneg : 0 ≤ mult
+  /-- Each high-excess-start window excess is at most the multiplier. -/
+  hpoint : ∀ k ∈ runHighExcessFibre ctx,
+    windowExcess (hitGap ctx.n24CarryData.a) k ctx.n24CarryData.r ctx.n24CarryData.T ≤ mult
+  /-- The K.1.1 marker spread (cover half-width index). -/
+  spread : ℕ
+  /-- The number of selected disjoint dense markers `|𝒟₀|`. -/
+  markersCard : ℕ
+  /-- The per-marker hit floor `ρ_D·L`. -/
+  rhoL : ℝ
+  /-- The per-marker hit floor is positive. -/
+  hrhoL_pos : 0 < rhoL
+  /-- **K.1.1 endpoint-disjoint cover** of the high-excess run fibre. -/
+  hcover : (runHighExcessFibre ctx).card ≤ markersCard * (2 * spread + 1)
+  /-- **The I.4.1 dense-marker hit packing** into the shell support count. -/
+  hpack : (markersCard : ℝ) * rhoL ≤ ((supportShell ctx.d ctx.X).card : ℝ)
+  /-- **The K.4 numerical smallness** at the I.5.2 run-slot budget `cStar·ξ/6`. -/
+  hsmall : (erdos260Constants.c0 / rhoL) * ((2 * spread + 1 : ℕ) : ℝ) * mult
+      ≤ erdos260Constants.cStar * erdos260Constants.ξ / 6
+
+/-- **The §26 run-area numeric, PROVED by consuming the positive-density failure `ctx.hfailure`.**
+
+`(#runHighExcessFibre)·mult ≤ cStar·ξ·X/6`, by the identical algebra as the proved Tower lemma
+`class2_activeFloorCount_of_denseMarkerCover` and `RunBaseAreaCover.harea`: the K.1.1 cover, the
+I.4.1 packing, the positive-density failure (`#supportShell < c₀·X`), and the K.4 smallness,
+multiplied through by `c₀ > 0`.  The shared factor `X` cancels. -/
+theorem RunHighExcessAreaCover.harea {ctx : ActualFailureContext}
+    (C : RunHighExcessAreaCover ctx) :
+    ((runHighExcessFibre ctx).card : ℝ) * C.mult
+      ≤ erdos260Constants.cStar * erdos260Constants.ξ * (ctx.shell.X : ℝ) / 6 := by
+  have hc0 : (0 : ℝ) < erdos260Constants.c0 := erdos260Constants.c0_pos
+  have hcξ6 : (0 : ℝ) ≤ erdos260Constants.cStar * erdos260Constants.ξ / 6 :=
+    div_nonneg (mul_nonneg erdos260Constants.cStar_pos.le erdos260Constants.ξ_pos.le) (by norm_num)
+  have hmult : (0 : ℝ) ≤ C.mult := C.hmult_nonneg
+  have hm : (0 : ℝ) ≤ (C.markersCard : ℝ) := Nat.cast_nonneg _
+  have hρ : (0 : ℝ) < C.rhoL := C.hrhoL_pos
+  have hcoverR :
+      ((runHighExcessFibre ctx).card : ℝ)
+        ≤ (C.markersCard : ℝ) * ((2 * C.spread + 1 : ℕ) : ℝ) := by
+    exact_mod_cast C.hcover
+  have hsmall' :
+      erdos260Constants.c0 * ((2 * C.spread + 1 : ℕ) : ℝ) * C.mult
+        ≤ erdos260Constants.cStar * erdos260Constants.ξ / 6 * C.rhoL := by
+    have h := C.hsmall
+    rw [div_mul_eq_mul_div, div_mul_eq_mul_div, div_le_iff₀ hρ] at h
+    exact h
+  have hfail : ((supportShell ctx.d ctx.X).card : ℝ)
+      < erdos260Constants.c0 * (ctx.shell.X : ℝ) := by
+    rw [ActualFailureContext.shell_X]; exact ctx.hfailure
+  have hmρ : (C.markersCard : ℝ) * C.rhoL ≤ erdos260Constants.c0 * (ctx.shell.X : ℝ) :=
+    le_of_lt (lt_of_le_of_lt C.hpack hfail)
+  have h1 :
+      ((runHighExcessFibre ctx).card : ℝ) * C.mult
+        ≤ ((C.markersCard : ℝ) * ((2 * C.spread + 1 : ℕ) : ℝ)) * C.mult :=
+    mul_le_mul_of_nonneg_right hcoverR hmult
+  have key :
+      erdos260Constants.c0
+          * (((runHighExcessFibre ctx).card : ℝ) * C.mult)
+        ≤ erdos260Constants.c0
+            * (erdos260Constants.cStar * erdos260Constants.ξ * (ctx.shell.X : ℝ) / 6) :=
+    calc erdos260Constants.c0
+            * (((runHighExcessFibre ctx).card : ℝ) * C.mult)
+          ≤ erdos260Constants.c0
+              * (((C.markersCard : ℝ) * ((2 * C.spread + 1 : ℕ) : ℝ)) * C.mult) :=
+            mul_le_mul_of_nonneg_left h1 hc0.le
+      _ = (C.markersCard : ℝ)
+            * (erdos260Constants.c0 * ((2 * C.spread + 1 : ℕ) : ℝ) * C.mult) := by ring
+      _ ≤ (C.markersCard : ℝ)
+            * (erdos260Constants.cStar * erdos260Constants.ξ / 6 * C.rhoL) :=
+            mul_le_mul_of_nonneg_left hsmall' hm
+      _ = erdos260Constants.cStar * erdos260Constants.ξ / 6
+            * ((C.markersCard : ℝ) * C.rhoL) := by ring
+      _ ≤ erdos260Constants.cStar * erdos260Constants.ξ / 6
+            * (erdos260Constants.c0 * (ctx.shell.X : ℝ)) :=
+            mul_le_mul_of_nonneg_left hmρ hcξ6
+      _ = erdos260Constants.c0
+            * (erdos260Constants.cStar * erdos260Constants.ξ * (ctx.shell.X : ℝ) / 6) := by ring
+  exact le_of_mul_le_mul_left key hc0
+
+/-- **The high-excess run mass is at most `#fibre·mult`** (the K.1.2/L.20 multiplier bounds each
+window excess). -/
+theorem runHighExcessMass_le_card_mul {ctx : ActualFailureContext}
+    (C : RunHighExcessAreaCover ctx) :
+    highExcessMass (runHighExcessFibre ctx) (hitGap ctx.n24CarryData.a)
+        ctx.n24CarryData.r ctx.n24CarryData.T
+      ≤ ((runHighExcessFibre ctx).card : ℝ) * C.mult := by
+  unfold highExcessMass
+  calc ∑ k ∈ runHighExcessFibre ctx,
+        windowExcess (hitGap ctx.n24CarryData.a) k ctx.n24CarryData.r ctx.n24CarryData.T
+      ≤ ∑ _k ∈ runHighExcessFibre ctx, C.mult := Finset.sum_le_sum (fun k hk => C.hpoint k hk)
+    _ = ((runHighExcessFibre ctx).card : ℝ) * C.mult := by
+          rw [Finset.sum_const, nsmul_eq_mul]
+
+/-- **`RunMassWithinBudget`, discharged from the §26 positive-density run-area cover.**  The high-excess
+run mass equals `routed 0 + routed 1 + routed 2`, is `≤ #fibre·mult`, and the cover's `harea` numeric
+caps that by `cStar·ξ·X/6`. -/
+theorem RunHighExcessAreaCover.hbudget {ctx : ActualFailureContext}
+    (C : RunHighExcessAreaCover ctx) : RunMassWithinBudget ctx := by
+  have hmass := runHighExcessMass_eq ctx
+  have hle := le_trans (runHighExcessMass_le_card_mul C) C.harea
+  unfold RunMassWithinBudget
+  linarith [hmass, hle]
+
+/--
+**The Run separated local leaf of the actual shell, from the §26 run-area cover.**
+
+End-to-end: `runLeafOfShellGenuine` fed the §26 positive-density cover `C` (which discharges the
+single budget residual `RunMassWithinBudget` from `ctx.hfailure`).  This reduces the package-track
+Run leaf to the **one** genuine §26/I.4.1 cover datum `RunHighExcessAreaCover ctx` — the same
+irreducible input class the proved Tower class-2 sub-mass rests on. -/
+def runLeafOfShellOfCover (ctx : ActualFailureContext) (C : RunHighExcessAreaCover ctx) :
+    RunClosedL41L42I52PackageInputData erdos260Constants.cStar erdos260Constants.ξ
+      (ctx.shell.X : ℝ) :=
+  runLeafOfShellGenuine ctx C.hbudget
+
+/-- **The total run mass of the cover-built family meets the I.5.2 floor.**  The high-excess run mass
+(sum of the four trichotomy class masses, chain `= 0`) fits `cStar·ξ·X/6`, with every quantity tied
+to the actual shell and the budget discharged genuinely from the §26 cover. -/
+theorem runLeafOfShellOfCover_runMass_bound (ctx : ActualFailureContext)
+    (C : RunHighExcessAreaCover ctx) :
+    (runTrichotomyOfShell ctx (runClsOfShell ctx)).runMass
+      ≤ erdos260Constants.cStar * erdos260Constants.ξ * (ctx.shell.X : ℝ) / 6 :=
+  runLeafOfShellGenuine_runMass_bound ctx C.hbudget
+
+/-- **The Run separated local leaf (the named Appendix-N target `RunSeparatedLocalLeafInputData`),
+from the §26 run-area cover.**  Projects the manuscript-shaped package through
+`runSeparatedLocalLeafFromClosedL41L42I52Package`. -/
+def runSeparatedLocalLeafOfShellOfCover (ctx : ActualFailureContext)
+    (C : RunHighExcessAreaCover ctx) :
+    RunSeparatedLocalLeafInputData erdos260Constants.cStar erdos260Constants.ξ
+      (ctx.shell.X : ℝ) :=
+  runSeparatedLocalLeafFromClosedL41L42I52Package (runLeafOfShellOfCover ctx C)
+
+/-- **The grounded Run local data consumed by the global assembly, from the §26 cover.**  This is the
+`GroundedRunLocalData` shape the per-failure assembly's `run` column ingests, built end-to-end from
+the single genuine §26/I.4.1 cover datum `RunHighExcessAreaCover ctx`. -/
+def groundedRunLocalOfShellOfCover (ctx : ActualFailureContext)
+    (C : RunHighExcessAreaCover ctx) :
+    GroundedRunLocalData erdos260Constants.cStar erdos260Constants.ξ (ctx.shell.X : ℝ) :=
+  (runSeparatedLocalLeafOfShellOfCover ctx C).toGroundedRunLocalData
+
+/-- **Proposition I.5.2 final run bound, end-to-end from the §26 cover.**  `runMass ≤ cStar·ξ·X/6`
+for the grounded Run local data built from the §26 cover of the actual shell. -/
+theorem groundedRunLocalOfShellOfCover_run_bound (ctx : ActualFailureContext)
+    (C : RunHighExcessAreaCover ctx) :
+    (groundedRunLocalOfShellOfCover ctx C).runMass
+      ≤ erdos260Constants.cStar * erdos260Constants.ξ * (ctx.shell.X : ℝ) / 6 :=
+  (groundedRunLocalOfShellOfCover ctx C).run_bound
+
 /-! ## Part G — honest residual inventory -/
 
 /-- The honest status of the Run L.4.1/L.4.2/I.5.2 cores after this file. -/
@@ -369,8 +566,19 @@ def runL4I52CoreResiduals : List String :=
       "runMassWithinBudget_of_charge further reduces it to per-fibre window-excess charge data " ++
       "(K.1.2/L.20 multiplier + J.1.1 fibre count). This is the genuine irreducible I.5.2 " ++
       "analytic input.",
-    "ASSEMBLED — runLeafOfShellGenuine builds the full RunClosedL41L42I52PackageInputData from " ++
-      "the genuine residual center and the single budget residual." ]
+    "DISCHARGED (runBudget from §26 cover, consuming ctx.hfailure) — RunHighExcessAreaCover.hbudget: " ++
+      "RunMassWithinBudget follows from the §26 positive-density run-area cover on the actual " ++
+      "high-excess run fibre runHighExcessFibre (the union of the three trichotomy classes, " ++
+      "runHighExcessMass_eq), by the IDENTICAL algebra (RunHighExcessAreaCover.harea) as the proved " ++
+      "Tower lemma class2_activeFloorCount_of_denseMarkerCover and RunBaseAreaCover.harea: K.1.1 cover " ++
+      "#fibre ≤ |𝒟₀|(2spread+1), I.4.1 packing |𝒟₀|ρ_D L ≤ #supportShell, failure #supportShell < " ++
+      "c₀X, K.4 smallness, all multiplied through by c₀>0 with the shared factor X cancelling. NO free " ++
+      "count, NO degenerate witness.",
+    "ASSEMBLED — runLeafOfShellGenuine / runLeafOfShellOfCover build the full " ++
+      "RunClosedL41L42I52PackageInputData from the genuine residual center and either the single budget " ++
+      "residual (RunMassWithinBudget) or the §26 cover (RunHighExcessAreaCover ctx). The package-track " ++
+      "Run leaf's sharpest residual is now ∀ ctx, RunHighExcessAreaCover ctx — the genuine §26/I.4.1 " ++
+      "dense-marker cover geometry of the actual high-excess run fibre." ]
 
 theorem runL4I52CoreResiduals_nonempty : runL4I52CoreResiduals ≠ [] := by
   simp [runL4I52CoreResiduals]
@@ -382,6 +590,13 @@ theorem runL4I52CoreResiduals_nonempty : runL4I52CoreResiduals ≠ [] := by
 #print axioms runFOfShell_residueOrbit
 #print axioms runChainRootOfShell
 #print axioms runLeafOfShellGenuine_runMass_bound
+#print axioms RunHighExcessAreaCover.harea
+#print axioms RunHighExcessAreaCover.hbudget
+#print axioms runLeafOfShellOfCover
+#print axioms runLeafOfShellOfCover_runMass_bound
+#print axioms runSeparatedLocalLeafOfShellOfCover
+#print axioms groundedRunLocalOfShellOfCover
+#print axioms groundedRunLocalOfShellOfCover_run_bound
 
 end
 

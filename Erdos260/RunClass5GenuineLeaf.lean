@@ -81,7 +81,7 @@ theorem runStageLen_maps (ctx : ActualFailureContext) (stageOf : ℕ → ℕ) :
   intro k hk
   have hle : stageOf k
       ≤ ((routedFibre ctx.n24CarryData (genuineChargeRoute ctx) 5).image stageOf).sup id :=
-    Finset.le_sup (Finset.mem_image_of_mem stageOf hk)
+    Finset.le_sup (f := id) (Finset.mem_image_of_mem stageOf hk)
   unfold runStageLen
   omega
 

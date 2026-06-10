@@ -1,4 +1,5 @@
 import Erdos260.RhoDQFinalConsumerBridgeCore
+import Erdos260.PhaseCapacityCore
 
 /-!
 # The genuine class-2 Tower leaf — `towerCount` reduced to one bundled §25.1 residual
@@ -280,12 +281,130 @@ def towerClass2GenuineLeafResiduals : List String :=
 theorem towerClass2GenuineLeafResiduals_nonempty : towerClass2GenuineLeafResiduals ≠ [] := by
   simp [towerClass2GenuineLeafResiduals]
 
-/-! ## 5.  Axiom-cleanliness audit -/
+/-! ## 5.  The genuine Proposition I.3.1 tower-output-estimate leaf endpoint
+
+The genuine §I.4 class-2 core (`Class2ActiveFloorCount`, the *smallest honest Tower
+sub-mass residual*, `TowerRunDeepCore`) inhabits the manuscript-shaped Tower separated
+local leaf `TowerSeparatedLocalLeafInputData` — the L.3/I.3.1 endpoint that the global
+assembly's `tower` slot ultimately consumes — through the genuine first-obstruction
+route `genuineChargeRoute` (`GenuineObstructionRoutingCore`) and the proved partial
+charged-family builder `towerLeafOfRouted` (`PhaseCapacityCore`).
+
+This closes the *structural* Tower output estimate non-synthetically:
+
+* the charged entry/exit family is the genuine class-2 tower fibre
+  `routedFibre … (genuineChargeRoute ctx) 2` re-indexed by the genuine injection
+  `towerExitOf`, charged by the actual window excess (`tower_routedFibre_image_sum`:
+  its total charged mass IS `routedClassMassOf … (genuineChargeRoute ctx) 2`);
+* the recurrent-cycle witness is the genuine shell-closed E.2–E.4 cycle
+  `(towerCycleOfFailingShellClosed …).D`;
+* the final tower smallness is the **single class-2 routed sub-mass fraction**, never
+  the full high-excess mass that `towerBudget_residual_forces_X_nonpos` refutes.
+
+The only residual is the genuine §I.4 active-floor count `Class2ActiveFloorCount`
+itself (further reducible to the §25.1 descent-depth `Class2TowerGenuineLeaf` here, and
+to the K.1.3 Hall marginal `Class2IndexSDR` via `Erdos260V3TowerReduction`).
+
+The route-parametric leaf endpoint `towerSeparatedLocalLeafOfRoutedSubMass` and the slot
+inclusion `towerXiSlot_le_cStarSlot` are the proved constructions of `TowerL31I31Core`;
+here they are specialised to the genuine first-obstruction route `genuineChargeRoute` and
+the genuine §I.4 class-2 core. -/
+
+/-- **The genuine class-2 routed Tower slot.**  From the smallest honest §I.4 core
+`Class2ActiveFloorCount` the class-2 routed sub-mass over the genuine route fits the
+manuscript Tower slot `c⋆·ξ·X/6` — a genuine fraction (via `htowerSubMass` and
+`towerXiSlot_le_cStarSlot`), not the full high-excess carry mass. -/
+theorem towerRoutedSlot_of_activeFloorCount (ctx : ActualFailureContext)
+    (C : Class2ActiveFloorCount ctx) :
+    routedClassMassOf ctx.n24CarryData (genuineChargeRoute ctx) 2
+      ≤ erdos260Constants.cStar * erdos260Constants.ξ * (ctx.shell.X : ℝ) / 6 :=
+  le_trans C.htowerSubMass (towerXiSlot_le_cStarSlot ctx.shell.X_nonneg_real)
+
+/-- **The genuine Proposition I.3.1 Tower separated local leaf, from the §I.4 core.**
+
+The manuscript-shaped `TowerSeparatedLocalLeafInputData` for a failure context, built
+from the genuine §I.4 class-2 active-floor count via the genuine first-obstruction route
+`genuineChargeRoute`.  Specialisation of `towerSeparatedLocalLeafOfRoutedSubMass` to the
+smallest honest core: the routed sub-mass is `Class2ActiveFloorCount.htowerSubMass`. -/
+def towerSeparatedLocalLeafOfActiveFloorCount (ctx : ActualFailureContext)
+    (C : Class2ActiveFloorCount ctx) :
+    TowerSeparatedLocalLeafInputData erdos260Constants.cStar erdos260Constants.ξ
+      (ctx.shell.X : ℝ) :=
+  towerSeparatedLocalLeafOfRoutedSubMass ctx (genuineChargeRoute ctx) C.htowerSubMass
+
+/-- **The genuine I.3.1 leaf provider from the §I.4 active-floor-count family.**  A
+class-2 active-floor count for every failure context inhabits the Tower separated local
+leaf for every failure context. -/
+def towerSeparatedLocalLeafProviderOfActiveFloorCount
+    (h : ∀ ctx : ActualFailureContext, Class2ActiveFloorCount ctx) :
+    ∀ ctx : ActualFailureContext,
+      TowerSeparatedLocalLeafInputData erdos260Constants.cStar erdos260Constants.ξ
+        (ctx.shell.X : ℝ) :=
+  fun ctx => towerSeparatedLocalLeafOfActiveFloorCount ctx (h ctx)
+
+/-- **The genuine I.3.1 leaf provider from the sharpest §25.1 form.**  The §25.1
+descent-depth genuine leaf `Class2TowerGenuineLeaf` discharges the §I.4 active-floor
+count (via the proved Q-correct frontier reduction `towerCount_of_class2GenuineLeaf`),
+hence inhabits the Tower separated local leaf for every failure context.  This is the
+end-to-end Tower-side chain from the §25.1 descent-depth agreement `hmatch` to the
+manuscript I.3.1 leaf endpoint. -/
+def towerSeparatedLocalLeafProviderOfGenuineLeaf
+    (h : ∀ ctx : ActualFailureContext, Class2TowerGenuineLeaf ctx) :
+    ∀ ctx : ActualFailureContext,
+      TowerSeparatedLocalLeafInputData erdos260Constants.cStar erdos260Constants.ξ
+        (ctx.shell.X : ℝ) :=
+  towerSeparatedLocalLeafProviderOfActiveFloorCount (towerCount_of_class2GenuineLeaf h)
+
+/-- **Sanity (the I.3.1 tower output estimate).**  The total charged tower-exit mass of
+the genuine class-2 leaf is the genuine class-2 routed fraction and fits the Tower slot
+`c⋆·ξ·X/6` — the manuscript `termTower` bound, never the full high-excess mass. -/
+theorem towerSeparatedLocalLeafOfActiveFloorCount_tower_bound (ctx : ActualFailureContext)
+    (C : Class2ActiveFloorCount ctx) :
+    (∑ b ∈ (towerSeparatedLocalLeafOfActiveFloorCount ctx C).entryExitSet,
+        ((towerSeparatedLocalLeafOfActiveFloorCount ctx C).chargedWeight b : ℝ))
+      ≤ erdos260Constants.cStar * erdos260Constants.ξ * (ctx.shell.X : ℝ) / 6 :=
+  (towerSeparatedLocalLeafOfActiveFloorCount ctx C).tower_bound
+
+/-- The precise status of the I.3.1 Tower separated-leaf endpoint after this module. -/
+def towerSeparatedLeafI31Residuals : List String :=
+  [ "GOAL — inhabit TowerSeparatedLocalLeafInputData c⋆ ξ X (the manuscript L.3/I.3.1 " ++
+      "tower-output-estimate leaf endpoint) for every failure context, non-synthetically.",
+    "CLOSED (structural) — towerSeparatedLocalLeafOfActiveFloorCount: built from the " ++
+      "genuine §I.4 class-2 core Class2ActiveFloorCount via the genuine route " ++
+      "genuineChargeRoute and the proved leaf endpoint TowerL31I31Core." ++
+      "towerSeparatedLocalLeafOfRoutedSubMass. Genuine shell-closed E.2–E.4 cycle, genuine " ++
+      "class-2 tower fibre charged family (towerExitOf re-indexing, window-excess weights), " ++
+      "tight routing/absorption. tower_bound = routedClassMassOf … (genuineChargeRoute ctx) " ++
+      "2 ≤ c⋆ξX/6, the genuine class-2 routed fraction.",
+    "REPAIRED — the circular full-mass over-claim highExcessMass ≤ c⋆ξX/6 (refuted by " ++
+      "towerBudget_residual_forces_X_nonpos) is avoided: only the single class-2 routed " ++
+      "fraction is charged, never the whole high-excess carry mass.",
+    "RESIDUAL (sharpest, OPEN) — Class2ActiveFloorCount ctx: the §I.4 active-floor count " ++
+      "(★) #fibre₂·positivePart(2·Y) ≤ ξX/6 (hcount) plus boundary exclusion (hbdry); " ++
+      "equivalently htowerSubMass : routedClassMassOf … (genuineChargeRoute ctx) 2 ≤ ξX/6.",
+    "FURTHER REDUCED — Class2ActiveFloorCount ⟸ Class2TowerGenuineLeaf (the §25.1 " ++
+      "descent-depth agreement hmatch) via towerCount_of_class2GenuineLeaf " ++
+      "(towerSeparatedLocalLeafProviderOfGenuineLeaf), and ⟸ Class2IndexSDR (the K.1.3 " ++
+      "Hall marginal + ρ_D·L density floor) via Erdos260V3TowerReduction.towerCount_ofIndexSDR. " ++
+      "These bottom out at the genuinely-open §I.4 dense-packing / §25.1 match.",
+    "NON-DEGENERATE — the entry/exit family is the real class-2 fibre routedFibre … " ++
+      "(genuineChargeRoute ctx) 2 of the genuine route with real window-excess weights and " ++
+      "the real shell-closed cycle; no empty / full-mass / synthetic witness." ]
+
+theorem towerSeparatedLeafI31Residuals_nonempty : towerSeparatedLeafI31Residuals ≠ [] := by
+  simp [towerSeparatedLeafI31Residuals]
+
+/-! ## 6.  Axiom-cleanliness audit -/
 
 #print axioms towerCount_of_class2GenuineLeaf
 #print axioms towerSlot_of_class2GenuineLeaf
 #print axioms windowMatch_of_periodicOn_orbit
 #print axioms Class2TowerGenuineLeaf.ofPeriodic
+#print axioms towerRoutedSlot_of_activeFloorCount
+#print axioms towerSeparatedLocalLeafOfActiveFloorCount
+#print axioms towerSeparatedLocalLeafProviderOfActiveFloorCount
+#print axioms towerSeparatedLocalLeafProviderOfGenuineLeaf
+#print axioms towerSeparatedLocalLeafOfActiveFloorCount_tower_bound
 
 end
 

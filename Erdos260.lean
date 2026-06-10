@@ -1,2 +1,4 @@
 import Erdos260.DescentDepthSection253Core
 import Erdos260.Erdos260FinalAssembly
+import Erdos260.Erdos260SixAtomCapstone
+import Erdos260.Erdos260SharpCapstone
