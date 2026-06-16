@@ -1,4 +1,0 @@
-import Erdos260.P1Leaves
-open Erdos260.P1Leaves
-#print axioms functional_graph_has_periodic_point
-#print axioms iterate_periodic_invariant

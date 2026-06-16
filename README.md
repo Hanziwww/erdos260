@@ -2,7 +2,7 @@
 
 A Lean 4 / Mathlib formalization of the manuscript
 
-> **Dyadic density of weighted binary expansions**
+> **Dyadic density of rational binary expansions**
 > (Han Wang, José María Grau Ribas)
 
 which concerns Erdős Problem 260: whether $\sum_{n\ge1} a_n 2^{-a_n}$ is irrational for every increasing sequence of positive integers with $a_n/n\to\infty$.
@@ -50,7 +50,7 @@ lake exe cache get      # fetch Mathlib oleans (optional but recommended)
 lake build
 ```
 
-`Erdos260.lean` is the aggregate root module; `Main.lean` and the `AxiomCheck*.lean` files run `#print axioms` on the wired theorems, including `erdos260_of_v30Residual`, `erdos260_of_v32Residual`, and `v32_dependency_firewall`.
+`Erdos260.lean` is the aggregate root module and `Main.lean` is the executable entry point. To audit the trusted base, run `#print axioms` on the wired theorems — e.g. `erdos260_of_v30Residual`, `erdos260_of_v32Residual`, and `v32_dependency_firewall` — each of which closes over only the standard axioms `[propext, Classical.choice, Quot.sound]`.
 
 ## Coverage map
 
