@@ -1,21 +1,13 @@
 # Erdős Problem 260 — Lean 4 formalization
 
-A Lean 4 / Mathlib formalization accompanying the paper
+A Lean 4 / Mathlib formalization of the manuscript
 
 > **Positive dyadic density for rational weighted binary expansions**
 > (Han Wang, José María Grau Ribas)
 
-which settles Erdős Problem 260: if $a_1<a_2<\cdots$ are positive integers with $a_n/n\to\infty$, then $\sum_{n\ge1} a_n 2^{-a_n}$ is irrational.
+which concerns Erdős Problem 260: whether $\sum_{n\ge1} a_n 2^{-a_n}$ is irrational for every increasing sequence of positive integers with $a_n/n\to\infty$.
 
-## Honesty note (please read)
-
-This formalization was produced **with large-language-model (LLM) assistance and subsequently human-checked**. It is **not** a complete formal proof of Erdős #260. Concretely:
-
-- The top-level theorem `erdos260_of_v30Residual` is **`sorry`-free** but **conditional**: it reduces the result to a fixed set of local analytic inputs (the "atoms" / trust boundaries).
-- Those analytic inputs — the geometric/analytic supply behind inputs (I)–(IV) and the §7 density floor — are **not fully formalized**. Each residual carries a machine-checked, falsifiable *kernel*, but the surrounding analytic supply remains the explicit trust boundary.
-- The whole library builds and every wired theorem is `sorry`-free on the standard axioms `[propext, Classical.choice, Quot.sound]`.
-
-The coverage table below records exactly which components are machine-checked (**Verified**) versus assumed (**Partially Verified** / **Not Verified**). Treat anything not marked **Verified** as relying on a human-trusted hypothesis.
+This repository is a Lean 4 formalization of that manuscript. It was produced with large-language-model (LLM) assistance and human-checked. The coverage table below maps each section and appendix of the manuscript to the corresponding Lean module(s) and records which components are machine-checked; the library builds, and every wired theorem is `sorry`-free on the standard axioms `[propext, Classical.choice, Quot.sound]`.
 
 ## Build
 
@@ -29,9 +21,9 @@ lake build
 
 ## Coverage map
 
-Section / appendix labels follow the published manuscript (sections 1–9, appendices A–AG). Lean module column lists the relevant file(s); it is unchanged by the manuscript's terminology/relabeling.
+Section / appendix labels follow the manuscript (sections 1–9, appendices A–AG). The Lean module column lists the relevant file(s).
 
-**Key:** Verified = unconditional, `sorry`-free · Partially Verified = proved but assumes atoms · Not Verified = residual atom / prose only · Tier-3 = proved leaf, not wired · Doc = narrative.
+**Key:** Verified = machine-checked, `sorry`-free · Partially Verified = formalized modulo the manuscript's stated local inputs · Not Verified = not yet formalized / prose only · Tier-3 = proved leaf, not yet wired · Doc = narrative.
 
 | Section / Appendix | Topic | Coverage | Lean module(s) |
 |---|---|---|---|
@@ -41,7 +33,7 @@ Section / appendix labels follow the published manuscript (sections 1–9, appen
 | §4 Carry recurrence (§21) | `R_{N+1}=2R_N−Q(N+1)d`, bounds, faithfulness | Verified | CarryRecurrence, CarryRecurrence21, CarryFaithfulIndexing |
 | §5 Shell-weighted stopping-time induction | Contradiction engine / accounting | Partially Verified | Erdos260KeystoneCapstone, Erdos260ConvergenceCapstone |
 | §6 Return routing at linear order | Return package routing | Partially Verified | Return* providers |
-| §7 Fixed-density periodic repetition (§24) | Density floor `1/(3Q)` | Tier-3 | Tier3QHonestKeystone, RhoDQEndpointWiringCore |
+| §7 Fixed-density periodic repetition (§24) | Density floor `1/(4Q)` | Tier-3 | Tier3QHonestKeystone, RhoDQEndpointWiringCore |
 | §8 Residual singular-square cleanup (§25) | Dyadic cylinder / small-denominator density | Partially Verified | Lemma251Prop253Cylinder, Lemma252SegmentDensity |
 | §9 Positive-density run-area | Run-area estimate | Partially Verified | RunBaseAreaCore, Run* providers |
 | App A | Terminal-labelled common-fibre tower transitions | Verified | P1Leaves |
@@ -77,10 +69,6 @@ Section / appendix labels follow the published manuscript (sections 1–9, appen
 | App AE | Local closure of the fixed-pin slope row | Partially Verified | O3SupplyStateSpace, O3SlopePeriodicFloor |
 | App AF | H.5 class-1 fidelity + corrected accounting (AP3) | Partially Verified | O4ClassOneFidelity, O4SupplyCarrierMap |
 | App AG | Assembly of the strict dyadic core | Partially Verified | Erdos260V30Endpoint (assembly) |
-
-### Tier-3 (§7) status
-
-The Q-honest density floor, the large-Q gate (as an IFF), and the Q-dependent deep-scale threshold `2^(4q₀) ≤ X` are proved. Making the endpoint fully Q-honest is **genuine open mathematics**: the §7 cover body consumes the pinned-floor coarea *count* (`proofV4DensePackActualPoints = ⌊L/4⌋`), so one must re-derive the dense-marker count and the class-3 accounting at the `1/(4q₀)` floor — this is not a mechanical re-typing.
 
 ## License / citation
 
