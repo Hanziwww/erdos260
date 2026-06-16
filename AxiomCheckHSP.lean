@@ -1,0 +1,12 @@
+import Erdos260.HighSupportPhaseCount
+
+open Erdos260.HighSupportPhaseCount
+
+#print axioms sum_card_le_of_pairwiseDisjoint_ground
+#print axioms sum_card_le_of_pairwiseDisjoint_range
+#print axioms sum_card_le_of_setPairwiseDisjoint_range
+#print axioms sum_weight_le_of_pairwiseDisjoint_range
+#print axioms card_mul_le_of_pairwiseDisjoint_range
+#print axioms card_le_div_of_pairwiseDisjoint_range
+#print axioms sum_phasecount_le_div
+#print axioms sum_phasecount_le_div_of_phases

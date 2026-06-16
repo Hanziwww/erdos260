@@ -1,0 +1,8 @@
+import Erdos260.Tier2ClusterFloorDensity
+
+open Erdos260.Tier2ClusterFloorDensity
+
+#print axioms hall_marginal_lower_bound_nat
+#print axioms hall_marginal_lower_bound
+#print axioms coarea_hitDensity_floor_le_supportWindow
+#print axioms clusterFloor_hall_marginal_from_coarea

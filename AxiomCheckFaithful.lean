@@ -1,0 +1,8 @@
+import Erdos260.CarryFaithfulIndexing
+open Erdos260.CarryFaithfulIndexing
+#print axioms carry_digit_identity
+#print axioms carry_determines_digit
+#print axioms carry_determines_digits
+#print axioms carry_faithful_index
+#print axioms o2_carry_transcript_injective
+#print axioms greedy_digit_from_carry

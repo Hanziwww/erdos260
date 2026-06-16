@@ -1,0 +1,18 @@
+import Erdos260.Tier3QHonestKeystone
+
+open Erdos260
+
+#print axioms proofV4DensePackMinHitsRhoDQ_le_of_pos
+#print axioms proofV4DensePackMinHitsRhoDQ_pos_iff
+#print axioms largeQ_of_deepScale
+#print axioms proofV4DensePackMinHitsRhoDQ_pos_of_deepScale
+#print axioms proofV4DensePackMinHitsRhoDQ_pos_iff_deepScale
+#print axioms fixedThreshold_insufficient_once_q0_large
+#print axioms QHonestDensityInput.ofDeepScale
+#print axioms QHonestDensityInput.ofDescentWindowMatch
+#print axioms qHonest_delivers_position_constraint
+#print axioms qHonest_density_no_stronger
+#print axioms qHonest_density_dischargeable_all_Q
+#print axioms qHonest_k4_budget_survives_all_Q
+#print axioms qHonest_interface_sufficient
+#print axioms tier3QHonestKeystoneResiduals_nonempty
