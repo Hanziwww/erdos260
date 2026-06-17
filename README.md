@@ -56,21 +56,21 @@ lake build
 
 Section / appendix labels follow the manuscript (sections 1–11, appendices A–AG). The Lean module column lists the relevant file(s).
 
-**Key:** Verified = machine-checked, `sorry`-free · Conditional = machine-checked modulo the four analytic inputs above · Input = one of the four analytic inputs / the calibration · Doc = narrative.
+**Key:** Verified = machine-checked, `sorry`-free · Partially verified = machine-checked modulo the four analytic inputs above · Input = one of the four analytic inputs / the calibration · Doc = narrative.
 
 | Section / Appendix | Topic | Coverage | Lean module(s) |
 |---|---|---|---|
 | §1–§3 Introduction / Method / Preliminaries | Problem, method, notation | Verified / Doc | Constants, HitSequence, IntegerCarry |
-| §4 Main theorem + analytic inputs | Reduction (R1)–(R7) → strict core | Conditional | Erdos260V30Endpoint |
+| §4 Main theorem + analytic inputs | Reduction (R1)–(R7) → strict core | Partially verified | Erdos260V30Endpoint |
 | §5 Carry recurrence | `R_{N+1}=2R_N−Q(N+1)d`, bounds, faithfulness | Verified | CarryRecurrence, CarryFaithfulIndexing |
-| §6 Shell-weighted stopping-time induction | Contradiction engine / accounting | Conditional | Erdos260KeystoneCapstone, Erdos260ConvergenceCapstone |
-| §7 Return routing | Return package routing | Conditional | Return* providers |
+| §6 Shell-weighted stopping-time induction | Contradiction engine / accounting | Partially verified | Erdos260KeystoneCapstone, Erdos260ConvergenceCapstone |
+| §7 Return routing | Return package routing | Partially verified | Return* providers |
 | §8 Fixed-density periodic repetition | Density floor `1/(4Q)` | Input | Tier3QHonestKeystone, RhoDQEndpointWiringCore |
 | §9 Residual singular-square cleanup | Dyadic cylinder / small-denominator density | Verified | Lemma251Prop253Cylinder, Lemma252SegmentDensity |
-| §10 Positive-density run-area | Run-area estimate | Conditional | RunBaseAreaCore, Run* providers |
+| §10 Positive-density run-area | Run-area estimate | Partially verified | RunBaseAreaCore, Run* providers |
 | App A | Terminal-labelled common-fibre tower transitions | Verified | P1Leaves |
 | App B | Correlated nonseparation ladders (CNL entropy) | Verified | AppendixG_CNLClassifier, AppendixG_Ladder |
-| App C | Positive-density recurrence + final theorem | Conditional | Erdos260ConvergenceCapstone |
+| App C | Positive-density recurrence + final theorem | Partially verified | Erdos260ConvergenceCapstone |
 | App D | Charged CNL closure / finite descent | Verified | AppendixI_PackageBounds, HighSupportPhaseCount |
 | App E | Branch accounting + CNL estimates | Verified | CNL* (KraftCount, FibreBound, …) |
 | App F | DensePack support, dirty crossings, CNL normal form | Verified | Tier2SupplyGeometry, Tier2ClusterFloorDensity |
@@ -78,15 +78,15 @@ Section / appendix labels follow the manuscript (sections 1–11, appendices A�
 | App H | Local closure lemmas | Verified | (M.* across providers) |
 | App I | Rolling-window variation-drop closure (Return–Run–Tower) | Verified | AppendixN_Closure, _Compression, _Descent |
 | App J | Residual-case replacements | Doc | — |
-| App K–L | Top-band / read-tail / exit-share; DensePack + fixed-pin | Conditional | Tier2SupplyGeometry, Tier2SpanRarity |
+| App K–L | Top-band / read-tail / exit-share; DensePack + fixed-pin | Partially verified | Tier2SupplyGeometry, Tier2SpanRarity |
 | App M, Z, AD | Fine-fibre complete-lap mass balance / cyclic atlas | **Input (RISK c)** | O1SupplyAtlas, O1MeasurePreservation |
 | App N, Q, R | Denominator-seven routing; certified seventh pin drops | Verified | V30PinSeventhsClosure, OrbitPinVoiding |
 | App O | Non-circular (R2)/(R3) extraction | Verified (firewall) | v32_dependency_firewall |
 | App P, U, AA, AE | Direct fixed-pin closure / confinement | **Input (confinement)** | O3SupplyStateSpace, O3SlopePeriodicFloor |
-| App S, T, V, W | Bisection / midpoint closure; exit-mass exposure; unsafe-cycle removal | Verified | V30Class1Realization, ExitMass*, V30BoundedPeriodRetirement |
+| App S, T, V, W | Bisection / midpoint closure; exit-mass exposure; unsafe-cycle removal | Verified | V30Class1Realization, V30CycleMassBalance, V30OffPinExitCap, ExitMass*, V30BoundedPeriodRetirement |
 | App X, Y | Summed off-pin closure; total-support bound | **Input (RISK b)** | O2SupplyEmbedding, O2AmbientInjection |
-| App AB, AC, AF | Class-one realization / corrected accounting | **Input (class-1)** | O4SupplyCarrierMap, O4ClassOneFidelity |
-| App AG | Assembly of the strict dyadic core | Conditional | Erdos260V30Endpoint (assembly) |
+| App AB, AC, AF | Class-one realization / corrected accounting | **Input (class-1)** | O4SupplyCarrierMap, O4ClassOneFidelity, V30StructuralAtoms |
+| App AG | Assembly of the strict dyadic core | Partially verified | Erdos260V30Endpoint (assembly) |
 
 ## License / citation
 

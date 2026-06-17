@@ -265,6 +265,127 @@ theorem v30_offPin_classCap_of_datum (ctx : ActualFailureContext) (i : Fin 7)
   obtain ⟨hc, hspace, hbal, hsafe, hamb⟩ := h
   exact v30_offPin_classCap ctx i hband hc hspace hbal hsafe hamb
 
+/-- Assemble the off-pin safe-cone datum from the two named residuals and the
+geometric safe-cone inputs.  This keeps RISK b/c as explicit inputs while closing
+the bookkeeping step that feeds the C1 capstone. -/
+theorem v30_safeConeDatum_of_measure_ambient (ctx : ActualFailureContext) (i : Fin 7)
+    {b c Mtot : Nat} (hc : 1 <= c)
+    (hspace : forall x, x ∈ routedFibre ctx.n24CarryData (genuineChargeRoute ctx) i ->
+      forall z, z ∈ routedFibre ctx.n24CarryData (genuineChargeRoute ctx) i ->
+        x <= z -> c ∣ z - x)
+    (hmeasure : V30MeasurePreservation ctx i b c Mtot)
+    (hsafe : 1536 * (cmbOverlap ctx c * b) <= 31 * c)
+    (hambient : V30AmbientAccounting ctx Mtot) :
+    V30OffPinSafeConeDatum ctx i b c Mtot :=
+  ⟨hc, hspace, hmeasure, hsafe, hambient⟩
+
+/-- A Lane-B cycle mass datum supplies the named RISK-c measure-preservation
+input used by the Lane-C safe-cone datum, once its exit mass is identified with
+the routed class fibre exit mass. -/
+theorem v30_measurePreservation_of_cycleDatum
+    (ctx : ActualFailureContext) (i : Fin 7) (D : CycleMassDatum)
+    (hexit : D.exitMass = emcFibreExitMass ctx i) {Mtot : Nat}
+    (hM : D.totalMass <= Mtot) :
+    V30MeasurePreservation ctx i D.E.card D.c Mtot :=
+  cmb_balance_of_datum ctx i D hexit hM
+
+/-- A Lane-B cycle mass datum, the ambient accounting residual, and the AB
+safe-cone geometry assemble the full Lane-C safe-cone datum.  This is the direct
+`CycleMassDatum` form of `v30_safeConeDatum_of_measure_ambient`. -/
+theorem v30_safeConeDatum_of_cycleDatum_ambient
+    (ctx : ActualFailureContext) (i : Fin 7) (D : CycleMassDatum)
+    (hexit : D.exitMass = emcFibreExitMass ctx i) {Mtot : Nat}
+    (hM : D.totalMass <= Mtot)
+    (hspace : forall x, x ∈ routedFibre ctx.n24CarryData (genuineChargeRoute ctx) i ->
+      forall z, z ∈ routedFibre ctx.n24CarryData (genuineChargeRoute ctx) i ->
+        x <= z -> D.c ∣ z - x)
+    (hsafe : 1536 * (cmbOverlap ctx D.c * D.E.card) <= 31 * D.c)
+    (hambient : V30AmbientAccounting ctx Mtot) :
+    V30OffPinSafeConeDatum ctx i D.E.card D.c Mtot :=
+  v30_safeConeDatum_of_measure_ambient ctx i D.hc hspace
+    (v30_measurePreservation_of_cycleDatum ctx i D hexit hM) hsafe hambient
+
+/-- Per-class C1 cap stated directly from the Lane-B cycle mass datum plus the
+remaining ambient/safe-cone geometric inputs. -/
+theorem v30_offPin_classCap_of_cycleDatum_ambient
+    (ctx : ActualFailureContext) (i : Fin 7)
+    (hband : fixedFamilyRecurrentBand ctx <= 4) (D : CycleMassDatum)
+    (hexit : D.exitMass = emcFibreExitMass ctx i) {Mtot : Nat}
+    (hM : D.totalMass <= Mtot)
+    (hspace : forall x, x ∈ routedFibre ctx.n24CarryData (genuineChargeRoute ctx) i ->
+      forall z, z ∈ routedFibre ctx.n24CarryData (genuineChargeRoute ctx) i ->
+        x <= z -> D.c ∣ z - x)
+    (hsafe : 1536 * (cmbOverlap ctx D.c * D.E.card) <= 31 * D.c)
+    (hambient : V30AmbientAccounting ctx Mtot) :
+    routedClassMassOf ctx.n24CarryData (genuineChargeRoute ctx) i <= emcCap ctx :=
+  v30_offPin_classCap_of_datum ctx i hband
+    (v30_safeConeDatum_of_cycleDatum_ambient ctx i D hexit hM hspace hsafe hambient)
+
+/-- Exit-light `b = 1` cells can consume a Lane-B cycle mass datum directly:
+the singleton exit-phase condition rewrites the datum's share numerator into the
+worst-case Lane-D safe-cell form. -/
+theorem v30_exitLight_safeConeDatum_of_cycleDatum_ambient
+    (ctx : ActualFailureContext) (i : Fin 7) (D : CycleMassDatum)
+    (hexit : D.exitMass = emcFibreExitMass ctx i) (hcard : D.E.card = 1)
+    {Mtot : Nat} (hM : D.totalMass <= Mtot)
+    (hsurv : boundedThreshold (shellLadderDepth ctx) < D.c) (hc64 : 64 <= D.c)
+    (hspace : forall x, x ∈ routedFibre ctx.n24CarryData (genuineChargeRoute ctx) i ->
+      forall z, z ∈ routedFibre ctx.n24CarryData (genuineChargeRoute ctx) i ->
+        x <= z -> D.c ∣ z - x)
+    (hambient : V30AmbientAccounting ctx Mtot) :
+    V30OffPinSafeConeDatum ctx i 1 D.c Mtot := by
+  have hmeasure : V30MeasurePreservation ctx i 1 D.c Mtot := by
+    rw [← hcard]
+    exact v30_measurePreservation_of_cycleDatum ctx i D hexit hM
+  exact v30_safeConeDatum_of_measure_ambient ctx i D.hc hspace hmeasure
+    (v30_ctx_exitLight_safe ctx hsurv rfl hc64) hambient
+
+/-- Exit-light per-class cap stated directly from a singleton-exit
+`CycleMassDatum`, the ambient accounting residual, and the AB spacing input. -/
+theorem v30_offPin_classCap_exitLight_of_cycleDatum_ambient
+    (ctx : ActualFailureContext) (i : Fin 7)
+    (hband : fixedFamilyRecurrentBand ctx <= 4) (D : CycleMassDatum)
+    (hexit : D.exitMass = emcFibreExitMass ctx i) (hcard : D.E.card = 1)
+    {Mtot : Nat} (hM : D.totalMass <= Mtot)
+    (hsurv : boundedThreshold (shellLadderDepth ctx) < D.c) (hc64 : 64 <= D.c)
+    (hspace : forall x, x ∈ routedFibre ctx.n24CarryData (genuineChargeRoute ctx) i ->
+      forall z, z ∈ routedFibre ctx.n24CarryData (genuineChargeRoute ctx) i ->
+        x <= z -> D.c ∣ z - x)
+    (hambient : V30AmbientAccounting ctx Mtot) :
+    routedClassMassOf ctx.n24CarryData (genuineChargeRoute ctx) i <= emcCap ctx :=
+  v30_offPin_classCap_of_datum ctx i hband
+    (v30_exitLight_safeConeDatum_of_cycleDatum_ambient ctx i D hexit hcard hM
+      hsurv hc64 hspace hambient)
+
+/-- Exit-light long cycles get the safe-cone inequality from Lane D, so the two
+named residuals plus the AB spacing input already form the full C1 datum. -/
+theorem v30_exitLight_safeConeDatum_of_measure_ambient
+    (ctx : ActualFailureContext) (i : Fin 7) {c Mtot : Nat}
+    (hsurv : boundedThreshold (shellLadderDepth ctx) < c) (hc64 : 64 <= c)
+    (hspace : forall x, x ∈ routedFibre ctx.n24CarryData (genuineChargeRoute ctx) i ->
+      forall z, z ∈ routedFibre ctx.n24CarryData (genuineChargeRoute ctx) i ->
+        x <= z -> c ∣ z - x)
+    (hmeasure : V30MeasurePreservation ctx i 1 c Mtot)
+    (hambient : V30AmbientAccounting ctx Mtot) :
+    V30OffPinSafeConeDatum ctx i 1 c Mtot :=
+  v30_safeConeDatum_of_measure_ambient ctx i (by omega) hspace hmeasure
+    (v30_ctx_exitLight_safe ctx hsurv rfl hc64) hambient
+
+/-- Exit-light capstone stated directly in terms of the two named residuals.
+The safe-cone cell inequality is supplied by the AC/Lane-D emptiness theorem. -/
+theorem v30_offPin_classCap_exitLight_of_measure_ambient
+    (ctx : ActualFailureContext) (i : Fin 7)
+    (hband : fixedFamilyRecurrentBand ctx <= 4) {c Mtot : Nat}
+    (hsurv : boundedThreshold (shellLadderDepth ctx) < c) (hc64 : 64 <= c)
+    (hspace : forall x, x ∈ routedFibre ctx.n24CarryData (genuineChargeRoute ctx) i ->
+      forall z, z ∈ routedFibre ctx.n24CarryData (genuineChargeRoute ctx) i ->
+        x <= z -> c ∣ z - x)
+    (hmeasure : V30MeasurePreservation ctx i 1 c Mtot)
+    (hambient : V30AmbientAccounting ctx Mtot) :
+    routedClassMassOf ctx.n24CarryData (genuineChargeRoute ctx) i <= emcCap ctx :=
+  v30_offPin_classCap_of_datum ctx i hband
+    (v30_exitLight_safeConeDatum_of_measure_ambient ctx i hsurv hc64 hspace hmeasure hambient)
+
 /-- **THE v30 OFF-PIN SAFE-CONE REGIME** (classes `{3,4,5}`): at every deep pin-free
 context the recurrent band is `≤ 4` and each off-pin recurrent class `3,4,5` admits a
 safe-cone cell datum.  This is the v30 analogue of `EmcOffPinSpacedShareRegime`, but
@@ -387,6 +508,15 @@ def v30_laneGResidual_of
   topBand := v30_topBandPushforward_of_cap htop
   readTail := hread
 
+/-- Endpoint form of the Lane-C/Lane-G handoff: the top-band cap and read-tail
+bridge build the Lane-G residual and slot it into the convergence surface. -/
+theorem v30Erdos260_of_laneGCap
+    (htop : ∀ ctx : ActualFailureContext, fixedFamilyRecurrentBand ctx ≤ 4
+        ∧ 64 * agcTopBandDev ctx < shellLadderDepth ctx)
+    (hread : V30ReadTailExitCount) (other : Erdos260ConvergenceResidual) :
+    Erdos260Statement :=
+  v30Erdos260_of_other (v30_laneGResidual_of htop hread) other
+
 /-! ## Part 7.  Honest machine-readable status -/
 
 /-- Machine-readable, honest status of the Lane C off-pin exit-mass cap (C1) pass. -/
@@ -470,6 +600,11 @@ fewer. -/
 #print axioms v30_offPin_classCap
 #print axioms v30_offPin_classCap_exitLight
 #print axioms v30_offPin_classCap_of_datum
+#print axioms v30_measurePreservation_of_cycleDatum
+#print axioms v30_safeConeDatum_of_cycleDatum_ambient
+#print axioms v30_offPin_classCap_of_cycleDatum_ambient
+#print axioms v30_exitLight_safeConeDatum_of_cycleDatum_ambient
+#print axioms v30_offPin_classCap_exitLight_of_cycleDatum_ambient
 #print axioms v30_offPinExitCap
 #print axioms v30_mdcClass0ExitMassControl_of_safeCone
 #print axioms v30_offPin_allClasses
@@ -477,6 +612,7 @@ fewer. -/
 #print axioms v30_spanRarity_of_cap
 #print axioms v30_topBandPushforward_of_cap
 #print axioms v30_laneGResidual_of
+#print axioms v30Erdos260_of_laneGCap
 #print axioms v30OffPinExitCapStatus_nonempty
 
 end

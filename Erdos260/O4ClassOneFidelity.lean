@@ -40,8 +40,9 @@
       lem:ao-zero-quotient-neutral (12081): `Δ_B = 0 ⇒ Γ₁ = 0` (AO.1).
       lem:ao-excess-supported-nonzero (12102): `𝒳_{1,v} ≤ Σ_{Δ_B≠0} Γ₁` (AO.2).
       prop:ao-o4sharp-discharged (12133): positive excess ⇒ positive nonzero mass.
-    Formalized via `Erdos260.P1HotspotAudit.o4_excess_exposes_nonzero` inside
-    `o4_excess_voids` / `o4_class1_cap`.
+    Formalized via `Erdos260.P1HotspotAudit.o4_excess_positive_nonzero_mass`
+    and exposed here as `ao_o4sharp_discharged`; the row-existence form
+    `o4_excess_exposes_nonzero` is used inside `o4_excess_voids` / `o4_class1_cap`.
 
   * Appendix AA — "Faithful class-1 realization" (§ at line 10465).
       lem:aa-failure-exposes-row (10595), prop:aa-c2-closed (10615),
@@ -252,6 +253,18 @@ theorem midpoint_table_zmod6 :
       (b - a ≠ 0 → (m - a ≠ 0 ∨ b - m ≠ 0)) := by decide
 
 end ZMod6
+
+/-- **AC.2 / `prop:ao-o4sharp-discharged` support form.**  A positive corrected
+    class-1 excess has positive total mass on retained rows with nonzero
+    class-1 boundary quotient.  This exposes the manuscript's
+    `IV^sharp` statement as a named Lean theorem, rather than only using the
+    row-existence form internally in `o4_excess_voids`. -/
+theorem ao_o4sharp_discharged
+    {ι : Type*} (S : Finset ι) (Δ : ι → ZMod 6) (wt : ι → ℚ)
+    (hwt : ∀ i ∈ S, 0 ≤ wt i)
+    (hpos : 0 < ∑ i ∈ S, wt i * w1 (0 : ZMod 6) (Δ i)) :
+    0 < ∑ i ∈ S.filter (fun i => Δ i ≠ 0), wt i :=
+  o4_excess_positive_nonzero_mass (0 : ZMod 6) S Δ wt hwt hpos
 
 /-! ===========================================================================
     Hotspot 3.  Excess ⇒ positive retained nonzero row ⇒ formal atom ⇒ void

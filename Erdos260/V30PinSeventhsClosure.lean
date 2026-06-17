@@ -127,6 +127,14 @@ theorem seventhsBlock_has_one (a : ℕ) (ha : 1 ≤ a) (ha7 : a ≤ 6) :
       ∨ seventhsDigit (seventhsNext (seventhsNext a)) = 1 := by
   interval_cases a <;> decide
 
+/-- Numeric form of `seventhsBlock_has_one`: every nonzero period-three
+sevenths block contributes at least one `1` to the block sum.  This is the
+direct Lean shape of the `≥ 1/3` density input used in Appendix S/U. -/
+theorem one_le_seventhsBlock_digit_sum (a : ℕ) (ha : 1 ≤ a) (ha7 : a ≤ 6) :
+    1 ≤ seventhsDigit a + seventhsDigit (seventhsNext a)
+      + seventhsDigit (seventhsNext (seventhsNext a)) := by
+  interval_cases a <;> decide
+
 /-! ## Part 2.  The cycle-persistent (periodic) sevenths fibre is VOID
 (unconditional — manuscript Prop U.7 `prop:u-seventh-periodic-direct`, 9899) -/
 
@@ -352,6 +360,7 @@ or fewer. -/
 #print axioms seventhsNext_period_three
 #print axioms seventhsDigit_binary
 #print axioms seventhsBlock_has_one
+#print axioms one_le_seventhsBlock_digit_sum
 #print axioms cyclePersistentSevenths_period3_void
 #print axioms cyclePersistentSevenths_void
 #print axioms deepSeventhsPinVoid_of_exitActive

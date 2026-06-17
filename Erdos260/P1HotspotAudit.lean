@@ -185,6 +185,22 @@ theorem o4_excess_exposes_nonzero
   rw [Finset.sum_eq_zero hzero] at hpos
   exact lt_irrefl _ hpos
 
+/-- O4.b / AO support consequence: a positive corrected class-1 excess is carried
+    by the retained rows with nonzero class-1 quotient.  This is the mass form of
+    `o4_excess_exposes_nonzero`, matching the manuscript statement
+    `X_{1,v} > 0 -> Mass(Ω^{≠0}_v) > 0`. -/
+theorem o4_excess_positive_nonzero_mass
+    {ι G : Type*} [DecidableEq G] (zero : G)
+    (S : Finset ι) (Δ : ι → G) (wt : ι → ℚ)
+    (hwt : ∀ i ∈ S, 0 ≤ wt i)
+    (hpos : 0 < ∑ i ∈ S, wt i * w1 zero (Δ i)) :
+    0 < ∑ i ∈ S.filter (fun i => Δ i ≠ zero), wt i := by
+  obtain ⟨i, hiS, hiΔ, hiwt⟩ :=
+    o4_excess_exposes_nonzero zero S Δ wt hwt hpos
+  exact Finset.sum_pos'
+    (fun j hj => hwt j (Finset.mem_filter.mp hj).1)
+    ⟨i, Finset.mem_filter.mpr ⟨hiS, hiΔ⟩, hiwt⟩
+
 /-! ===========================================================================
     O4.c — Y priority-heredity descent  ⇒  no class-1 atom at any depth
     Manuscript: lem:y-priority-heredity, prop:y-bisection-defect-empty, X.2.

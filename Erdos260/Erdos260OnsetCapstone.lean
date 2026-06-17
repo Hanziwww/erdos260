@@ -425,7 +425,7 @@ def erdos260OnsetCapstoneStatus : List String :=
       "unique et al.) remain conditional counting records in SurvivorKeyCount - they do " ++
       "NOT close the envelope (W ~ c0*X vs liftLevelBound X), so nothing to fold there.",
     "THE CONSUMER-2 GATE IS DOUBLY SMALL (the wave-13 correction): the demanded envelope " ++
-      "liftLevelBound X is the INVERSE TOWER log* X (ReturnM2J4Core) - the wave-13 TODO " ++
+      "liftLevelBound X is the INVERSE TOWER log* X (ReturnM2J4Core) - the earlier wave-13 " ++
       "text read the gate as L + 1; liftLevelBound X <= L + 1 is only an UPPER bound and " ++
       "the true gate is log*-small, so the onset function must satisfy f(eps) <= " ++
       "log2(log* X - 1) - 2 with eps ~ (log* X)/(F+W) (windowOnesOnsetGate_of_explicit).  " ++

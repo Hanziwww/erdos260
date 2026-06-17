@@ -3222,6 +3222,7 @@ def toClassicalTableRoutedDirectFiveClassTerminalAbsorptionWithBddL6Data
       (GroundedC1VDSplitData.ofVariation
         variation.toVariationClassData.toVariationClassData).termMass
       O_D O_P O_E O_CNL O_bdd := by
+  letI : DecidableEq data.sigma := Classical.decEq data.sigma
   letI : LinearOrder data.iota := data.linIota
   exact
     classicalTableRoutedDirectFiveClassTerminalAbsorptionFromRawClosedN33LowPaid
@@ -3687,6 +3688,69 @@ def toRawTerminalLowPaidInputData
       O_D O_P O_E O_CNL O_bdd :=
   data.toStructuredTerminalLowPaidInputData.toRawTerminalLowPaidInputData
 
+/-- Project the finite-overlap terminal package directly to the L.6-backed
+table-routed N.3.3 terminal absorption data, keeping the bounded class at the
+finite-overlap L.6.2 boundary until the final absorption constructor. -/
+def toClassicalTableRoutedDirectFiveClassTerminalAbsorptionWithBddL6Data
+    {shell : FailingDyadicShell}
+    {chernoffLeaf :
+      RegularShellPaidChernoff22_1AInputData erdos260Constants.cStar
+        erdos260Constants.ξ (shell.X : Real)}
+    {carryLocal :
+      ThresholdControlledStrictFailureBoundedThresholdShellGroundedCarryLocalData
+        shell erdos260Constants.cPr}
+    {hc0Small : shell.c0 <= manuscriptKappa / 16}
+    {h_supportCount_pos : 1 <= supportCount shell.d shell.X}
+    {O_D O_P O_E O_CNL O_bdd O_V : Real}
+    {variation :
+      AppendixNVariationClosedN21N22InputData carryLocal hc0Small
+        h_supportCount_pos O_V}
+    (data :
+      AppendixNStructuredTerminalFiniteOverlapLowPaidInputData chernoffLeaf
+        variation O_D O_P O_E O_CNL O_bdd) :
+    ClassicalTableRoutedDirectFiveClassTerminalAbsorptionWithBddL6Data
+      chernoffLeaf
+      (GroundedC1VDSplitData.ofVariation
+        variation.toVariationClassData.toVariationClassData).termMass
+      O_D O_P O_E O_CNL O_bdd := by
+  letI : DecidableEq data.sigma := Classical.decEq data.sigma
+  letI : LinearOrder data.iota := data.linIota
+  exact
+    classicalTableRoutedDirectFiveClassTerminalAbsorptionFromClosedN33FiniteOverlapLowPaid
+      data.E data.row data.supp data.thr data.terminalWeight
+      data.terminalMass.toTableRoutedTerminalMassInputData
+      data.densePack.toTableRoutedDensePackClassInputData
+      data.progress.toTableRoutedProgressClassInputData
+      data.endpoint.toTableRoutedEndpointClassInputData
+      data.cnl.toTableRoutedCNLClassInputData
+      data.bddFiniteOverlap
+
+/-- Forget only the explicit L.6 explanation from the finite-overlap terminal
+package, recovering ordinary table-routed N.3.3 absorption data. -/
+def toClassicalTableRoutedDirectFiveClassTerminalAbsorptionData
+    {shell : FailingDyadicShell}
+    {chernoffLeaf :
+      RegularShellPaidChernoff22_1AInputData erdos260Constants.cStar
+        erdos260Constants.ξ (shell.X : Real)}
+    {carryLocal :
+      ThresholdControlledStrictFailureBoundedThresholdShellGroundedCarryLocalData
+        shell erdos260Constants.cPr}
+    {hc0Small : shell.c0 <= manuscriptKappa / 16}
+    {h_supportCount_pos : 1 <= supportCount shell.d shell.X}
+    {O_D O_P O_E O_CNL O_bdd O_V : Real}
+    {variation :
+      AppendixNVariationClosedN21N22InputData carryLocal hc0Small
+        h_supportCount_pos O_V}
+    (data :
+      AppendixNStructuredTerminalFiniteOverlapLowPaidInputData chernoffLeaf
+        variation O_D O_P O_E O_CNL O_bdd) :
+    ClassicalTableRoutedDirectFiveClassTerminalAbsorptionData
+      (GroundedC1VDSplitData.ofVariation
+        variation.toVariationClassData.toVariationClassData).termMass
+      O_D O_P O_E O_CNL O_bdd :=
+  data.toClassicalTableRoutedDirectFiveClassTerminalAbsorptionWithBddL6Data
+    |>.toClassicalTableRoutedDirectFiveClassTerminalAbsorptionData
+
 /-- Project the finite-overlap terminal package directly to the closed
 N.2/N.3/L.6 bundle. -/
 def toBddL6InputData
@@ -3707,8 +3771,10 @@ def toBddL6InputData
       AppendixNStructuredTerminalFiniteOverlapLowPaidInputData chernoffLeaf
         variation O_D O_P O_E O_CNL O_bdd) :
     AppendixNClosedN2N3BddL6InputData chernoffLeaf carryLocal hc0Small
-      h_supportCount_pos O_D O_P O_E O_CNL O_bdd O_V :=
-  data.toStructuredTerminalLowPaidInputData.toBddL6InputData
+      h_supportCount_pos O_D O_P O_E O_CNL O_bdd O_V where
+  variation := variation
+  terminalAbsorption :=
+    data.toClassicalTableRoutedDirectFiveClassTerminalAbsorptionWithBddL6Data
 
 /-- The finite-overlap terminal package pays the terminal mass into the five
 non-drop classes after collapsing to the standard L.6 split. -/
@@ -3732,7 +3798,34 @@ theorem termMass_le_classes
     (GroundedC1VDSplitData.ofVariation
       variation.toVariationClassData.toVariationClassData).termMass <=
       O_D + O_P + O_E + O_CNL + O_bdd :=
-  data.toStructuredTerminalLowPaidInputData.termMass_le_classes
+  data.toClassicalTableRoutedDirectFiveClassTerminalAbsorptionWithBddL6Data
+    |>.termMass_le_classes
+
+/-- Project the finite-overlap N.3.3/L.6 package to the separated terminal leaf
+used by the canonical-Y route. -/
+def toClassicalTerminalN33SeparatedLeafData
+    {shell : FailingDyadicShell}
+    {chernoffLeaf :
+      RegularShellPaidChernoff22_1AInputData erdos260Constants.cStar
+        erdos260Constants.ξ (shell.X : Real)}
+    {carryLocal :
+      ThresholdControlledStrictFailureBoundedThresholdShellGroundedCarryLocalData
+        shell erdos260Constants.cPr}
+    {hc0Small : shell.c0 <= manuscriptKappa / 16}
+    {h_supportCount_pos : 1 <= supportCount shell.d shell.X}
+    {O_D O_P O_E O_CNL O_bdd O_V : Real}
+    {variation :
+      AppendixNVariationClosedN21N22InputData carryLocal hc0Small
+        h_supportCount_pos O_V}
+    (data :
+      AppendixNStructuredTerminalFiniteOverlapLowPaidInputData chernoffLeaf
+        variation O_D O_P O_E O_CNL O_bdd) :
+    ClassicalTerminalN33SeparatedLeafData
+      (GroundedC1VDSplitData.ofVariation
+        variation.toVariationClassData.toVariationClassData).termMass
+      O_D O_P O_E O_CNL O_bdd :=
+  classicalTerminalN33SeparatedLeafFromTableRoutedDirectBddL6
+    data.toClassicalTableRoutedDirectFiveClassTerminalAbsorptionWithBddL6Data
 
 end AppendixNStructuredTerminalFiniteOverlapLowPaidInputData
 
@@ -6209,6 +6302,29 @@ def globalAppendixNProofV4DirectRawTerminalLowPaidFromStructuredTerminalLowPaid
   fun shell pin hXge =>
     (terminal shell pin hXge).toRawTerminalLowPaidInputData
 
+/-- Expose finite-overlap L.6.2 structured terminal data directly at the raw
+terminal-low-paid provider boundary.  This is the same projection as
+`globalAppendixNProofV4DirectStructuredTerminalLowPaidFromFiniteOverlap`
+followed by
+`globalAppendixNProofV4DirectRawTerminalLowPaidFromStructuredTerminalLowPaid`. -/
+def globalAppendixNProofV4DirectRawTerminalLowPaidFromStructuredTerminalFiniteOverlapLowPaid
+    (chernoff : GlobalAppendixNProofV4CarryChernoffProvider)
+    (cnl : GlobalAppendixNProofV4DirectCNLProvider)
+    (dirtyMultiplicity : GlobalAppendixNProofV4DirectDirtyProvider)
+    (trt : GlobalAppendixNProofV4GroundedTRTPackageProvider)
+    (variation :
+      GlobalAppendixNProofV4DirectClosedN2VariationProvider
+        chernoff cnl dirtyMultiplicity trt)
+    (terminal :
+      GlobalAppendixNProofV4DirectStructuredTerminalFiniteOverlapLowPaidProvider
+        chernoff cnl dirtyMultiplicity trt variation) :
+    GlobalAppendixNProofV4DirectRawTerminalLowPaidProvider
+      chernoff cnl dirtyMultiplicity trt variation :=
+  globalAppendixNProofV4DirectRawTerminalLowPaidFromStructuredTerminalLowPaid
+    chernoff cnl dirtyMultiplicity trt variation
+    (globalAppendixNProofV4DirectStructuredTerminalLowPaidFromFiniteOverlap
+      chernoff cnl dirtyMultiplicity trt variation terminal)
+
 /-- Forget the explicit L.6 explanation carried by a raw terminal-low-paid
 provider, recovering an ordinary N.3.3 terminal absorption provider on the
 same closed-N.2 canonical-Y variation. -/
@@ -6269,6 +6385,26 @@ def globalAppendixNProofV4DirectRawN24LowPaidFromClosedN2RawTerminalLowPaid
   fun shell pin hXge =>
     (terminal shell pin hXge).toClosedN2N3RawLowPaidInputData
 
+/-- Assemble the raw N.24 low-paid provider directly from closed N.2 variation
+data and finite-overlap L.6.2 structured terminal data. -/
+def globalAppendixNProofV4DirectRawN24LowPaidFromClosedN2StructuredTerminalFiniteOverlapLowPaid
+    (chernoff : GlobalAppendixNProofV4CarryChernoffProvider)
+    (cnl : GlobalAppendixNProofV4DirectCNLProvider)
+    (dirtyMultiplicity : GlobalAppendixNProofV4DirectDirtyProvider)
+    (trt : GlobalAppendixNProofV4GroundedTRTPackageProvider)
+    (variation :
+      GlobalAppendixNProofV4DirectClosedN2VariationProvider
+        chernoff cnl dirtyMultiplicity trt)
+    (terminal :
+      GlobalAppendixNProofV4DirectStructuredTerminalFiniteOverlapLowPaidProvider
+        chernoff cnl dirtyMultiplicity trt variation) :
+    GlobalAppendixNProofV4DirectRawN24LowPaidProvider
+      chernoff cnl dirtyMultiplicity trt :=
+  globalAppendixNProofV4DirectRawN24LowPaidFromClosedN2RawTerminalLowPaid
+    chernoff cnl dirtyMultiplicity trt variation
+    (globalAppendixNProofV4DirectRawTerminalLowPaidFromStructuredTerminalFiniteOverlapLowPaid
+      chernoff cnl dirtyMultiplicity trt variation terminal)
+
 /-- Project the raw N.2/N.3.3 low-paid provider to the existing L.6-backed N.24
 provider field consumed by the manuscript-direct endpoint. -/
 def globalAppendixNProofV4DirectN24FromRawLowPaid
@@ -6301,6 +6437,44 @@ def globalAppendixNProofV4DirectN24FromRawLowPaid
         (termRun phases) :=
   fun shell pin hXge =>
     (n24Raw shell pin hXge).toBddL6InputData
+
+/-- Project closed N.2 variation plus finite-overlap L.6.2 structured terminal
+data all the way to the L.6-backed N.24 provider field. -/
+def globalAppendixNProofV4DirectN24FromStructuredTerminalFiniteOverlapLowPaid
+    (chernoff : GlobalAppendixNProofV4CarryChernoffProvider)
+    (cnl : GlobalAppendixNProofV4DirectCNLProvider)
+    (dirtyMultiplicity : GlobalAppendixNProofV4DirectDirtyProvider)
+    (trt : GlobalAppendixNProofV4GroundedTRTPackageProvider)
+    (variation :
+      GlobalAppendixNProofV4DirectClosedN2VariationProvider
+        chernoff cnl dirtyMultiplicity trt)
+    (terminal :
+      GlobalAppendixNProofV4DirectStructuredTerminalFiniteOverlapLowPaidProvider
+        chernoff cnl dirtyMultiplicity trt variation) :
+    forall (shell : FailingDyadicShell)
+      (pin : PinnedManuscriptShell shell)
+      (hXge :
+        appendixNChainCompressionStartThreshold shell.Q shell.d shell.hd
+            shell.hnonterm <= shell.X),
+      let phases :=
+        globalAppendixNProofV4DirectCNLDirtyTRTPackageClosurePhases
+          chernoff cnl dirtyMultiplicity trt shell pin hXge
+      AppendixNClosedN2N3BddL6InputData
+        (globalAppendixNProofV4CarryStoppedChernoff chernoff
+          shell pin.hc0Small hXge)
+        (appendixNGapCanonicalYCarryLocalAt shell hXge)
+        pin.hc0Small
+        (supportCount_pos_of_appendixNChainCompressionStartThreshold_le hXge)
+        (termDensePack phases)
+        (termChernoff phases)
+        (termReturn phases)
+        (termCnl phases)
+        (termTower phases)
+        (termRun phases) :=
+  globalAppendixNProofV4DirectN24FromRawLowPaid
+    chernoff cnl dirtyMultiplicity trt
+    (globalAppendixNProofV4DirectRawN24LowPaidFromClosedN2StructuredTerminalFiniteOverlapLowPaid
+      chernoff cnl dirtyMultiplicity trt variation terminal)
 
 set_option linter.unusedVariables false in
 /-- Manuscript-direct surface splitting N.24 into canonical-Y N.2 variation,
@@ -11431,6 +11605,49 @@ def toStructuredTerminalProviderInputs
     simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR] using
       (data.terminal ctx).toStructuredTerminalLowPaidInputData
 
+/-- Direct projection of the finite-overlap terminal provider to the raw
+actual final surface, keeping the finite-overlap certificate until the actual
+terminal package is formed. -/
+def toRawChernoffCNLRRRawN2StructuredTerminalLowPaidInputs
+    (data :
+      GlobalAssemblyActualCarryStoppedChernoffRawClusterCNLRawReturnRunFieldsRecordDensityN2FiniteOverlapTerminalProviderInputs) :
+    GlobalAssemblyActualRawChernoffCNLRRRawN2StructuredTerminalLowPaidInputs where
+  chernoff :=
+    globalAppendixNActualRawChernoffFromCarryStoppedTreeAreaLayerProvider
+      data.chernoff
+  cnl := globalAppendixNActualRawCNLFromRawClusterFields data.cnl
+  returnPkg := globalAppendixNActualRawReturnFromRawReturnFieldsProvider
+    data.returnPkg
+  run := globalAppendixNActualRawRunFromRawRunFieldsProvider data.runProvider
+  n2 := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR] using
+      (((data.n2 ctx).toRawN2FirstCrossingFields).toActualRawN2FirstCrossingData)
+  terminal := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR] using
+      ((globalAppendixNActualStructuredTerminalFiniteOverlapFromProofV4StructuredTerminal
+        (data.terminal ctx)).toStructuredTerminalLowPaidData)
+
+/-- Project record-density N.2 and proof-v4 finite-overlap terminal data to
+the fully actual raw-N.2 manuscript-regular target. -/
+def toManuscriptRegularRawN2FiniteOverlapTerminalInputs
+    (data :
+      GlobalAssemblyActualCarryStoppedChernoffRawClusterCNLRawReturnRunFieldsRecordDensityN2FiniteOverlapTerminalProviderInputs) :
+    GlobalAssemblyActualManuscriptRegularRawN2FiniteOverlapTerminalInputs where
+  chernoff :=
+    globalAppendixNActualRawChernoffFromCarryStoppedTreeAreaLayerProvider
+      data.chernoff
+  cnl := globalAppendixNActualRawCNLFromRawClusterFields data.cnl
+  returnPkg := globalAppendixNActualRawReturnFromRawReturnFieldsProvider
+    data.returnPkg
+  run := globalAppendixNActualRawRunFromRawRunFieldsProvider data.runProvider
+  n2 := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR] using
+      (((data.n2 ctx).toRawN2FirstCrossingFields).toActualRawN2FirstCrossingData)
+  terminal := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR] using
+      (globalAppendixNActualStructuredTerminalFiniteOverlapFromProofV4StructuredTerminal
+        (data.terminal ctx))
+
 end GlobalAssemblyActualCarryStoppedChernoffRawClusterCNLRawReturnRunFieldsRecordDensityN2FiniteOverlapTerminalProviderInputs
 
 /-- Nonemptiness of the proof-v4 finite-overlap terminal surface supplies the
@@ -11450,8 +11667,8 @@ theorem erdos260_final_actual_carryStoppedChernoff_rawClusterCNL_rawReturnRunFie
     (data :
       GlobalAssemblyActualCarryStoppedChernoffRawClusterCNLRawReturnRunFieldsRecordDensityN2FiniteOverlapTerminalProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedChernoff_rawClusterCNL_rawReturnRunFields_recordDensityN2StructuredTerminal_provider
-    data.toStructuredTerminalProviderInputs
+  erdos260_final_actual_manuscriptRegular_rawN2FiniteOverlapTerminal
+    data.toManuscriptRegularRawN2FiniteOverlapTerminalInputs
 
 /--
 A nonempty finite-overlap manuscript-regular actual provider proves the final
@@ -11524,6 +11741,46 @@ def toFiniteOverlapTerminalProviderInputs
     simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR] using
       (data.terminal ctx).toAppendixNStructuredTerminalFiniteOverlapLowPaidInputData
 
+/-- Direct projection of actual finite-overlap terminal data to the raw actual
+structured-terminal surface. -/
+def toRawChernoffCNLRRRawN2StructuredTerminalLowPaidInputs
+    (data :
+      GlobalAssemblyActualCarryStoppedChernoffRawClusterCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapTerminalProviderInputs) :
+    GlobalAssemblyActualRawChernoffCNLRRRawN2StructuredTerminalLowPaidInputs where
+  chernoff :=
+    globalAppendixNActualRawChernoffFromCarryStoppedTreeAreaLayerProvider
+      data.chernoff
+  cnl := globalAppendixNActualRawCNLFromRawClusterFields data.cnl
+  returnPkg := globalAppendixNActualRawReturnFromRawReturnFieldsProvider
+    data.returnPkg
+  run := globalAppendixNActualRawRunFromRawRunFieldsProvider data.runProvider
+  n2 := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR] using
+      (((data.n2 ctx).toRawN2FirstCrossingFields).toActualRawN2FirstCrossingData)
+  terminal := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR] using
+      ((data.terminal ctx).toStructuredTerminalLowPaidData)
+
+/-- Project record-density N.2 and actual finite-overlap terminal data to the
+fully actual raw-N.2 manuscript-regular target. -/
+def toManuscriptRegularRawN2FiniteOverlapTerminalInputs
+    (data :
+      GlobalAssemblyActualCarryStoppedChernoffRawClusterCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapTerminalProviderInputs) :
+    GlobalAssemblyActualManuscriptRegularRawN2FiniteOverlapTerminalInputs where
+  chernoff :=
+    globalAppendixNActualRawChernoffFromCarryStoppedTreeAreaLayerProvider
+      data.chernoff
+  cnl := globalAppendixNActualRawCNLFromRawClusterFields data.cnl
+  returnPkg := globalAppendixNActualRawReturnFromRawReturnFieldsProvider
+    data.returnPkg
+  run := globalAppendixNActualRawRunFromRawRunFieldsProvider data.runProvider
+  n2 := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR] using
+      (((data.n2 ctx).toRawN2FirstCrossingFields).toActualRawN2FirstCrossingData)
+  terminal := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR] using
+      data.terminal ctx
+
 end GlobalAssemblyActualCarryStoppedChernoffRawClusterCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapTerminalProviderInputs
 
 /-- Nonemptiness of the actual finite-overlap terminal surface supplies the
@@ -11543,8 +11800,8 @@ theorem erdos260_final_actual_carryStoppedChernoff_rawClusterCNL_rawReturnRunFie
     (data :
       GlobalAssemblyActualCarryStoppedChernoffRawClusterCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapTerminalProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedChernoff_rawClusterCNL_rawReturnRunFields_recordDensityN2FiniteOverlapTerminal_provider
-    data.toFiniteOverlapTerminalProviderInputs
+  erdos260_final_actual_manuscriptRegular_rawN2FiniteOverlapTerminal
+    data.toManuscriptRegularRawN2FiniteOverlapTerminalInputs
 
 /-- A nonempty actual-shell finite-overlap terminal provider proves the final
 statement. This remains conditional: no no-argument inhabitant is introduced. -/
@@ -11609,6 +11866,46 @@ def toActualFiniteOverlapTerminalProviderInputs
   n2 := data.n2
   terminal := fun ctx => (data.terminal ctx).toFiniteOverlapLowPaidData
 
+/-- Direct projection of field-exposed actual finite-overlap terminal data to
+the raw actual structured-terminal surface. -/
+def toRawChernoffCNLRRRawN2StructuredTerminalLowPaidInputs
+    (data :
+      GlobalAssemblyActualCarryStoppedChernoffRawClusterCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
+    GlobalAssemblyActualRawChernoffCNLRRRawN2StructuredTerminalLowPaidInputs where
+  chernoff :=
+    globalAppendixNActualRawChernoffFromCarryStoppedTreeAreaLayerProvider
+      data.chernoff
+  cnl := globalAppendixNActualRawCNLFromRawClusterFields data.cnl
+  returnPkg := globalAppendixNActualRawReturnFromRawReturnFieldsProvider
+    data.returnPkg
+  run := globalAppendixNActualRawRunFromRawRunFieldsProvider data.runProvider
+  n2 := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR] using
+      (((data.n2 ctx).toRawN2FirstCrossingFields).toActualRawN2FirstCrossingData)
+  terminal := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR] using
+      ((data.terminal ctx).toFiniteOverlapLowPaidData.toStructuredTerminalLowPaidData)
+
+/-- Project record-density N.2 and field-exposed actual finite-overlap terminal
+data to the field-exposed fully actual raw-N.2 manuscript-regular target. -/
+def toManuscriptRegularRawN2FiniteOverlapFieldsTerminalInputs
+    (data :
+      GlobalAssemblyActualCarryStoppedChernoffRawClusterCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
+    GlobalAssemblyActualManuscriptRegularRawN2FiniteOverlapFieldsTerminalInputs where
+  chernoff :=
+    globalAppendixNActualRawChernoffFromCarryStoppedTreeAreaLayerProvider
+      data.chernoff
+  cnl := globalAppendixNActualRawCNLFromRawClusterFields data.cnl
+  returnPkg := globalAppendixNActualRawReturnFromRawReturnFieldsProvider
+    data.returnPkg
+  run := globalAppendixNActualRawRunFromRawRunFieldsProvider data.runProvider
+  n2 := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR] using
+      (((data.n2 ctx).toRawN2FirstCrossingFields).toActualRawN2FirstCrossingData)
+  terminal := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR] using
+      data.terminal ctx
+
 end GlobalAssemblyActualCarryStoppedChernoffRawClusterCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapFieldsTerminalProviderInputs
 
 /-- Nonemptiness of the field-exposed actual finite-overlap terminal surface
@@ -11628,8 +11925,8 @@ theorem erdos260_final_actual_carryStoppedChernoff_rawClusterCNL_rawReturnRunFie
     (data :
       GlobalAssemblyActualCarryStoppedChernoffRawClusterCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedChernoff_rawClusterCNL_rawReturnRunFields_recordDensityN2ActualFiniteOverlapTerminal_provider
-    data.toActualFiniteOverlapTerminalProviderInputs
+  erdos260_final_actual_manuscriptRegular_rawN2FiniteOverlapFieldsTerminal
+    data.toManuscriptRegularRawN2FiniteOverlapFieldsTerminalInputs
 
 /-- A nonempty fully exposed actual finite-overlap terminal-field provider
 proves the final statement. This remains conditional. -/
@@ -11727,8 +12024,8 @@ theorem erdos260_final_actual_carryStoppedChernoff_rawClusterCNL_rawReturnRunFie
     (data :
       GlobalAssemblyActualCarryStoppedChernoffRawClusterCNLRawReturnRunFieldsRawN2ActualFiniteOverlapTerminalProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_rawChernoffCNLRRRawN2StructuredTerminalLowPaid
-    data.toRawChernoffCNLRRRawN2StructuredTerminalLowPaidInputs
+  erdos260_final_actual_manuscriptRegular_rawN2FiniteOverlapTerminal
+    data.toManuscriptRegularRawN2FiniteOverlapTerminalInputs
 
 /-- The same bridge factored through the fully actual manuscript-regular
 target. -/
@@ -11836,8 +12133,8 @@ theorem erdos260_final_actual_carryStoppedChernoff_rawClusterCNL_rawReturnRunFie
     (data :
       GlobalAssemblyActualCarryStoppedChernoffRawClusterCNLRawReturnRunFieldsRawN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedChernoff_rawClusterCNL_rawReturnRunFields_rawN2ActualFiniteOverlapTerminal_provider
-    data.toRawN2ActualFiniteOverlapTerminalProviderInputs
+  erdos260_final_actual_manuscriptRegular_rawN2FiniteOverlapFieldsTerminal
+    data.toManuscriptRegularRawN2FiniteOverlapFieldsTerminalInputs
 
 /-- The same bridge factored through the field-exposed fully actual
 manuscript-regular target. -/
@@ -12032,8 +12329,8 @@ theorem erdos260_final_actual_carryStoppedChernoff_rawClusterCNL_rawReturnRunFie
     (data :
       GlobalAssemblyActualCarryStoppedChernoffRawClusterCNLRawReturnRunFieldsClosedN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedChernoff_rawClusterCNL_rawReturnRunFields_closedN2ActualFiniteOverlapTerminal_provider
-    data.toClosedN2ActualFiniteOverlapTerminalProviderInputs
+  erdos260_final_actual_manuscriptRegular_closedN2FiniteOverlapFieldsTerminal
+    data.toManuscriptRegularClosedN2FiniteOverlapFieldsTerminalInputs
 
 /-- The same bridge factored through the field-exposed fully actual
 manuscript-regular closed-N.2 target. -/
@@ -12126,8 +12423,8 @@ theorem erdos260_final_actual_carryStoppedChernoff_proofObjectCNL_rawReturnRunFi
     (data :
       GlobalAssemblyActualCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsClosedN2ActualFiniteOverlapTerminalProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedChernoff_rawClusterCNL_rawReturnRunFields_closedN2ActualFiniteOverlapTerminal_provider
-    data.toRawClusterCNLClosedN2ActualFiniteOverlapTerminalProviderInputs
+  erdos260_final_actual_manuscriptRegular_closedN2FiniteOverlapTerminal
+    data.toManuscriptRegularClosedN2FiniteOverlapTerminalInputs
 
 /-- The same bridge factored through the fully actual manuscript-regular
 closed-N.2 target. -/
@@ -12228,8 +12525,8 @@ theorem erdos260_final_actual_carryStoppedChernoff_proofObjectCNL_rawReturnRunFi
     (data :
       GlobalAssemblyActualCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsClosedN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedChernoff_proofObjectCNL_rawReturnRunFields_closedN2ActualFiniteOverlapTerminal_provider
-    data.toClosedN2ActualFiniteOverlapTerminalProviderInputs
+  erdos260_final_actual_manuscriptRegular_closedN2FiniteOverlapFieldsTerminal
+    data.toManuscriptRegularClosedN2FiniteOverlapFieldsTerminalInputs
 
 /-- The same bridge factored through the field-exposed fully actual
 manuscript-regular closed-N.2 target. -/
@@ -12332,8 +12629,8 @@ theorem erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_r
     (data :
       GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLRawReturnRunFieldsClosedN2ActualFiniteOverlapTerminalProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedChernoff_proofObjectCNL_rawReturnRunFields_closedN2ActualFiniteOverlapTerminal_provider
-    data.toCarryStoppedChernoffProofObjectCNLClosedN2ActualFiniteOverlapTerminalProviderInputs
+  erdos260_final_actual_manuscriptRegular_closedN2FiniteOverlapTerminal
+    data.toManuscriptRegularClosedN2FiniteOverlapTerminalInputs
 
 /-- The same bridge factored through the fully actual manuscript-regular
 closed-N.2 target. -/
@@ -12441,8 +12738,8 @@ theorem erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_r
     (data :
       GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLRawReturnRunFieldsClosedN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_rawReturnRunFields_closedN2ActualFiniteOverlapTerminal_provider
-    data.toClosedN2ActualFiniteOverlapTerminalProviderInputs
+  erdos260_final_actual_manuscriptRegular_closedN2FiniteOverlapFieldsTerminal
+    data.toManuscriptRegularClosedN2FiniteOverlapFieldsTerminalInputs
 
 /-- The same bridge factored through the field-exposed fully actual
 manuscript-regular closed-N.2 target. -/
@@ -12557,8 +12854,8 @@ theorem erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_r
     (data :
       GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLReturnRunPackagesClosedN2ActualFiniteOverlapTerminalProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_rawReturnRunFields_closedN2ActualFiniteOverlapTerminal_provider
-    data.toRawReturnRunFieldsClosedN2ActualFiniteOverlapTerminalProviderInputs
+  erdos260_final_actual_manuscriptRegular_closedN2FiniteOverlapTerminal
+    data.toManuscriptRegularClosedN2FiniteOverlapTerminalInputs
 
 /-- The same bridge factored through the fully actual manuscript-regular
 closed-N.2 target. -/
@@ -12687,8 +12984,8 @@ theorem erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_r
     (data :
       GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLReturnRunPackagesClosedN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_returnRunPackages_closedN2ActualFiniteOverlapTerminal_provider
-    data.toClosedN2ActualFiniteOverlapTerminalProviderInputs
+  erdos260_final_actual_manuscriptRegular_closedN2FiniteOverlapFieldsTerminal
+    data.toManuscriptRegularClosedN2FiniteOverlapFieldsTerminalInputs
 
 /-- The same bridge factored through the field-exposed fully actual
 manuscript-regular closed-N.2 target. -/
@@ -12820,8 +13117,8 @@ theorem erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_t
     (data :
       GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLTRTPackagesClosedN2ActualFiniteOverlapTerminalProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_returnRunPackages_closedN2ActualFiniteOverlapTerminal_provider
-    data.toReturnRunPackagesClosedN2ActualFiniteOverlapTerminalProviderInputs
+  erdos260_final_actual_manuscriptRegular_closedN2FiniteOverlapTerminal
+    data.toManuscriptRegularClosedN2FiniteOverlapTerminalInputs
 
 /-- The same bridge factored through the fully actual manuscript-regular
 closed-N.2 target. -/
@@ -12973,8 +13270,8 @@ theorem erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_t
     (data :
       GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLTRTPackagesClosedN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_trtPackages_closedN2ActualFiniteOverlapTerminal_provider
-    data.toTRTPackagesClosedN2ActualFiniteOverlapTerminalProviderInputs
+  erdos260_final_actual_manuscriptRegular_closedN2FiniteOverlapFieldsTerminal
+    data.toManuscriptRegularClosedN2FiniteOverlapFieldsTerminalInputs
 
 /-- The same bridge factored through the field-exposed fully actual
 manuscript-regular closed-N.2 target. -/
@@ -13161,8 +13458,8 @@ theorem erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_t
     (data :
       GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLTRTPackagesCanonicalYVariationLeafActualFiniteOverlapTerminalProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_trtPackages_closedN2ActualFiniteOverlapTerminal_provider
-    data.toTRTPackagesClosedN2ActualFiniteOverlapTerminalProviderInputs
+  erdos260_final_actual_manuscriptRegular_closedN2FiniteOverlapTerminal
+    data.toManuscriptRegularClosedN2FiniteOverlapTerminalInputs
 
 /-- The same bridge factored through the fully actual manuscript-regular
 closed-N.2 target. -/
@@ -13273,8 +13570,8 @@ theorem erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_t
     (data :
       GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLTRTPackagesCanonicalYVariationLeafActualFiniteOverlapFieldsTerminalProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_trtPackages_closedN2ActualFiniteOverlapFieldsTerminal_provider
-    data.toTRTPackagesClosedN2ActualFiniteOverlapFieldsTerminalProviderInputs
+  erdos260_final_actual_manuscriptRegular_closedN2FiniteOverlapFieldsTerminal
+    data.toManuscriptRegularClosedN2FiniteOverlapFieldsTerminalInputs
 
 /-- The same bridge factored through the field-exposed fully actual
 manuscript-regular closed-N.2 target. -/
@@ -13374,8 +13671,8 @@ theorem erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_t
     (data :
       GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLTRTPackagesCanonicalYVariationLeafStructuredFiniteOverlapTerminalProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_trtPackages_canonicalYVariationLeafActualFiniteOverlapTerminal_provider
-    data.toCanonicalYVariationLeafActualFiniteOverlapTerminalProviderInputs
+  erdos260_final_actual_manuscriptRegular_closedN2FiniteOverlapTerminal
+    data.toManuscriptRegularClosedN2FiniteOverlapTerminalInputs
 
 /-- The same structured finite-overlap bridge factored through the fully actual
 manuscript-regular closed-N.2 target. -/
@@ -13767,8 +14064,8 @@ theorem erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_t
     (data :
       GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLTRTPackagesCanonicalYVariationLeafPhaseAlignedTerminalAllFieldsProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_trtPackages_canonicalYVariationLeafPinnedPhaseTerminalAllFields_provider
-    data.toCanonicalYVariationLeafPinnedPhaseTerminalAllFieldsProviderInputs
+  erdos260_final_actual_manuscriptRegular_closedN2PhaseAlignedTerminalAllFields
+    data.toManuscriptRegularClosedN2PhaseAlignedTerminalAllFieldsInputs
 
 /-- The same phase-aligned terminal-all-fields route factored through the
 fully actual phase-aligned target. -/
@@ -14770,6 +15067,35 @@ def toRawN2PhaseAlignedTerminalAllFieldsProviderInputs
   terminal_progressPhase_eq := data.terminal_progressPhase_eq
   terminal_endpointPhase_eq := data.terminal_endpointPhase_eq
 
+/-- Project the area-layer record-density N.2 separated-TRT route directly to
+the fully actual phase-aligned closed-N.2 target. -/
+def toManuscriptRegularClosedN2PhaseAlignedTerminalAllFieldsInputs
+    (data :
+      GlobalAssemblyActualCarryStoppedTreeAreaLayerChernoffRawClusterCNLSeparatedTRTFieldsRecordDensityN2PhaseAlignedTerminalAllFieldsProviderInputs) :
+    GlobalAssemblyActualManuscriptRegularClosedN2PhaseAlignedTerminalAllFieldsInputs where
+  chernoff := globalAppendixNActualRawChernoffFromCarryStoppedTreeAreaLayerProvider
+    data.chernoff
+  cnl := globalAppendixNActualRawCNLFromRawClusterFields data.cnl
+  returnPkg := globalAppendixNActualRawReturnFromRawReturnFieldsProvider
+    data.returnPkg
+  run := globalAppendixNActualRawRunFromRawRunFieldsProvider data.run
+  variation := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedTreeAreaLayerRawClusterCNLSeparatedTRTFieldsRR]
+      using
+        ((((data.n2 ctx).toRawN2FirstCrossingFields).toActualRawN2FirstCrossingData).toVariationData)
+  terminal := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedTreeAreaLayerRawClusterCNLSeparatedTRTFieldsRR]
+      using data.terminal ctx
+  terminal_densePhase_eq := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedTreeAreaLayerRawClusterCNLSeparatedTRTFieldsRR]
+      using data.terminal_densePhase_eq ctx
+  terminal_progressPhase_eq := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedTreeAreaLayerRawClusterCNLSeparatedTRTFieldsRR]
+      using data.terminal_progressPhase_eq ctx
+  terminal_endpointPhase_eq := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedTreeAreaLayerRawClusterCNLSeparatedTRTFieldsRR]
+      using data.terminal_endpointPhase_eq ctx
+
 end GlobalAssemblyActualCarryStoppedTreeAreaLayerChernoffRawClusterCNLSeparatedTRTFieldsRecordDensityN2PhaseAlignedTerminalAllFieldsProviderInputs
 
 /-- Nonemptiness of the area-layer record-density N.2 phase-aligned surface
@@ -14789,8 +15115,8 @@ theorem erdos260_final_actual_carryStoppedTreeAreaLayerChernoff_rawClusterCNL_se
     (data :
       GlobalAssemblyActualCarryStoppedTreeAreaLayerChernoffRawClusterCNLSeparatedTRTFieldsRecordDensityN2PhaseAlignedTerminalAllFieldsProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedTreeAreaLayerChernoff_rawClusterCNL_separatedTRTFields_rawN2PhaseAlignedTerminalAllFields_provider
-    data.toRawN2PhaseAlignedTerminalAllFieldsProviderInputs
+  erdos260_final_actual_manuscriptRegular_closedN2PhaseAlignedTerminalAllFields
+    data.toManuscriptRegularClosedN2PhaseAlignedTerminalAllFieldsInputs
 
 /-- A nonempty area-layer record-density N.2 / phase-aligned terminal
 separated-TRT provider proves the final statement. This remains conditional. -/
@@ -14928,8 +15254,8 @@ theorem erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_rawClusterCNL_se
     (data :
       GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffRawClusterCNLSeparatedTRTFieldsRawN2PhaseAlignedTerminalAllFieldsProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedTreeAreaLayerChernoff_rawClusterCNL_separatedTRTFields_rawN2PhaseAlignedTerminalAllFields_provider
-    data.toCarryStoppedTreeAreaLayerChernoffRawClusterCNLSeparatedTRTFieldsRawN2PhaseAlignedTerminalAllFieldsProviderInputs
+  erdos260_final_actual_manuscriptRegular_closedN2PhaseAlignedTerminalAllFields
+    data.toManuscriptRegularClosedN2PhaseAlignedTerminalAllFieldsInputs
 
 /-- A nonempty raw actual N.2 / phase-aligned terminal separated-TRT provider
 proves the final statement. This remains conditional. -/
@@ -15047,6 +15373,37 @@ def toRawN2PhaseAlignedTerminalAllFieldsProviderInputs
   terminal_progressPhase_eq := data.terminal_progressPhase_eq
   terminal_endpointPhase_eq := data.terminal_endpointPhase_eq
 
+/-- Project the layer-cake record-density N.2 separated-TRT route directly to
+the fully actual phase-aligned closed-N.2 target. -/
+def toManuscriptRegularClosedN2PhaseAlignedTerminalAllFieldsInputs
+    (data :
+      GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffRawClusterCNLSeparatedTRTFieldsRecordDensityN2PhaseAlignedTerminalAllFieldsProviderInputs) :
+    GlobalAssemblyActualManuscriptRegularClosedN2PhaseAlignedTerminalAllFieldsInputs where
+  chernoff :=
+    globalAppendixNActualRawChernoffFromCarryStoppedTreeAreaLayerProvider
+      (globalAppendixNProofV4CarryStoppedTreeAreaLayerChernoffProviderFromLayerCake
+        data.chernoff)
+  cnl := globalAppendixNActualRawCNLFromRawClusterFields data.cnl
+  returnPkg := globalAppendixNActualRawReturnFromRawReturnFieldsProvider
+    data.returnPkg
+  run := globalAppendixNActualRawRunFromRawRunFieldsProvider data.run
+  variation := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedLayerCakeRawClusterCNLSeparatedTRTFieldsRR]
+      using
+        ((((data.n2 ctx).toRawN2FirstCrossingFields).toActualRawN2FirstCrossingData).toVariationData)
+  terminal := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedLayerCakeRawClusterCNLSeparatedTRTFieldsRR]
+      using data.terminal ctx
+  terminal_densePhase_eq := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedLayerCakeRawClusterCNLSeparatedTRTFieldsRR]
+      using data.terminal_densePhase_eq ctx
+  terminal_progressPhase_eq := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedLayerCakeRawClusterCNLSeparatedTRTFieldsRR]
+      using data.terminal_progressPhase_eq ctx
+  terminal_endpointPhase_eq := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedLayerCakeRawClusterCNLSeparatedTRTFieldsRR]
+      using data.terminal_endpointPhase_eq ctx
+
 end GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffRawClusterCNLSeparatedTRTFieldsRecordDensityN2PhaseAlignedTerminalAllFieldsProviderInputs
 
 /-- Nonemptiness of the layer-cake record-density N.2 phase-aligned surface
@@ -15078,8 +15435,8 @@ theorem erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_rawClusterCNL_se
     (data :
       GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffRawClusterCNLSeparatedTRTFieldsRecordDensityN2PhaseAlignedTerminalAllFieldsProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedTreeAreaLayerChernoff_rawClusterCNL_separatedTRTFields_recordDensityN2PhaseAlignedTerminalAllFields_provider
-    data.toCarryStoppedTreeAreaLayerChernoffRawClusterCNLSeparatedTRTFieldsRecordDensityN2PhaseAlignedTerminalAllFieldsProviderInputs
+  erdos260_final_actual_manuscriptRegular_closedN2PhaseAlignedTerminalAllFields
+    data.toManuscriptRegularClosedN2PhaseAlignedTerminalAllFieldsInputs
 
 /-- A nonempty record-density N.2 / phase-aligned terminal separated-TRT
 provider proves the final statement. This remains conditional. -/
@@ -15163,8 +15520,8 @@ theorem erdos260_final_actual_carryStoppedChernoff_proofObjectCNL_rawReturnRunFi
     (data :
       GlobalAssemblyActualCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsRawN2ActualFiniteOverlapTerminalProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedChernoff_rawClusterCNL_rawReturnRunFields_rawN2ActualFiniteOverlapTerminal_provider
-    data.toRawClusterCNLRawN2ActualFiniteOverlapTerminalProviderInputs
+  erdos260_final_actual_manuscriptRegular_rawN2FiniteOverlapTerminal
+    data.toManuscriptRegularRawN2FiniteOverlapTerminalInputs
 
 /-- The same bridge factored through the fully actual manuscript-regular
 target. -/
@@ -15264,8 +15621,8 @@ theorem erdos260_final_actual_carryStoppedChernoff_proofObjectCNL_rawReturnRunFi
     (data :
       GlobalAssemblyActualCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsRawN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedChernoff_proofObjectCNL_rawReturnRunFields_rawN2ActualFiniteOverlapTerminal_provider
-    data.toRawN2ActualFiniteOverlapTerminalProviderInputs
+  erdos260_final_actual_manuscriptRegular_rawN2FiniteOverlapFieldsTerminal
+    data.toManuscriptRegularRawN2FiniteOverlapFieldsTerminalInputs
 
 /-- The same bridge factored through the field-exposed fully actual
 manuscript-regular target. -/
@@ -15367,8 +15724,8 @@ theorem erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_r
     (data :
       GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLRawReturnRunFieldsRawN2ActualFiniteOverlapTerminalProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedChernoff_proofObjectCNL_rawReturnRunFields_rawN2ActualFiniteOverlapTerminal_provider
-    data.toCarryStoppedChernoffProofObjectCNLRawN2ActualFiniteOverlapTerminalProviderInputs
+  erdos260_final_actual_manuscriptRegular_rawN2FiniteOverlapTerminal
+    data.toManuscriptRegularRawN2FiniteOverlapTerminalInputs
 
 /-- The same layer-cake bridge factored through the fully actual
 manuscript-regular target. -/
@@ -15475,8 +15832,8 @@ theorem erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_r
     (data :
       GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLRawReturnRunFieldsRawN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_rawReturnRunFields_rawN2ActualFiniteOverlapTerminal_provider
-    data.toRawN2ActualFiniteOverlapTerminalProviderInputs
+  erdos260_final_actual_manuscriptRegular_rawN2FiniteOverlapFieldsTerminal
+    data.toManuscriptRegularRawN2FiniteOverlapFieldsTerminalInputs
 
 /-- The same field-exposed layer-cake bridge factored through the field-exposed
 fully actual manuscript-regular target. -/
@@ -15554,6 +15911,60 @@ def toRawClusterCNLFiniteOverlapTerminalProviderInputs
   terminal := fun ctx => by
     simpa using data.terminal ctx
 
+/-- Direct projection of the proof-object CNL proof-v4 finite-overlap terminal
+route to the raw actual structured-terminal surface. -/
+def toRawChernoffCNLRRRawN2StructuredTerminalLowPaidInputs
+    (data :
+      GlobalAssemblyActualCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2FiniteOverlapTerminalProviderInputs) :
+    GlobalAssemblyActualRawChernoffCNLRRRawN2StructuredTerminalLowPaidInputs where
+  chernoff :=
+    globalAppendixNActualRawChernoffFromCarryStoppedTreeAreaLayerProvider
+      data.chernoff
+  cnl :=
+    globalAppendixNActualRawCNLFromRawClusterFields
+      (globalAppendixNProofV4RawClusterCNLFieldsFromProofObject data.cnl)
+  returnPkg := globalAppendixNActualRawReturnFromRawReturnFieldsProvider
+    data.returnPkg
+  run := globalAppendixNActualRawRunFromRawRunFieldsProvider data.runProvider
+  n2 := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR,
+      globalAppendixNActualRawCNLFromRawClusterFields,
+      globalAppendixNProofV4RawClusterCNLFieldsFromProofObject] using
+      (((data.n2 ctx).toRawN2FirstCrossingFields).toActualRawN2FirstCrossingData)
+  terminal := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR,
+      globalAppendixNActualRawCNLFromRawClusterFields,
+      globalAppendixNProofV4RawClusterCNLFieldsFromProofObject] using
+      ((globalAppendixNActualStructuredTerminalFiniteOverlapFromProofV4StructuredTerminal
+        (data.terminal ctx)).toStructuredTerminalLowPaidData)
+
+/-- Project proof-object CNL record-density N.2 and proof-v4 finite-overlap
+terminal data to the fully actual raw-N.2 manuscript-regular target. -/
+def toManuscriptRegularRawN2FiniteOverlapTerminalInputs
+    (data :
+      GlobalAssemblyActualCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2FiniteOverlapTerminalProviderInputs) :
+    GlobalAssemblyActualManuscriptRegularRawN2FiniteOverlapTerminalInputs where
+  chernoff :=
+    globalAppendixNActualRawChernoffFromCarryStoppedTreeAreaLayerProvider
+      data.chernoff
+  cnl :=
+    globalAppendixNActualRawCNLFromRawClusterFields
+      (globalAppendixNProofV4RawClusterCNLFieldsFromProofObject data.cnl)
+  returnPkg := globalAppendixNActualRawReturnFromRawReturnFieldsProvider
+    data.returnPkg
+  run := globalAppendixNActualRawRunFromRawRunFieldsProvider data.runProvider
+  n2 := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR,
+      globalAppendixNActualRawCNLFromRawClusterFields,
+      globalAppendixNProofV4RawClusterCNLFieldsFromProofObject] using
+      (((data.n2 ctx).toRawN2FirstCrossingFields).toActualRawN2FirstCrossingData)
+  terminal := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR,
+      globalAppendixNActualRawCNLFromRawClusterFields,
+      globalAppendixNProofV4RawClusterCNLFieldsFromProofObject] using
+      (globalAppendixNActualStructuredTerminalFiniteOverlapFromProofV4StructuredTerminal
+        (data.terminal ctx))
+
 end GlobalAssemblyActualCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2FiniteOverlapTerminalProviderInputs
 
 /-- Final bridge from the proof-object-CNL, finite-overlap manuscript-regular
@@ -15562,8 +15973,8 @@ theorem erdos260_final_actual_carryStoppedChernoff_proofObjectCNL_rawReturnRunFi
     (data :
       GlobalAssemblyActualCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2FiniteOverlapTerminalProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedChernoff_rawClusterCNL_rawReturnRunFields_recordDensityN2FiniteOverlapTerminal_provider
-    data.toRawClusterCNLFiniteOverlapTerminalProviderInputs
+  erdos260_final_actual_manuscriptRegular_rawN2FiniteOverlapTerminal
+    data.toManuscriptRegularRawN2FiniteOverlapTerminalInputs
 
 /--
 A nonempty proof-object-CNL finite-overlap manuscript-regular actual provider
@@ -15634,6 +16045,58 @@ def toFiniteOverlapTerminalProviderInputs
     simpa using
       (data.terminal ctx).toAppendixNStructuredTerminalFiniteOverlapLowPaidInputData
 
+/-- Direct projection of the proof-object CNL actual finite-overlap terminal
+route to the raw actual structured-terminal surface. -/
+def toRawChernoffCNLRRRawN2StructuredTerminalLowPaidInputs
+    (data :
+      GlobalAssemblyActualCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapTerminalProviderInputs) :
+    GlobalAssemblyActualRawChernoffCNLRRRawN2StructuredTerminalLowPaidInputs where
+  chernoff :=
+    globalAppendixNActualRawChernoffFromCarryStoppedTreeAreaLayerProvider
+      data.chernoff
+  cnl :=
+    globalAppendixNActualRawCNLFromRawClusterFields
+      (globalAppendixNProofV4RawClusterCNLFieldsFromProofObject data.cnl)
+  returnPkg := globalAppendixNActualRawReturnFromRawReturnFieldsProvider
+    data.returnPkg
+  run := globalAppendixNActualRawRunFromRawRunFieldsProvider data.runProvider
+  n2 := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR,
+      globalAppendixNActualRawCNLFromRawClusterFields,
+      globalAppendixNProofV4RawClusterCNLFieldsFromProofObject] using
+      (((data.n2 ctx).toRawN2FirstCrossingFields).toActualRawN2FirstCrossingData)
+  terminal := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR,
+      globalAppendixNActualRawCNLFromRawClusterFields,
+      globalAppendixNProofV4RawClusterCNLFieldsFromProofObject] using
+      ((data.terminal ctx).toStructuredTerminalLowPaidData)
+
+/-- Project proof-object CNL record-density N.2 and actual finite-overlap
+terminal data to the fully actual raw-N.2 manuscript-regular target. -/
+def toManuscriptRegularRawN2FiniteOverlapTerminalInputs
+    (data :
+      GlobalAssemblyActualCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapTerminalProviderInputs) :
+    GlobalAssemblyActualManuscriptRegularRawN2FiniteOverlapTerminalInputs where
+  chernoff :=
+    globalAppendixNActualRawChernoffFromCarryStoppedTreeAreaLayerProvider
+      data.chernoff
+  cnl :=
+    globalAppendixNActualRawCNLFromRawClusterFields
+      (globalAppendixNProofV4RawClusterCNLFieldsFromProofObject data.cnl)
+  returnPkg := globalAppendixNActualRawReturnFromRawReturnFieldsProvider
+    data.returnPkg
+  run := globalAppendixNActualRawRunFromRawRunFieldsProvider data.runProvider
+  n2 := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR,
+      globalAppendixNActualRawCNLFromRawClusterFields,
+      globalAppendixNProofV4RawClusterCNLFieldsFromProofObject] using
+      (((data.n2 ctx).toRawN2FirstCrossingFields).toActualRawN2FirstCrossingData)
+  terminal := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR,
+      globalAppendixNActualRawCNLFromRawClusterFields,
+      globalAppendixNProofV4RawClusterCNLFieldsFromProofObject] using
+      data.terminal ctx
+
 end GlobalAssemblyActualCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapTerminalProviderInputs
 
 /-- Final bridge from proof-object CNL plus actual finite-overlap terminal
@@ -15642,8 +16105,8 @@ theorem erdos260_final_actual_carryStoppedChernoff_proofObjectCNL_rawReturnRunFi
     (data :
       GlobalAssemblyActualCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapTerminalProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedChernoff_proofObjectCNL_rawReturnRunFields_recordDensityN2FiniteOverlapTerminal_provider
-    data.toFiniteOverlapTerminalProviderInputs
+  erdos260_final_actual_manuscriptRegular_rawN2FiniteOverlapTerminal
+    data.toManuscriptRegularRawN2FiniteOverlapTerminalInputs
 
 /-- A nonempty proof-object CNL actual finite-overlap terminal provider proves
 the final statement. This remains conditional. -/
@@ -15710,6 +16173,58 @@ def toActualFiniteOverlapTerminalProviderInputs
   n2 := data.n2
   terminal := fun ctx => (data.terminal ctx).toFiniteOverlapLowPaidData
 
+/-- Direct projection of fully exposed proof-object CNL actual finite-overlap
+fields to the raw actual structured-terminal surface. -/
+def toRawChernoffCNLRRRawN2StructuredTerminalLowPaidInputs
+    (data :
+      GlobalAssemblyActualCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
+    GlobalAssemblyActualRawChernoffCNLRRRawN2StructuredTerminalLowPaidInputs where
+  chernoff :=
+    globalAppendixNActualRawChernoffFromCarryStoppedTreeAreaLayerProvider
+      data.chernoff
+  cnl :=
+    globalAppendixNActualRawCNLFromRawClusterFields
+      (globalAppendixNProofV4RawClusterCNLFieldsFromProofObject data.cnl)
+  returnPkg := globalAppendixNActualRawReturnFromRawReturnFieldsProvider
+    data.returnPkg
+  run := globalAppendixNActualRawRunFromRawRunFieldsProvider data.runProvider
+  n2 := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR,
+      globalAppendixNActualRawCNLFromRawClusterFields,
+      globalAppendixNProofV4RawClusterCNLFieldsFromProofObject] using
+      (((data.n2 ctx).toRawN2FirstCrossingFields).toActualRawN2FirstCrossingData)
+  terminal := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR,
+      globalAppendixNActualRawCNLFromRawClusterFields,
+      globalAppendixNProofV4RawClusterCNLFieldsFromProofObject] using
+      ((data.terminal ctx).toFiniteOverlapLowPaidData.toStructuredTerminalLowPaidData)
+
+/-- Project proof-object CNL record-density N.2 and field-exposed actual
+finite-overlap terminal data to the field-exposed fully actual raw-N.2 target. -/
+def toManuscriptRegularRawN2FiniteOverlapFieldsTerminalInputs
+    (data :
+      GlobalAssemblyActualCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
+    GlobalAssemblyActualManuscriptRegularRawN2FiniteOverlapFieldsTerminalInputs where
+  chernoff :=
+    globalAppendixNActualRawChernoffFromCarryStoppedTreeAreaLayerProvider
+      data.chernoff
+  cnl :=
+    globalAppendixNActualRawCNLFromRawClusterFields
+      (globalAppendixNProofV4RawClusterCNLFieldsFromProofObject data.cnl)
+  returnPkg := globalAppendixNActualRawReturnFromRawReturnFieldsProvider
+    data.returnPkg
+  run := globalAppendixNActualRawRunFromRawRunFieldsProvider data.runProvider
+  n2 := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR,
+      globalAppendixNActualRawCNLFromRawClusterFields,
+      globalAppendixNProofV4RawClusterCNLFieldsFromProofObject] using
+      (((data.n2 ctx).toRawN2FirstCrossingFields).toActualRawN2FirstCrossingData)
+  terminal := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR,
+      globalAppendixNActualRawCNLFromRawClusterFields,
+      globalAppendixNProofV4RawClusterCNLFieldsFromProofObject] using
+      data.terminal ctx
+
 end GlobalAssemblyActualCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapFieldsTerminalProviderInputs
 
 /-- Final bridge from proof-object CNL plus fully exposed actual
@@ -15718,8 +16233,8 @@ theorem erdos260_final_actual_carryStoppedChernoff_proofObjectCNL_rawReturnRunFi
     (data :
       GlobalAssemblyActualCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedChernoff_proofObjectCNL_rawReturnRunFields_recordDensityN2ActualFiniteOverlapTerminal_provider
-    data.toActualFiniteOverlapTerminalProviderInputs
+  erdos260_final_actual_manuscriptRegular_rawN2FiniteOverlapFieldsTerminal
+    data.toManuscriptRegularRawN2FiniteOverlapFieldsTerminalInputs
 
 /-- A nonempty proof-object CNL fully exposed actual finite-overlap terminal
 provider proves the final statement. This remains conditional. -/
@@ -15800,6 +16315,62 @@ def toCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2FiniteO
   terminal := fun ctx => by
     simpa using data.terminal ctx
 
+/-- Direct projection of the layer-cake/proof-object proof-v4 finite-overlap
+terminal route to the raw actual structured-terminal surface. -/
+def toRawChernoffCNLRRRawN2StructuredTerminalLowPaidInputs
+    (data :
+      GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2FiniteOverlapTerminalProviderInputs) :
+    GlobalAssemblyActualRawChernoffCNLRRRawN2StructuredTerminalLowPaidInputs where
+  chernoff :=
+    globalAppendixNActualRawChernoffFromCarryStoppedTreeAreaLayerProvider
+      (globalAppendixNProofV4CarryStoppedTreeAreaLayerChernoffProviderFromLayerCake
+        data.chernoff)
+  cnl :=
+    globalAppendixNActualRawCNLFromRawClusterFields
+      (globalAppendixNProofV4RawClusterCNLFieldsFromProofObject data.cnl)
+  returnPkg := globalAppendixNActualRawReturnFromRawReturnFieldsProvider
+    data.returnPkg
+  run := globalAppendixNActualRawRunFromRawRunFieldsProvider data.runProvider
+  n2 := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR,
+      globalAppendixNActualRawCNLFromRawClusterFields,
+      globalAppendixNProofV4RawClusterCNLFieldsFromProofObject] using
+      (((data.n2 ctx).toRawN2FirstCrossingFields).toActualRawN2FirstCrossingData)
+  terminal := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR,
+      globalAppendixNActualRawCNLFromRawClusterFields,
+      globalAppendixNProofV4RawClusterCNLFieldsFromProofObject] using
+      ((globalAppendixNActualStructuredTerminalFiniteOverlapFromProofV4StructuredTerminal
+        (data.terminal ctx)).toStructuredTerminalLowPaidData)
+
+/-- Project layer-cake/proof-object record-density N.2 and proof-v4
+finite-overlap terminal data to the fully actual raw-N.2 target. -/
+def toManuscriptRegularRawN2FiniteOverlapTerminalInputs
+    (data :
+      GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2FiniteOverlapTerminalProviderInputs) :
+    GlobalAssemblyActualManuscriptRegularRawN2FiniteOverlapTerminalInputs where
+  chernoff :=
+    globalAppendixNActualRawChernoffFromCarryStoppedTreeAreaLayerProvider
+      (globalAppendixNProofV4CarryStoppedTreeAreaLayerChernoffProviderFromLayerCake
+        data.chernoff)
+  cnl :=
+    globalAppendixNActualRawCNLFromRawClusterFields
+      (globalAppendixNProofV4RawClusterCNLFieldsFromProofObject data.cnl)
+  returnPkg := globalAppendixNActualRawReturnFromRawReturnFieldsProvider
+    data.returnPkg
+  run := globalAppendixNActualRawRunFromRawRunFieldsProvider data.runProvider
+  n2 := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR,
+      globalAppendixNActualRawCNLFromRawClusterFields,
+      globalAppendixNProofV4RawClusterCNLFieldsFromProofObject] using
+      (((data.n2 ctx).toRawN2FirstCrossingFields).toActualRawN2FirstCrossingData)
+  terminal := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR,
+      globalAppendixNActualRawCNLFromRawClusterFields,
+      globalAppendixNProofV4RawClusterCNLFieldsFromProofObject] using
+      (globalAppendixNActualStructuredTerminalFiniteOverlapFromProofV4StructuredTerminal
+        (data.terminal ctx))
+
 end GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2FiniteOverlapTerminalProviderInputs
 
 /-- Final bridge from the layer-cake Chernoff, proof-object-CNL,
@@ -15808,8 +16379,8 @@ theorem erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_r
     (data :
       GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2FiniteOverlapTerminalProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedChernoff_proofObjectCNL_rawReturnRunFields_recordDensityN2FiniteOverlapTerminal_provider
-    data.toCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2FiniteOverlapTerminalProviderInputs
+  erdos260_final_actual_manuscriptRegular_rawN2FiniteOverlapTerminal
+    data.toManuscriptRegularRawN2FiniteOverlapTerminalInputs
 
 /--
 A nonempty layer-cake Chernoff/proof-object-CNL finite-overlap actual provider
@@ -15888,6 +16459,60 @@ def toCarryStoppedChernoffProofObjectCNLActualFiniteOverlapTerminalProviderInput
   terminal := fun ctx => by
     simpa using data.terminal ctx
 
+/-- Direct projection of the layer-cake/proof-object actual finite-overlap
+terminal route to the raw actual structured-terminal surface. -/
+def toRawChernoffCNLRRRawN2StructuredTerminalLowPaidInputs
+    (data :
+      GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapTerminalProviderInputs) :
+    GlobalAssemblyActualRawChernoffCNLRRRawN2StructuredTerminalLowPaidInputs where
+  chernoff :=
+    globalAppendixNActualRawChernoffFromCarryStoppedTreeAreaLayerProvider
+      (globalAppendixNProofV4CarryStoppedTreeAreaLayerChernoffProviderFromLayerCake
+        data.chernoff)
+  cnl :=
+    globalAppendixNActualRawCNLFromRawClusterFields
+      (globalAppendixNProofV4RawClusterCNLFieldsFromProofObject data.cnl)
+  returnPkg := globalAppendixNActualRawReturnFromRawReturnFieldsProvider
+    data.returnPkg
+  run := globalAppendixNActualRawRunFromRawRunFieldsProvider data.runProvider
+  n2 := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR,
+      globalAppendixNActualRawCNLFromRawClusterFields,
+      globalAppendixNProofV4RawClusterCNLFieldsFromProofObject] using
+      (((data.n2 ctx).toRawN2FirstCrossingFields).toActualRawN2FirstCrossingData)
+  terminal := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR,
+      globalAppendixNActualRawCNLFromRawClusterFields,
+      globalAppendixNProofV4RawClusterCNLFieldsFromProofObject] using
+      ((data.terminal ctx).toStructuredTerminalLowPaidData)
+
+/-- Project layer-cake/proof-object record-density N.2 and actual
+finite-overlap terminal data to the fully actual raw-N.2 target. -/
+def toManuscriptRegularRawN2FiniteOverlapTerminalInputs
+    (data :
+      GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapTerminalProviderInputs) :
+    GlobalAssemblyActualManuscriptRegularRawN2FiniteOverlapTerminalInputs where
+  chernoff :=
+    globalAppendixNActualRawChernoffFromCarryStoppedTreeAreaLayerProvider
+      (globalAppendixNProofV4CarryStoppedTreeAreaLayerChernoffProviderFromLayerCake
+        data.chernoff)
+  cnl :=
+    globalAppendixNActualRawCNLFromRawClusterFields
+      (globalAppendixNProofV4RawClusterCNLFieldsFromProofObject data.cnl)
+  returnPkg := globalAppendixNActualRawReturnFromRawReturnFieldsProvider
+    data.returnPkg
+  run := globalAppendixNActualRawRunFromRawRunFieldsProvider data.runProvider
+  n2 := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR,
+      globalAppendixNActualRawCNLFromRawClusterFields,
+      globalAppendixNProofV4RawClusterCNLFieldsFromProofObject] using
+      (((data.n2 ctx).toRawN2FirstCrossingFields).toActualRawN2FirstCrossingData)
+  terminal := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR,
+      globalAppendixNActualRawCNLFromRawClusterFields,
+      globalAppendixNProofV4RawClusterCNLFieldsFromProofObject] using
+      data.terminal ctx
+
 end GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapTerminalProviderInputs
 
 /-- Final bridge from layer-cake Chernoff/proof-object CNL with actual
@@ -15896,8 +16521,8 @@ theorem erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_r
     (data :
       GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapTerminalProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedChernoff_proofObjectCNL_rawReturnRunFields_recordDensityN2ActualFiniteOverlapTerminal_provider
-    data.toCarryStoppedChernoffProofObjectCNLActualFiniteOverlapTerminalProviderInputs
+  erdos260_final_actual_manuscriptRegular_rawN2FiniteOverlapTerminal
+    data.toManuscriptRegularRawN2FiniteOverlapTerminalInputs
 
 /-- A nonempty layer-cake/proof-object actual finite-overlap terminal provider
 proves the final statement. This remains conditional. -/
@@ -15970,6 +16595,60 @@ def toActualFiniteOverlapTerminalProviderInputs
   n2 := data.n2
   terminal := fun ctx => (data.terminal ctx).toFiniteOverlapLowPaidData
 
+/-- Direct projection of fully exposed layer-cake/proof-object actual
+finite-overlap fields to the raw actual structured-terminal surface. -/
+def toRawChernoffCNLRRRawN2StructuredTerminalLowPaidInputs
+    (data :
+      GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
+    GlobalAssemblyActualRawChernoffCNLRRRawN2StructuredTerminalLowPaidInputs where
+  chernoff :=
+    globalAppendixNActualRawChernoffFromCarryStoppedTreeAreaLayerProvider
+      (globalAppendixNProofV4CarryStoppedTreeAreaLayerChernoffProviderFromLayerCake
+        data.chernoff)
+  cnl :=
+    globalAppendixNActualRawCNLFromRawClusterFields
+      (globalAppendixNProofV4RawClusterCNLFieldsFromProofObject data.cnl)
+  returnPkg := globalAppendixNActualRawReturnFromRawReturnFieldsProvider
+    data.returnPkg
+  run := globalAppendixNActualRawRunFromRawRunFieldsProvider data.runProvider
+  n2 := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR,
+      globalAppendixNActualRawCNLFromRawClusterFields,
+      globalAppendixNProofV4RawClusterCNLFieldsFromProofObject] using
+      (((data.n2 ctx).toRawN2FirstCrossingFields).toActualRawN2FirstCrossingData)
+  terminal := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR,
+      globalAppendixNActualRawCNLFromRawClusterFields,
+      globalAppendixNProofV4RawClusterCNLFieldsFromProofObject] using
+      ((data.terminal ctx).toFiniteOverlapLowPaidData.toStructuredTerminalLowPaidData)
+
+/-- Project layer-cake/proof-object record-density N.2 and field-exposed
+actual finite-overlap terminal data to the field-exposed raw-N.2 target. -/
+def toManuscriptRegularRawN2FiniteOverlapFieldsTerminalInputs
+    (data :
+      GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
+    GlobalAssemblyActualManuscriptRegularRawN2FiniteOverlapFieldsTerminalInputs where
+  chernoff :=
+    globalAppendixNActualRawChernoffFromCarryStoppedTreeAreaLayerProvider
+      (globalAppendixNProofV4CarryStoppedTreeAreaLayerChernoffProviderFromLayerCake
+        data.chernoff)
+  cnl :=
+    globalAppendixNActualRawCNLFromRawClusterFields
+      (globalAppendixNProofV4RawClusterCNLFieldsFromProofObject data.cnl)
+  returnPkg := globalAppendixNActualRawReturnFromRawReturnFieldsProvider
+    data.returnPkg
+  run := globalAppendixNActualRawRunFromRawRunFieldsProvider data.runProvider
+  n2 := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR,
+      globalAppendixNActualRawCNLFromRawClusterFields,
+      globalAppendixNProofV4RawClusterCNLFieldsFromProofObject] using
+      (((data.n2 ctx).toRawN2FirstCrossingFields).toActualRawN2FirstCrossingData)
+  terminal := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedRawClusterRawRR,
+      globalAppendixNActualRawCNLFromRawClusterFields,
+      globalAppendixNProofV4RawClusterCNLFieldsFromProofObject] using
+      data.terminal ctx
+
 end GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapFieldsTerminalProviderInputs
 
 /-- Final bridge from layer-cake Chernoff/proof-object CNL plus fully exposed
@@ -15978,8 +16657,8 @@ theorem erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_r
     (data :
       GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_rawReturnRunFields_recordDensityN2ActualFiniteOverlapTerminal_provider
-    data.toActualFiniteOverlapTerminalProviderInputs
+  erdos260_final_actual_manuscriptRegular_rawN2FiniteOverlapFieldsTerminal
+    data.toManuscriptRegularRawN2FiniteOverlapFieldsTerminalInputs
 
 /-- A nonempty layer-cake/proof-object fully exposed actual finite-overlap
 terminal provider proves the final statement. This remains conditional. -/
@@ -16208,8 +16887,8 @@ theorem erdos260_final_actual_carryStoppedTreeAreaLayerChernoff_rawClusterCNL_ra
     (data :
       GlobalAssemblyActualCarryStoppedTreeAreaLayerChernoffRawClusterCNLRawTRTFieldsRecordDensityN2PhaseAlignedTerminalAllFieldsProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedTreeAreaLayerChernoff_rawClusterCNL_separatedTRTFields_recordDensityN2PhaseAlignedTerminalAllFields_provider
-    data.toSeparatedTRTFieldsRecordDensityN2PhaseAlignedTerminalAllFieldsProviderInputs
+  erdos260_final_actual_manuscriptRegular_closedN2PhaseAlignedTerminalAllFields
+    data.toManuscriptRegularClosedN2PhaseAlignedTerminalAllFieldsInputs
 
 /-- A nonempty area-layer raw-TRT-bundle record-density N.2 phase-aligned
 terminal provider proves the final statement. This remains conditional. -/
@@ -16335,6 +17014,37 @@ def toCarryStoppedTreeAreaLayerChernoffRawClusterCNLRawTRTFieldsRecordDensityN2P
       actualClosurePhaseFromCarryStoppedLayerCakeRawClusterCNLSeparatedTRTFieldsRR]
       using data.terminal_endpointPhase_eq ctx
 
+/-- Project the layer-cake raw-TRT bundle route directly to the fully actual
+phase-aligned closed-N.2 target. -/
+def toManuscriptRegularClosedN2PhaseAlignedTerminalAllFieldsInputs
+    (data :
+      GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffRawClusterCNLRawTRTFieldsRecordDensityN2PhaseAlignedTerminalAllFieldsProviderInputs) :
+    GlobalAssemblyActualManuscriptRegularClosedN2PhaseAlignedTerminalAllFieldsInputs where
+  chernoff :=
+    globalAppendixNActualRawChernoffFromCarryStoppedTreeAreaLayerProvider
+      (globalAppendixNProofV4CarryStoppedTreeAreaLayerChernoffProviderFromLayerCake
+        data.chernoff)
+  cnl := globalAppendixNActualRawCNLFromRawClusterFields data.cnl
+  returnPkg := globalAppendixNActualRawReturnFromRawReturnFieldsProvider
+    data.trt.returnPkg
+  run := globalAppendixNActualRawRunFromRawRunFieldsProvider data.trt.run
+  variation := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedLayerCakeRawClusterCNLRawTRTFieldsRR]
+      using
+        ((((data.n2 ctx).toRawN2FirstCrossingFields).toActualRawN2FirstCrossingData).toVariationData)
+  terminal := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedLayerCakeRawClusterCNLRawTRTFieldsRR]
+      using data.terminal ctx
+  terminal_densePhase_eq := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedLayerCakeRawClusterCNLRawTRTFieldsRR]
+      using data.terminal_densePhase_eq ctx
+  terminal_progressPhase_eq := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedLayerCakeRawClusterCNLRawTRTFieldsRR]
+      using data.terminal_progressPhase_eq ctx
+  terminal_endpointPhase_eq := fun ctx => by
+    simpa [actualClosurePhaseFromCarryStoppedLayerCakeRawClusterCNLRawTRTFieldsRR]
+      using data.terminal_endpointPhase_eq ctx
+
 end GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffRawClusterCNLRawTRTFieldsRecordDensityN2PhaseAlignedTerminalAllFieldsProviderInputs
 
 /-- Nonemptiness of the layer-cake raw-TRT bundle phase-aligned surface supplies
@@ -16367,8 +17077,8 @@ theorem erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_rawClusterCNL_ra
     (data :
       GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffRawClusterCNLRawTRTFieldsRecordDensityN2PhaseAlignedTerminalAllFieldsProviderInputs) :
     Erdos260Statement :=
-  erdos260_final_actual_carryStoppedTreeAreaLayerChernoff_rawClusterCNL_rawTRTFields_recordDensityN2PhaseAlignedTerminalAllFields_provider
-    data.toCarryStoppedTreeAreaLayerChernoffRawClusterCNLRawTRTFieldsRecordDensityN2PhaseAlignedTerminalAllFieldsProviderInputs
+  erdos260_final_actual_manuscriptRegular_closedN2PhaseAlignedTerminalAllFields
+    data.toManuscriptRegularClosedN2PhaseAlignedTerminalAllFieldsInputs
 
 /-- A nonempty raw-TRT-bundle record-density N.2 phase-aligned terminal
 provider proves the final statement. This remains conditional. -/
@@ -25685,8 +26395,8 @@ theorem erdos260_final_actual_from_globalAppendixNFinalActualCarryStoppedTreeLay
     (data :
       GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents) :
     Erdos260Statement :=
-  erdos260_final_actual_from_globalAppendixNFinalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftStructuredTerminalComponents
-    data.toStructuredTerminalComponents
+  erdos260_final_actual_from_appendixN_leaf_inputs
+    data.toProofV4LeafInputs
 
 /-- Final actual theorem from the layer-cake raw-TRT finite-overlap terminal
 component gate through the explicit-phase/L.6 bridge. -/
@@ -25807,8 +26517,7 @@ def toExplicitPhaseClosedN2N3BddL6Inputs
       ctx.shell ctx.hc0Small ctx.shell_startThreshold_le
   n2n3 := fun ctx => by
     let terminalData := data.terminal ctx.shell ctx.pin ctx.shell_startThreshold_le
-    let closedData :=
-      terminalData.toStructuredTerminalLowPaidInputData.toBddL6InputData
+    let closedData := terminalData.toBddL6InputData
     simpa [
       ActualFailureContext.n24CarryLocal,
       ActualFailureContext.hc0Small,
@@ -26289,8 +26998,8 @@ theorem erdos260_final_actual_from_globalAppendixNFinalActualCarryStoppedTreeLay
     (data :
       GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeProofObjectCNLClosedK25RawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents) :
     Erdos260Statement :=
-  erdos260_final_actual_from_globalAppendixNFinalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents
-    data.toWeightedKraftFiniteOverlapTerminalComponents
+  erdos260_final_actual_from_appendixN_leaf_inputs
+    data.toProofV4LeafInputs
 
 /-- Final actual theorem from the proof-object CNL finite-overlap component
 gate through the explicit-phase/L.6 bridge. -/
@@ -26452,8 +27161,8 @@ theorem erdos260_final_actual_from_globalAppendixNFinalActualCarryStoppedTreeLay
     (data :
       GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeRawClusterCNLClosedK25RawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents) :
     Erdos260Statement :=
-  erdos260_final_actual_from_globalAppendixNFinalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents
-    data.toWeightedKraftFiniteOverlapTerminalComponents
+  erdos260_final_actual_from_appendixN_leaf_inputs
+    data.toProofV4LeafInputs
 
 /-- Final actual theorem from the raw-cluster CNL finite-overlap component
 gate through the explicit-phase/L.6 bridge. -/
@@ -26622,8 +27331,8 @@ theorem erdos260_final_actual_from_globalAppendixNFinalActualCarryStoppedTreeLay
     (data :
       GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeRawClusterCNLRawK25BoundRawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents) :
     Erdos260Statement :=
-  erdos260_final_actual_from_globalAppendixNFinalActualCarryStoppedTreeLayerCakeRawClusterCNLClosedK25RawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents
-    data.toRawClusterClosedK25FiniteOverlapTerminalComponents
+  erdos260_final_actual_from_appendixN_leaf_inputs
+    data.toProofV4LeafInputs
 
 /-- Final actual theorem from the raw-cluster CNL/raw-K.2.5 finite-overlap
 component gate through the explicit-phase/L.6 bridge. -/
@@ -26793,8 +27502,8 @@ theorem erdos260_final_actual_from_globalAppendixNFinalActualCarryStoppedTreeLay
     (data :
       GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeRawClusterCNLRawK25BoundSeparatedTRTFieldsWeightedKraftFiniteOverlapTerminalComponents) :
     Erdos260Statement :=
-  erdos260_final_actual_from_globalAppendixNFinalActualCarryStoppedTreeLayerCakeRawClusterCNLRawK25BoundRawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents
-    data.toRawTRTFieldsFiniteOverlapTerminalComponents
+  erdos260_final_actual_from_appendixN_leaf_inputs
+    data.toProofV4LeafInputs
 
 /-- Final actual theorem from the separated-TRT finite-overlap component gate
 through the explicit-phase/L.6 bridge. -/
@@ -27434,8 +28143,11 @@ def globalAppendixNStrictLeafAudit : List GlobalAppendixNLeafAuditItem :=
           "AppendixNStructuredTerminalFiniteOverlapLowPaidInputData",
           "AppendixNStructuredTerminalFiniteOverlapLowPaidInputData.toStructuredTerminalLowPaidInputData",
           "AppendixNStructuredTerminalFiniteOverlapLowPaidInputData.toRawTerminalLowPaidInputData",
+          "AppendixNStructuredTerminalFiniteOverlapLowPaidInputData.toClassicalTableRoutedDirectFiveClassTerminalAbsorptionWithBddL6Data",
+          "AppendixNStructuredTerminalFiniteOverlapLowPaidInputData.toClassicalTableRoutedDirectFiveClassTerminalAbsorptionData",
           "AppendixNStructuredTerminalFiniteOverlapLowPaidInputData.toBddL6InputData",
           "AppendixNStructuredTerminalFiniteOverlapLowPaidInputData.termMass_le_classes",
+          "AppendixNStructuredTerminalFiniteOverlapLowPaidInputData.toClassicalTerminalN33SeparatedLeafData",
           "GlobalAppendixNProofV4DirectRawTerminalLowPaidProvider",
           "GlobalAppendixNProofV4DirectStructuredTerminalLowPaidProvider",
           "GlobalAppendixNProofV4DirectStructuredTerminalFiniteOverlapLowPaidProvider",
@@ -27443,9 +28155,12 @@ def globalAppendixNStrictLeafAudit : List GlobalAppendixNLeafAuditItem :=
           "globalAppendixNProofV4DirectRawTerminalLowPaidFromTerminalAbsorptionLowPaid",
           "globalAppendixNProofV4DirectRawTerminalLowPaidFromTerminalLeafLowPaid",
           "globalAppendixNProofV4DirectRawTerminalLowPaidFromStructuredTerminalLowPaid",
+          "globalAppendixNProofV4DirectRawTerminalLowPaidFromStructuredTerminalFiniteOverlapLowPaid",
           "globalAppendixNProofV4DirectTerminalAbsorptionFromRawTerminalLowPaid",
           "globalAppendixNProofV4DirectTerminalLeafFromRawTerminalLowPaid",
           "globalAppendixNProofV4DirectRawN24LowPaidFromClosedN2RawTerminalLowPaid",
+          "globalAppendixNProofV4DirectRawN24LowPaidFromClosedN2StructuredTerminalFiniteOverlapLowPaid",
+          "globalAppendixNProofV4DirectN24FromStructuredTerminalFiniteOverlapLowPaid",
           "GlobalAppendixNChainCompressionProofV4RawManuscriptDirectClosedN2TerminalLeafLowPaidRawCNLDirtySeparatedTRTInputs.toClosedN2RawTerminalLowPaidRawCNLDirtySeparatedTRTInputs",
           "GlobalAppendixNChainCompressionProofV4RawManuscriptDirectClosedN2RawTerminalLowPaidRawCNLDirtySeparatedTRTInputs",
           "AppendixNClosedN2N3RawLowPaidInputData.ofCanonicalYVariationClassRawTerminalLowPaid",
@@ -27529,8 +28244,11 @@ def globalAppendixNStrictLeafAudit : List GlobalAppendixNLeafAuditItem :=
           "AppendixNStructuredTerminalFiniteOverlapLowPaidInputData",
           "AppendixNStructuredTerminalFiniteOverlapLowPaidInputData.toStructuredTerminalLowPaidInputData",
           "AppendixNStructuredTerminalFiniteOverlapLowPaidInputData.toRawTerminalLowPaidInputData",
+          "AppendixNStructuredTerminalFiniteOverlapLowPaidInputData.toClassicalTableRoutedDirectFiveClassTerminalAbsorptionWithBddL6Data",
+          "AppendixNStructuredTerminalFiniteOverlapLowPaidInputData.toClassicalTableRoutedDirectFiveClassTerminalAbsorptionData",
           "AppendixNStructuredTerminalFiniteOverlapLowPaidInputData.toBddL6InputData",
           "AppendixNStructuredTerminalFiniteOverlapLowPaidInputData.termMass_le_classes",
+          "AppendixNStructuredTerminalFiniteOverlapLowPaidInputData.toClassicalTerminalN33SeparatedLeafData",
           "AppendixNStructuredTerminalLowPaidInputData",
           "AppendixNStructuredTerminalLowPaidInputData.toRawTerminalLowPaidInputData",
           "GlobalAppendixNProofV4DirectRawTerminalLowPaidProvider",
@@ -27540,7 +28258,10 @@ def globalAppendixNStrictLeafAudit : List GlobalAppendixNLeafAuditItem :=
           "globalAppendixNProofV4DirectRawTerminalLowPaidFromTerminalAbsorptionLowPaid",
           "globalAppendixNProofV4DirectRawTerminalLowPaidFromTerminalLeafLowPaid",
           "globalAppendixNProofV4DirectRawTerminalLowPaidFromStructuredTerminalLowPaid",
+          "globalAppendixNProofV4DirectRawTerminalLowPaidFromStructuredTerminalFiniteOverlapLowPaid",
           "globalAppendixNProofV4DirectRawN24LowPaidFromClosedN2RawTerminalLowPaid",
+          "globalAppendixNProofV4DirectRawN24LowPaidFromClosedN2StructuredTerminalFiniteOverlapLowPaid",
+          "globalAppendixNProofV4DirectN24FromStructuredTerminalFiniteOverlapLowPaid",
           "GlobalAppendixNChainCompressionProofV4RawManuscriptDirectClosedN2TerminalLeafLowPaidRawCNLDirtySeparatedTRTInputs.toClosedN2RawTerminalLowPaidRawCNLDirtySeparatedTRTInputs",
           "GlobalAppendixNChainCompressionProofV4RawManuscriptDirectClosedN2RawTerminalLowPaidRawCNLDirtySeparatedTRTInputs",
           "AppendixNClosedN2N3RawLowPaidInputData.ofCanonicalYVariationClassRawTerminalLowPaid",
@@ -27582,30 +28303,42 @@ def globalAppendixNStrictLeafAudit : List GlobalAppendixNLeafAuditItem :=
           "TableRoutedCNLClassKraftInputData",
           "TableRoutedCNLClassKraftInputData.toTableRoutedCNLClassInputData",
           "classicalTableRoutedDirectFiveClassTerminalAbsorptionFromRawClosedN33LowPaid",
+          "classicalTableRoutedDirectFiveClassTerminalAbsorptionFromRawClosedN33FiniteOverlapLowPaid",
           "GlobalAppendixNChainCompressionProofV4ClosedTRTN24StrictProviderLeafInputs",
           "AppendixNClosedN2N3InputData",
           "AppendixNClosedN2N3InputData.ofN24CanonicalYInputData",
           "appendixNN24CanonicalYFromClosedN2N3",
           "classicalTableRoutedDirectFiveClassTerminalAbsorptionFromClosedN33BddL6",
           "classicalTableRoutedDirectFiveClassTerminalAbsorptionFromClosedN33LowPaid",
+          "classicalTableRoutedDirectFiveClassTerminalAbsorptionFromClosedN33FiniteOverlapLowPaid",
           "classicalTableRoutedDirectFiveClassTerminalAbsorptionFromCompressedMassClosedN33",
           "classicalTableRoutedDirectFiveClassTerminalAbsorptionFromCompressedMassCNLKraftClosedN33",
           "classicalTableRoutedDirectFiveClassTerminalAbsorptionFromCompressedMassCNLKraftClosedN33LowPaid",
+          "classicalTableRoutedDirectFiveClassTerminalAbsorptionFromCompressedMassCNLKraftClosedN33FiniteOverlapLowPaid",
           "classicalTableRoutedDirectFiveClassTerminalAbsorptionFromCompressedMassDensePackSupportCNLKraftClosedN33LowPaid",
+          "classicalTableRoutedDirectFiveClassTerminalAbsorptionFromCompressedMassDensePackSupportCNLKraftClosedN33FiniteOverlapLowPaid",
           "classicalTableRoutedDirectFiveClassTerminalAbsorptionFromCompressedMassDensePackSupportProgressChernoffCNLKraftClosedN33LowPaid",
+          "classicalTableRoutedDirectFiveClassTerminalAbsorptionFromCompressedMassDensePackSupportProgressChernoffCNLKraftClosedN33FiniteOverlapLowPaid",
           "classicalTableRoutedDirectFiveClassTerminalAbsorptionFromCompressedMassDensePackSupportProgressChernoffEndpointReturnCNLKraftClosedN33LowPaid",
+          "classicalTableRoutedDirectFiveClassTerminalAbsorptionFromCompressedMassDensePackSupportProgressChernoffEndpointReturnCNLKraftClosedN33FiniteOverlapLowPaid",
           "classicalTableRoutedDirectFiveClassTerminalAbsorptionFromClosedN33Bundled",
           "classicalTableRoutedDirectFiveClassTerminalAbsorptionFromClosedN33",
           "classicalTerminalN33SeparatedLeafFromTableRoutedDirectBddL6",
           "classicalTerminalN33SeparatedLeafFromTableRoutedDirect",
           "classicalTerminalN33SeparatedLeafFromRawClosedN33LowPaid",
+          "classicalTerminalN33SeparatedLeafFromRawClosedN33FiniteOverlapLowPaid",
           "classicalTerminalN33SeparatedLeafFromClosedN33LowPaid",
+          "classicalTerminalN33SeparatedLeafFromClosedN33FiniteOverlapLowPaid",
           "classicalTerminalN33SeparatedLeafFromCompressedMassClosedN33",
           "classicalTerminalN33SeparatedLeafFromCompressedMassCNLKraftClosedN33",
           "classicalTerminalN33SeparatedLeafFromCompressedMassCNLKraftClosedN33LowPaid",
+          "classicalTerminalN33SeparatedLeafFromCompressedMassCNLKraftClosedN33FiniteOverlapLowPaid",
           "classicalTerminalN33SeparatedLeafFromCompressedMassDensePackSupportCNLKraftClosedN33LowPaid",
+          "classicalTerminalN33SeparatedLeafFromCompressedMassDensePackSupportCNLKraftClosedN33FiniteOverlapLowPaid",
           "classicalTerminalN33SeparatedLeafFromCompressedMassDensePackSupportProgressChernoffCNLKraftClosedN33LowPaid",
+          "classicalTerminalN33SeparatedLeafFromCompressedMassDensePackSupportProgressChernoffCNLKraftClosedN33FiniteOverlapLowPaid",
           "classicalTerminalN33SeparatedLeafFromCompressedMassDensePackSupportProgressChernoffEndpointReturnCNLKraftClosedN33LowPaid",
+          "classicalTerminalN33SeparatedLeafFromCompressedMassDensePackSupportProgressChernoffEndpointReturnCNLKraftClosedN33FiniteOverlapLowPaid",
           "classicalTerminalN33SeparatedLeafFromClosedN33Bundled",
           "classicalTerminalN33SeparatedLeafFromClosedN33" ],
       missingProvider :=
@@ -27779,7 +28512,7 @@ def globalAppendixNFinalRawManuscriptProviderRoutes : List String :=
     "globalAppendixNProofV4CNLFromRawCodeFibreFields",
     "globalAppendixNProofV4DirtyMultiplicityFromRawK25Fields",
     "GlobalAppendixNProofV4RawTRTFieldProviderBundle.toRawSeparatedTRTProviderBundle / globalAppendixNProofV4GroundedTRTPackageFromSeparatedManuscriptPackages",
-    "globalAppendixNProofV4DirectClosedN2FromRawFirstCrossingFields / (globalAppendixNProofV4DirectRawTerminalLowPaidFromTerminalAbsorptionLowPaid or globalAppendixNProofV4DirectRawTerminalLowPaidFromTerminalLeafLowPaid or globalAppendixNProofV4DirectRawTerminalLowPaidFromStructuredTerminalLowPaid) / globalAppendixNProofV4DirectRawN24LowPaidFromClosedN2RawTerminalLowPaid / globalAppendixNProofV4DirectN24FromRawLowPaid" ]
+    "globalAppendixNProofV4DirectClosedN2FromRawFirstCrossingFields / (globalAppendixNProofV4DirectRawTerminalLowPaidFromTerminalAbsorptionLowPaid or globalAppendixNProofV4DirectRawTerminalLowPaidFromTerminalLeafLowPaid or globalAppendixNProofV4DirectRawTerminalLowPaidFromStructuredTerminalLowPaid or globalAppendixNProofV4DirectRawTerminalLowPaidFromStructuredTerminalFiniteOverlapLowPaid) / (globalAppendixNProofV4DirectRawN24LowPaidFromClosedN2RawTerminalLowPaid or globalAppendixNProofV4DirectRawN24LowPaidFromClosedN2StructuredTerminalFiniteOverlapLowPaid) / (globalAppendixNProofV4DirectN24FromRawLowPaid or globalAppendixNProofV4DirectN24FromStructuredTerminalFiniteOverlapLowPaid)" ]
 
 theorem globalAppendixNFinalRawManuscriptProviderRoutes_length :
     globalAppendixNFinalRawManuscriptProviderRoutes.length = 5 := by
@@ -27819,7 +28552,7 @@ def globalAppendixNFinalStrictProviderDataOpenItems :
       missingData :=
         "raw Tower cycle-routing-absorption fields, raw Return OLC multiplicity fields, and raw Run trichotomy/half-decrease fields, equivalently their three closed manuscript packages" },
     { provider := "Appendix N.24"
-      directRoute := "globalAppendixNProofV4DirectClosedN2FromRawFirstCrossingFields / (globalAppendixNProofV4DirectRawTerminalLowPaidFromTerminalAbsorptionLowPaid or globalAppendixNProofV4DirectRawTerminalLowPaidFromTerminalLeafLowPaid or globalAppendixNProofV4DirectRawTerminalLowPaidFromStructuredTerminalLowPaid) / globalAppendixNProofV4DirectRawN24LowPaidFromClosedN2RawTerminalLowPaid / globalAppendixNProofV4DirectN24FromRawLowPaid"
+      directRoute := "globalAppendixNProofV4DirectClosedN2FromRawFirstCrossingFields / (globalAppendixNProofV4DirectRawTerminalLowPaidFromTerminalAbsorptionLowPaid or globalAppendixNProofV4DirectRawTerminalLowPaidFromTerminalLeafLowPaid or globalAppendixNProofV4DirectRawTerminalLowPaidFromStructuredTerminalLowPaid or globalAppendixNProofV4DirectRawTerminalLowPaidFromStructuredTerminalFiniteOverlapLowPaid) / (globalAppendixNProofV4DirectRawN24LowPaidFromClosedN2RawTerminalLowPaid or globalAppendixNProofV4DirectRawN24LowPaidFromClosedN2StructuredTerminalFiniteOverlapLowPaid) / (globalAppendixNProofV4DirectN24FromRawLowPaid or globalAppendixNProofV4DirectN24FromStructuredTerminalFiniteOverlapLowPaid)"
       proofRef := "proof_v4.tex 6077-6521 and 6632-6669"
       missingData :=
         "raw N.2 first-crossing branch/drop-density/window data plus raw N.3.3 terminal routing or structured terminal low-paid data, sharing the same proof-v4 L.6-backed low/paid split" } ]
@@ -28064,7 +28797,11 @@ def globalAppendixNPreferredActualProjectionRoutes : List String :=
     "factorization from the classical compact raw-TRT/raw-N.24 provider to the raw-code/fibre compact provider: GlobalAssemblyActualShellPaidChernoffClassicalCodeFibreCNLRawTRTFieldsRawN24ProviderInputs.toRawCodeFibreCNLRawTRTFieldsRawN24ProviderInputs",
     "direct TRT projection from separated Tower/Return/Run package providers to the grounded phase-core provider: GlobalAppendixNProofV4RawSeparatedTRTProviderBundle.toGroundedTRTPackageProvider / globalAppendixNProofV4GroundedTRTPackageFromRawSeparatedTRTBundle",
     "direct TRT projection from one raw Tower/Return/Run field bundle to the grounded phase-core provider: GlobalAppendixNProofV4RawTRTFieldProviderBundle.toGroundedTRTPackageProvider / globalAppendixNProofV4GroundedTRTPackageFromRawTRTFieldBundle",
-    "terminal finite-overlap nonempty projections to the structured / bundled actual terminal surfaces: closedN2FiniteOverlapTerminalInputs_nonempty_of_closedN2StructuredFiniteOverlapTerminalInputs / recordDensityN2StructuredTerminalProvider_nonempty_of_recordDensityN2FiniteOverlapTerminalProvider / recordDensityN2FiniteOverlapTerminalProvider_nonempty_of_recordDensityN2ActualFiniteOverlapTerminalProvider",
+    "terminal finite-overlap projections to the fully actual manuscript-regular raw-N.2 finite-overlap target: closedN2FiniteOverlapTerminalInputs_nonempty_of_closedN2StructuredFiniteOverlapTerminalInputs / recordDensityN2StructuredTerminalProvider_nonempty_of_recordDensityN2FiniteOverlapTerminalProvider / GlobalAssemblyActualCarryStoppedChernoffRawClusterCNLRawReturnRunFieldsRecordDensityN2FiniteOverlapTerminalProviderInputs.toManuscriptRegularRawN2FiniteOverlapTerminalInputs / GlobalAssemblyActualCarryStoppedChernoffRawClusterCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapTerminalProviderInputs.toManuscriptRegularRawN2FiniteOverlapTerminalInputs / GlobalAssemblyActualCarryStoppedChernoffRawClusterCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapFieldsTerminalProviderInputs.toManuscriptRegularRawN2FiniteOverlapFieldsTerminalInputs / recordDensityN2FiniteOverlapTerminalProvider_nonempty_of_recordDensityN2ActualFiniteOverlapTerminalProvider",
+    "proof-object CNL proof-v4 finite-overlap projection to the fully actual manuscript-regular raw-N.2 target: GlobalAssemblyActualCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2FiniteOverlapTerminalProviderInputs.toManuscriptRegularRawN2FiniteOverlapTerminalInputs",
+    "proof-object CNL actual finite-overlap projections to the fully actual manuscript-regular raw-N.2 targets: GlobalAssemblyActualCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapTerminalProviderInputs.toManuscriptRegularRawN2FiniteOverlapTerminalInputs / GlobalAssemblyActualCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapFieldsTerminalProviderInputs.toManuscriptRegularRawN2FiniteOverlapFieldsTerminalInputs",
+    "layer-cake Chernoff proof-object CNL proof-v4 finite-overlap projection to the fully actual manuscript-regular raw-N.2 target: GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2FiniteOverlapTerminalProviderInputs.toManuscriptRegularRawN2FiniteOverlapTerminalInputs",
+    "layer-cake Chernoff proof-object CNL actual finite-overlap projections to the fully actual manuscript-regular raw-N.2 targets: GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapTerminalProviderInputs.toManuscriptRegularRawN2FiniteOverlapTerminalInputs / GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapFieldsTerminalProviderInputs.toManuscriptRegularRawN2FiniteOverlapFieldsTerminalInputs",
     "field-exposed finite-overlap terminal nonempty projections: recordDensityN2ActualFiniteOverlapTerminalProvider_nonempty_of_recordDensityN2ActualFiniteOverlapFieldsTerminalProvider / rawN2ActualFiniteOverlapTerminalProvider_nonempty_of_rawN2ActualFiniteOverlapFieldsTerminalProvider / closedN2ActualFiniteOverlapTerminalProvider_nonempty_of_closedN2ActualFiniteOverlapFieldsTerminalProvider",
     "phase-aligned N.2 nonempty projections from record-density first-crossing data to raw actual N.2 data: areaLayerRawN2PhaseAlignedTerminalAllFieldsProvider_nonempty_of_areaLayerRecordDensityN2PhaseAlignedTerminalAllFieldsProvider / layerCakeRawN2PhaseAlignedTerminalAllFieldsProvider_nonempty_of_layerCakeRecordDensityN2PhaseAlignedTerminalAllFieldsProvider / areaLayerRecordDensityN2PhaseAlignedTerminalAllFieldsProvider_nonempty_of_layerCakeRecordDensityN2PhaseAlignedTerminalAllFieldsProvider",
     "phase-aligned raw-TRT bundle nonempty projections to separated raw Tower/Return/Run routes: areaLayerSeparatedTRTFieldsRecordDensityN2PhaseAlignedTerminalAllFieldsProvider_nonempty_of_areaLayerRawTRTFieldsRecordDensityN2PhaseAlignedTerminalAllFieldsProvider / layerCakeSeparatedTRTFieldsRecordDensityN2PhaseAlignedTerminalAllFieldsProvider_nonempty_of_layerCakeRawTRTFieldsRecordDensityN2PhaseAlignedTerminalAllFieldsProvider / areaLayerRawTRTFieldsRecordDensityN2PhaseAlignedTerminalAllFieldsProvider_nonempty_of_layerCakeRawTRTFieldsRecordDensityN2PhaseAlignedTerminalAllFieldsProvider",
@@ -28074,7 +28811,7 @@ def globalAppendixNPreferredActualProjectionRoutes : List String :=
     "nonempty projection from every lowered preferred bridge to GlobalAssemblyActualPreferredProviderTarget" ]
 
 theorem globalAppendixNPreferredActualProjectionRoutes_length :
-    globalAppendixNPreferredActualProjectionRoutes.length = 206 := by
+    globalAppendixNPreferredActualProjectionRoutes.length = 210 := by
   rfl
 
 /-- The no-input theorem can be installed only after this provider surface has

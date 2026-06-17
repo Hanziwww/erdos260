@@ -1,6 +1,7 @@
 import Mathlib
 import Erdos260.P1HotspotAudit
 import Erdos260.O4ClassOneFidelity
+import Erdos260.V30Class1Realization
 
 /-!
 # O4 supply side: the Appendix-Y descent (DERIVED heredity) and the AN.1 carrier map
@@ -54,11 +55,11 @@ so the corrected class-1 aligned cap (R2) holds (`cor:an-r2-from-o4sharp`).  Reu
 `carrier_mass_preserving`, `o4_no_failed_row_of_bisect`, `o4_classOne_cap_from_bisect`.
 
 ## Honest residual (what remains genuinely open)
-The two flagged dynamical inputs of the Y descent — the one-cell parity base `hbase` and the
-priority-monotonicity heredity `hpri` (these come from the verified priority deletion order, App Y.2
-/ X.2, not formalizable without the full priority machinery) — and the carrier-map data itself
-(`hrealize`: that a failed-(R2) ledger row really realizes a retained depth-`v` atom with matching
-label, `lem:aa-ledger-row-realizes-formal-row` / AN.1, the dynamical realization bridge).
+At the raw `Bisect` layer, the descent still needs the one-cell parity base `hbase` and priority
+monotonicity `hpri`.  At the highest O4 interface in this file, however, those facts are absorbed
+by the V30 `Class1FormalSystem.atom_void` theorem.  The remaining top-level O4 bridge is the split
+AA/AN realization data: the actual failed row is retained by the same priority selector (`hret`) and
+its formal boundary label is the row boundary quotient (`hlabel`).
 -/
 
 namespace Erdos260.O4SupplyCarrierMap
@@ -193,7 +194,205 @@ theorem o4_classOne_cap_from_bisect
   rw [hempty] at hmem
   simp at hmem
 
-/-! ## 4.  Honest residual / status inventory -/
+/-! ## 4.  Packaged O4 residual surface -/
+
+/-- The exact remaining O4 supply inputs after the midpoint cocycle and descent
+have been formalized.  This bundles the three genuine data still owed by the
+manuscript-to-Lean bridge: depth-zero parity, priority heredity, and realization
+of nonzero rows by retained formal atoms. -/
+structure O4BisectSupplyInputs {ι : Type*} (S : Finset ι) (Δ : ι → ZMod 6) (v : ℕ) where
+  ret : (w : ℕ) → Bisect w → Prop
+  realize : ι → Bisect v
+  hbase : ∀ δ : ZMod 6, ret 0 (Bisect.leaf δ) → δ = 0
+  hpriority : ∀ (w : ℕ) (l r : Bisect w), ret (w + 1) (Bisect.node l r) →
+    (l.label ≠ 0 → ret w l) ∧ (r.label ≠ 0 → ret w r)
+  hrealize : ∀ i ∈ S, Δ i ≠ 0 → ret v (realize i) ∧ (realize i).label = Δ i
+
+namespace O4BisectSupplyInputs
+
+/-- The packaged O4 supply surface voids all failed class-one rows. -/
+theorem no_failed_row {ι : Type*} {S : Finset ι} {Δ : ι → ZMod 6} {v : ℕ}
+    (I : O4BisectSupplyInputs S Δ v) :
+    S.filter (fun i => Δ i ≠ 0) = ∅ :=
+  o4_no_failed_row_of_bisect S Δ v I.ret I.hbase I.hpriority I.realize I.hrealize
+
+/-- The packaged O4 supply surface gives the corrected class-one aligned cap. -/
+theorem classOneCap {ι : Type*} {S : Finset ι} {Δ : ι → ZMod 6}
+    (wt : ι → ℚ) {v : ℕ} (I : O4BisectSupplyInputs S Δ v)
+    (hwt : ∀ i ∈ S, 0 ≤ wt i) :
+    ∑ i ∈ S, wt i * P1HotspotAudit.w1 (0 : ZMod 6) (Δ i) ≤ 0 :=
+  o4_classOne_cap_from_bisect S Δ wt v I.ret I.hbase I.hpriority I.realize
+    hwt I.hrealize
+
+/-- Positive corrected class-one excess is impossible from the packaged bisect
+supply surface.  This is the direct AO/AA refutation form of `classOneCap`. -/
+theorem no_positive_excess {ι : Type*} {S : Finset ι} {Δ : ι → ZMod 6}
+    (wt : ι → ℚ) {v : ℕ} (I : O4BisectSupplyInputs S Δ v)
+    (hwt : ∀ i ∈ S, 0 ≤ wt i) :
+    ¬ 0 < ∑ i ∈ S, wt i * P1HotspotAudit.w1 (0 : ZMod 6) (Δ i) :=
+  not_lt.mpr (classOneCap wt I hwt)
+
+end O4BisectSupplyInputs
+
+/-! ## 5.  Bridge to the V30 formal-system atoms -/
+
+/-- If every failed row is realized as a retained atom in a V30 `Class1FormalSystem`,
+then no failed row survives.  This is the O4 supply conclusion with the Y-base and
+priority inputs already packaged inside the V30 formal-system proof of
+`Class1FormalSystem.atom_void`. -/
+theorem o4_no_failed_row_of_formalSystem
+    {ι : Type*} (Rows : Finset ι) (Δ : ι → ZMod 6)
+    (Sys : V30Class1Realization.Class1FormalSystem (ZMod 6))
+    (atomStart atomDepth : ι → ℕ)
+    (hrealize : ∀ i ∈ Rows, Δ i ≠ 0 → Sys.atom (atomStart i) (atomDepth i)) :
+    Rows.filter (fun i => Δ i ≠ 0) = ∅ := by
+  rw [Finset.filter_eq_empty_iff]
+  intro i hi hne
+  exact (Sys.atom_void (atomStart i) (atomDepth i)) (hrealize i hi hne)
+
+/-- The corrected class-one aligned cap from a V30 formal-system realization.  A
+positive O4 excess exposes a nonzero failed row; the formal-system atom voiding
+theorem makes such a realized row impossible. -/
+theorem o4_classOne_cap_from_formalSystem
+    {ι : Type*} (Rows : Finset ι) (Δ : ι → ZMod 6) (wt : ι → ℚ)
+    (Sys : V30Class1Realization.Class1FormalSystem (ZMod 6))
+    (atomStart atomDepth : ι → ℕ)
+    (hwt : ∀ i ∈ Rows, 0 ≤ wt i)
+    (hrealize : ∀ i ∈ Rows, Δ i ≠ 0 → Sys.atom (atomStart i) (atomDepth i)) :
+    ∑ i ∈ Rows, wt i * P1HotspotAudit.w1 (0 : ZMod 6) (Δ i) ≤ 0 := by
+  rw [← not_lt]
+  intro hpos
+  obtain ⟨i, hiRows, hiΔ, _⟩ :=
+    P1HotspotAudit.o4_excess_exposes_nonzero (0 : ZMod 6) Rows Δ wt hwt hpos
+  have hempty :=
+    o4_no_failed_row_of_formalSystem Rows Δ Sys atomStart atomDepth hrealize
+  have hmem : i ∈ Rows.filter (fun i => Δ i ≠ 0) :=
+    Finset.mem_filter.mpr ⟨hiRows, hiΔ⟩
+  rw [hempty] at hmem
+  simp at hmem
+
+/-- Packaged O4 supply surface when the realization target is a V30 formal system.
+Compared with `O4BisectSupplyInputs`, the base/parity and priority descent data
+are absorbed by `Class1FormalSystem.atom_void`; the remaining external input is
+the ledger-row-to-formal-atom realization. -/
+structure O4FormalSystemSupplyInputs {ι : Type*} (Rows : Finset ι) (Δ : ι → ZMod 6) where
+  system : V30Class1Realization.Class1FormalSystem (ZMod 6)
+  atomStart : ι → ℕ
+  atomDepth : ι → ℕ
+  hrealize : ∀ i ∈ Rows, Δ i ≠ 0 → system.atom (atomStart i) (atomDepth i)
+
+namespace O4FormalSystemSupplyInputs
+
+/-- The packaged V30 formal-system supply surface voids all failed class-one rows. -/
+theorem no_failed_row {ι : Type*} {Rows : Finset ι} {Δ : ι → ZMod 6}
+    (I : O4FormalSystemSupplyInputs Rows Δ) :
+    Rows.filter (fun i => Δ i ≠ 0) = ∅ :=
+  o4_no_failed_row_of_formalSystem Rows Δ I.system I.atomStart I.atomDepth I.hrealize
+
+/-- The packaged V30 formal-system supply surface gives the corrected class-one
+aligned cap. -/
+theorem classOneCap {ι : Type*} {Rows : Finset ι} {Δ : ι → ZMod 6}
+    (wt : ι → ℚ) (I : O4FormalSystemSupplyInputs Rows Δ)
+    (hwt : ∀ i ∈ Rows, 0 ≤ wt i) :
+    ∑ i ∈ Rows, wt i * P1HotspotAudit.w1 (0 : ZMod 6) (Δ i) ≤ 0 :=
+  o4_classOne_cap_from_formalSystem Rows Δ wt I.system I.atomStart I.atomDepth
+    hwt I.hrealize
+
+/-- Positive corrected class-one excess is impossible from the packaged
+formal-system supply surface. -/
+theorem no_positive_excess {ι : Type*} {Rows : Finset ι} {Δ : ι → ZMod 6}
+    (wt : ι → ℚ) (I : O4FormalSystemSupplyInputs Rows Δ)
+    (hwt : ∀ i ∈ Rows, 0 ≤ wt i) :
+    ¬ 0 < ∑ i ∈ Rows, wt i * P1HotspotAudit.w1 (0 : ZMod 6) (Δ i) :=
+  not_lt.mpr (classOneCap wt I hwt)
+
+end O4FormalSystemSupplyInputs
+
+/-! ## 5'.  Realization split into retention and boundary-label compatibility -/
+
+/-- The Appendix-AA/AN realization bridge split into the two local facts used by
+`Class1FormalSystem.atom`: the realized row is retained after the priority
+deletion, and its formal boundary label is the row's class-one quotient.  This is
+strictly stronger/more structured than supplying `system.atom` directly. -/
+structure O4FormalSystemRealizationInputs {Row : Type*} (Rows : Finset Row)
+    (Delta : Row -> ZMod 6) where
+  system : V30Class1Realization.Class1FormalSystem (ZMod 6)
+  atomStart : Row -> Nat
+  atomDepth : Row -> Nat
+  hret : forall i, i ∈ Rows -> Delta i ≠ 0 ->
+    V30Class1Realization.retCore system.clean system.tagged (atomStart i) (atomDepth i)
+  hlabel : forall i, i ∈ Rows -> Delta i ≠ 0 ->
+    V30Class1Realization.blockLabel system.C (atomStart i) (atomDepth i) = Delta i
+
+namespace O4FormalSystemRealizationInputs
+
+/-- The split AA/AN realization data reconstructs the older atom-valued O4
+supply surface. -/
+def toSupplyInputs {Row : Type*} {Rows : Finset Row} {Delta : Row -> ZMod 6}
+    (I : O4FormalSystemRealizationInputs Rows Delta) :
+    O4FormalSystemSupplyInputs Rows Delta where
+  system := I.system
+  atomStart := I.atomStart
+  atomDepth := I.atomDepth
+  hrealize := by
+    intro i hi hne
+    exact ⟨I.hret i hi hne, by
+      rw [I.hlabel i hi hne]
+      exact hne⟩
+
+/-- The split realization package voids all retained nonzero class-one rows. -/
+theorem no_failed_row {Row : Type*} {Rows : Finset Row} {Delta : Row -> ZMod 6}
+    (I : O4FormalSystemRealizationInputs Rows Delta) :
+    Rows.filter (fun i => Delta i ≠ 0) = ∅ :=
+  O4FormalSystemSupplyInputs.no_failed_row I.toSupplyInputs
+
+/-- The split realization package gives the corrected class-one aligned cap. -/
+theorem classOneCap {Row : Type*} {Rows : Finset Row} {Delta : Row -> ZMod 6}
+    (wt : Row -> Rat) (I : O4FormalSystemRealizationInputs Rows Delta)
+    (hwt : forall i, i ∈ Rows -> 0 <= wt i) :
+    Finset.sum Rows (fun i => wt i * P1HotspotAudit.w1 (0 : ZMod 6) (Delta i)) <= 0 :=
+  O4FormalSystemSupplyInputs.classOneCap wt I.toSupplyInputs hwt
+
+/-- Positive corrected class-one excess is impossible from the split
+realization package. -/
+theorem no_positive_excess {Row : Type*} {Rows : Finset Row} {Delta : Row -> ZMod 6}
+    (wt : Row -> Rat) (I : O4FormalSystemRealizationInputs Rows Delta)
+    (hwt : forall i, i ∈ Rows -> 0 <= wt i) :
+    Not (0 < Finset.sum Rows
+      (fun i => wt i * P1HotspotAudit.w1 (0 : ZMod 6) (Delta i))) :=
+  O4FormalSystemSupplyInputs.no_positive_excess wt I.toSupplyInputs hwt
+
+end O4FormalSystemRealizationInputs
+
+/-! ## 6.  Honest residual / status inventory -/
+
+/-- Machine-readable list of O4 components closed in this module. -/
+def o4SupplyCarrierMapClosedItems : List String :=
+  [ "formal atom model Bisect v over ZMod 6",
+    "midpoint cocycle and nonzero-child lemma",
+    "well-founded descent from hbase and hpriority",
+    "AN carrier-map mass preservation for realized rows",
+    "no failed class-one row from Bisect realization",
+    "packaged O4BisectSupplyInputs -> class-one cap",
+    "V30 Class1FormalSystem realization bridge via atom_void",
+    "packaged O4FormalSystemSupplyInputs -> class-one cap",
+    "AA/AN realization split into retention and boundary-label compatibility",
+    "packaged O4 supply surfaces refute positive class-one excess" ]
+
+/-- Machine-readable list of the exact top-level O4 inputs that remain external.
+At the raw bisect layer `hbase` and `hpriority` are still inputs, but the
+formal-system bridge above absorbs them into `Class1FormalSystem.atom_void`. -/
+def o4SupplyCarrierMapOpenItems : List String :=
+  [ "hret: actual ledger row is retained after priority deletion in the formal system",
+    "hlabel: actual ledger row boundary quotient matches the formal atom label" ]
+
+theorem o4SupplyCarrierMapClosedItems_length :
+    o4SupplyCarrierMapClosedItems.length = 10 := by
+  rfl
+
+theorem o4SupplyCarrierMapOpenItems_length :
+    o4SupplyCarrierMapOpenItems.length = 2 := by
+  rfl
 
 /-- The precise status of the O4 supply carrier-map / descent side. -/
 def o4SupplyCarrierMapResiduals : List String :=
@@ -214,12 +413,19 @@ def o4SupplyCarrierMapResiduals : List String :=
       "realized as a retained depth-v atom is impossible (descent ⇒ label 0 ⇒ contradiction with " ++
       "Δ ≠ 0); hence the corrected class-1 cap (R2) holds (cor:an-r2-from-o4sharp). Reuses " ++
       "P1HotspotAudit.o4_excess_exposes_nonzero.",
-    "RESIDUAL (genuine dynamical inputs of the Y descent) — hbase (one-cell parity base, App Y " ++
-      "depth-0 / X.2) and hpri (priority monotonicity, lem:y-priority-monotone Y.2): from the " ++
-      "verified priority deletion order, NOT formalizable without the full priority machinery.",
-    "RESIDUAL (realization bridge) — hrealize: that a failed-(R2) ledger row really realizes a " ++
-      "retained depth-v formal atom with matching class-1 label (lem:aa-ledger-row-realizes-formal-row " ++
-      "/ AN.1); the dynamical row↦atom carrier, the genuine class-1 SUPPLY." ]
+    "CLOSED (V30 formal-system bridge) - o4_no_failed_row_of_formalSystem / " ++
+      "o4_classOne_cap_from_formalSystem: if a failed row realizes a retained V30 Class1FormalSystem " ++
+      "atom, Class1FormalSystem.atom_void immediately empties it and gives the corrected class-1 cap.",
+    "CLOSED (AA/AN realization split) - O4FormalSystemRealizationInputs replaces the atom-valued " ++
+      "hrealize field by the two Appendix-AA facts that actually define the atom: row retention " ++
+      "after priority deletion and boundary-label compatibility with the formal midpoint row.",
+    "RESIDUAL (raw Bisect layer only) — hbase (one-cell parity base, App Y depth-0 / X.2) " ++
+      "and hpri (priority monotonicity, lem:y-priority-monotone Y.2) are still needed if one " ++
+      "uses O4BisectSupplyInputs directly; the formal-system interface absorbs them into " ++
+      "Class1FormalSystem.atom_void.",
+    "RESIDUAL (realization bridge) — hret + hlabel: the actual ledger row must be shown retained " ++
+      "under the same priority selector and to have the same boundary quotient as the formal " ++
+      "midpoint row (lem:aa-ledger-row-realizes-formal-row / lem:aa-priority-selectors-agree / AN.1)." ]
 
 theorem o4SupplyCarrierMapResiduals_nonempty : o4SupplyCarrierMapResiduals ≠ [] := by
   simp [o4SupplyCarrierMapResiduals]

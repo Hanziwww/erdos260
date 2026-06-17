@@ -1,5 +1,6 @@
 import Erdos260.V30Class1Realization
 import Erdos260.V30OffPinExitCap
+import Erdos260.O4SupplyCarrierMap
 
 /-!
 # V30 STRUCTURAL ATOMS — `V30StructuralAtoms` (v30 follow-up lane)
@@ -27,8 +28,9 @@ carries the zero class-1 label.  We PROVE it for a concrete, manuscript-faithful
 * `class1SystemOfCarry C clean` — the canonical tag-faithful system with
   `tagged := fun x => decide (blockLabel C x 0 ≠ 0)`; `parityZero` is PROVED, not
   assumed.  Hence `class1SystemOfCarry_no_atom` (`A₁,ᵥ^deep = ∅`) and
-  `v30Class1Deep_of_carryRealization` deliver the deep class-1 cap from JUST a
-  realization bridge — the `parityZero` obligation has LEFT the residual.
+  `v30Class1Deep_of_carryRealization` and
+  `v30Class1Deep_field_of_carryRealization` deliver the deep class-1 cap from
+  JUST a realization bridge — the `parityZero` obligation has LEFT the residual.
 
 Honest caveat: this realizes the manuscript's TAGGING DISCIPLINE (discrepancies are
 tagged) at the convention level rather than re-deriving the carry multiplier; the
@@ -156,6 +158,206 @@ theorem v30Class1Deep_of_carryRealization (C : ℕ → ZMod 6) (clean : ℕ → 
     DccClass1DeepResidual 0 :=
   v30Class1DeepResidual_of_realization (class1SystemOfCarry C clean) hreal
 
+/-- **Keystone class-1 field from the concrete carry system.**  This is the exact
+field shape consumed downstream by the v30/keystone endpoint, with the parity-zero
+obligation already discharged by `class1SystemOfCarry`; the only remaining input
+is the Appendix-AA ledger-row realization bridge into that concrete system. -/
+theorem v30Class1Deep_field_of_carryRealization (C : ℕ → ZMod 6) (clean : ℕ → Bool)
+    (hreal : V30Class1LedgerRealizesFormalRow (class1SystemOfCarry C clean)) :
+    ∀ ctx : ActualFailureContext,
+      1274740 ≤ shellLadderDepth ctx → 82 ≤ ctx.n24CarryData.r →
+      1 ≤ ctx.n24CarryData.r →
+      (¬ ∃ cv bv Tv : ℕ,
+        ((class1SlopeDatum ctx).q, (class1SlopeDatum ctx).K₀, cv, bv, Tv)
+            ∈ sreClass1ThresholdTable
+          ∧ shellLadderDepth ctx ≤ Tv) →
+      ((routedFibre ctx.n24CarryData (genuineChargeRoute ctx) 1).card : ℝ)
+          * ctx.n24CarryData.Y
+        ≤ erdos260Constants.cStar * erdos260Constants.ξ / 6 * (ctx.shell.X : ℝ) :=
+  v30Class1Deep_field_of_realization (class1SystemOfCarry C clean) hreal
+
+/-- Packaged V30 class-one carry realization surface.  After `parityZero` is
+proved by `class1SystemOfCarry`, the only remaining Appendix-AA input for the
+deep class-one field is the ledger-row realization bridge into this concrete
+system. -/
+structure V30Class1CarryRealizationInputs where
+  C : ℕ → ZMod 6
+  clean : ℕ → Bool
+  hreal : V30Class1LedgerRealizesFormalRow (class1SystemOfCarry C clean)
+
+namespace V30Class1CarryRealizationInputs
+
+/-- The packaged concrete carry realization gives the deep class-one residual. -/
+theorem deepResidual (I : V30Class1CarryRealizationInputs) :
+    DccClass1DeepResidual 0 :=
+  v30Class1Deep_of_carryRealization I.C I.clean I.hreal
+
+/-- The packaged concrete carry realization gives the exact keystone class-one
+field consumed downstream. -/
+theorem class1DeepField (I : V30Class1CarryRealizationInputs) :
+    ∀ ctx : ActualFailureContext,
+      1274740 ≤ shellLadderDepth ctx → 82 ≤ ctx.n24CarryData.r →
+      1 ≤ ctx.n24CarryData.r →
+      (¬ ∃ cv bv Tv : ℕ,
+        ((class1SlopeDatum ctx).q, (class1SlopeDatum ctx).K₀, cv, bv, Tv)
+            ∈ sreClass1ThresholdTable
+          ∧ shellLadderDepth ctx ≤ Tv) →
+      ((routedFibre ctx.n24CarryData (genuineChargeRoute ctx) 1).card : ℝ)
+          * ctx.n24CarryData.Y
+        ≤ erdos260Constants.cStar * erdos260Constants.ξ / 6 * (ctx.shell.X : ℝ) :=
+  v30Class1Deep_field_of_carryRealization I.C I.clean I.hreal
+
+end V30Class1CarryRealizationInputs
+
+/-- **O4 failed-row voiding from the concrete carry system.**  This is the O4
+formal-system bridge with the V30 tag-faithful system `class1SystemOfCarry C clean`
+substituted, so the depth-zero parity/tag discipline is already proved and the
+remaining input is only the ledger-row realization as an atom of this concrete
+system. -/
+theorem o4_no_failed_row_of_carrySystem
+    {ι : Type*} (Rows : Finset ι) (Δ : ι → ZMod 6)
+    (C : ℕ → ZMod 6) (clean : ℕ → Bool)
+    (atomStart atomDepth : ι → ℕ)
+    (hrealize : ∀ i ∈ Rows, Δ i ≠ 0 →
+      (class1SystemOfCarry C clean).atom (atomStart i) (atomDepth i)) :
+    Rows.filter (fun i => Δ i ≠ 0) = ∅ :=
+  O4SupplyCarrierMap.o4_no_failed_row_of_formalSystem Rows Δ
+    (class1SystemOfCarry C clean) atomStart atomDepth hrealize
+
+/-- **O4 corrected class-one cap from the concrete carry system.**  The positive
+excess witness is voided by `class1SystemOfCarry` through the V30/O4 bridge; no
+separate `parityZero`, `hbase`, or priority-descent hypothesis is exposed here. -/
+theorem o4_classOne_cap_from_carrySystem
+    {ι : Type*} (Rows : Finset ι) (Δ : ι → ZMod 6) (wt : ι → ℚ)
+    (C : ℕ → ZMod 6) (clean : ℕ → Bool)
+    (atomStart atomDepth : ι → ℕ)
+    (hwt : ∀ i ∈ Rows, 0 ≤ wt i)
+    (hrealize : ∀ i ∈ Rows, Δ i ≠ 0 →
+      (class1SystemOfCarry C clean).atom (atomStart i) (atomDepth i)) :
+    ∑ i ∈ Rows, wt i * P1HotspotAudit.w1 (0 : ZMod 6) (Δ i) ≤ 0 :=
+  O4SupplyCarrierMap.o4_classOne_cap_from_formalSystem Rows Δ wt
+    (class1SystemOfCarry C clean) atomStart atomDepth hwt hrealize
+
+/-- Packaged O4 supply surface for the concrete carry system.  This is the
+remaining Appendix-AA realization interface after depth-zero parity and the
+Appendix-Y descent have been discharged by `class1SystemOfCarry`. -/
+structure O4CarrySystemSupplyInputs {ι : Type*} (Rows : Finset ι) (Δ : ι → ZMod 6) where
+  C : ℕ → ZMod 6
+  clean : ℕ → Bool
+  atomStart : ι → ℕ
+  atomDepth : ι → ℕ
+  hrealize : ∀ i ∈ Rows, Δ i ≠ 0 →
+    (class1SystemOfCarry C clean).atom (atomStart i) (atomDepth i)
+
+namespace O4CarrySystemSupplyInputs
+
+/-- The concrete carry-system package is a V30 formal-system package with
+`system = class1SystemOfCarry C clean`.  This makes the remaining AA input
+literally the same `hrealize` field used by `O4FormalSystemSupplyInputs`. -/
+def toFormalSystemInputs {ι : Type*} {Rows : Finset ι} {Δ : ι → ZMod 6}
+    (I : O4CarrySystemSupplyInputs Rows Δ) :
+    O4SupplyCarrierMap.O4FormalSystemSupplyInputs Rows Δ where
+  system := class1SystemOfCarry I.C I.clean
+  atomStart := I.atomStart
+  atomDepth := I.atomDepth
+  hrealize := I.hrealize
+
+/-- The concrete carry-system package voids all retained nonzero class-one rows. -/
+theorem no_failed_row {ι : Type*} {Rows : Finset ι} {Δ : ι → ZMod 6}
+    (I : O4CarrySystemSupplyInputs Rows Δ) :
+    Rows.filter (fun i => Δ i ≠ 0) = ∅ :=
+  o4_no_failed_row_of_carrySystem Rows Δ I.C I.clean I.atomStart I.atomDepth I.hrealize
+
+/-- The concrete carry-system package gives the corrected class-one aligned cap. -/
+theorem classOneCap {ι : Type*} {Rows : Finset ι} {Δ : ι → ZMod 6}
+    (wt : ι → ℚ) (I : O4CarrySystemSupplyInputs Rows Δ)
+    (hwt : ∀ i ∈ Rows, 0 ≤ wt i) :
+    ∑ i ∈ Rows, wt i * P1HotspotAudit.w1 (0 : ZMod 6) (Δ i) ≤ 0 :=
+  o4_classOne_cap_from_carrySystem Rows Δ wt I.C I.clean I.atomStart I.atomDepth
+    hwt I.hrealize
+
+/-- Positive corrected class-one excess is impossible from the packaged concrete
+carry-system supply surface. -/
+theorem no_positive_excess {ι : Type*} {Rows : Finset ι} {Δ : ι → ZMod 6}
+    (wt : ι → ℚ) (I : O4CarrySystemSupplyInputs Rows Δ)
+    (hwt : ∀ i ∈ Rows, 0 ≤ wt i) :
+    ¬ 0 < ∑ i ∈ Rows, wt i * P1HotspotAudit.w1 (0 : ZMod 6) (Δ i) :=
+  not_lt.mpr (classOneCap wt I hwt)
+
+end O4CarrySystemSupplyInputs
+
+/-- Split concrete carry-system realization surface.  Instead of asking for the
+whole atom predicate, this asks for the two Appendix-AA facts that define it for
+`class1SystemOfCarry C clean`: retention after priority deletion and equality of
+the formal boundary label with the ledger row's class-one quotient. -/
+structure O4CarrySystemRealizationInputs {Row : Type*} (Rows : Finset Row)
+    (Delta : Row -> ZMod 6) where
+  C : Nat -> ZMod 6
+  clean : Nat -> Bool
+  atomStart : Row -> Nat
+  atomDepth : Row -> Nat
+  hret : forall i, i ∈ Rows -> Delta i ≠ 0 ->
+    retCore clean (depthZeroTag C) (atomStart i) (atomDepth i)
+  hlabel : forall i, i ∈ Rows -> Delta i ≠ 0 ->
+    blockLabel C (atomStart i) (atomDepth i) = Delta i
+
+namespace O4CarrySystemRealizationInputs
+
+/-- The split concrete carry-system data is a split O4 formal-system realization
+with `system = class1SystemOfCarry C clean`. -/
+def toFormalRealizationInputs {Row : Type*} {Rows : Finset Row} {Delta : Row -> ZMod 6}
+    (I : O4CarrySystemRealizationInputs Rows Delta) :
+    O4SupplyCarrierMap.O4FormalSystemRealizationInputs Rows Delta where
+  system := class1SystemOfCarry I.C I.clean
+  atomStart := I.atomStart
+  atomDepth := I.atomDepth
+  hret := by
+    intro i hi hne
+    exact I.hret i hi hne
+  hlabel := by
+    intro i hi hne
+    exact I.hlabel i hi hne
+
+/-- The split concrete carry-system data reconstructs the older atom-valued
+carry-system supply surface. -/
+def toSupplyInputs {Row : Type*} {Rows : Finset Row} {Delta : Row -> ZMod 6}
+    (I : O4CarrySystemRealizationInputs Rows Delta) :
+    O4CarrySystemSupplyInputs Rows Delta where
+  C := I.C
+  clean := I.clean
+  atomStart := I.atomStart
+  atomDepth := I.atomDepth
+  hrealize := I.toFormalRealizationInputs.toSupplyInputs.hrealize
+
+/-- The split concrete carry-system realization voids all retained nonzero
+class-one rows. -/
+theorem no_failed_row {Row : Type*} {Rows : Finset Row} {Delta : Row -> ZMod 6}
+    (I : O4CarrySystemRealizationInputs Rows Delta) :
+    Rows.filter (fun i => Delta i ≠ 0) = ∅ :=
+  O4SupplyCarrierMap.O4FormalSystemRealizationInputs.no_failed_row
+    I.toFormalRealizationInputs
+
+/-- The split concrete carry-system realization gives the corrected class-one
+aligned cap. -/
+theorem classOneCap {Row : Type*} {Rows : Finset Row} {Delta : Row -> ZMod 6}
+    (wt : Row -> Rat) (I : O4CarrySystemRealizationInputs Rows Delta)
+    (hwt : forall i, i ∈ Rows -> 0 <= wt i) :
+    Finset.sum Rows (fun i => wt i * P1HotspotAudit.w1 (0 : ZMod 6) (Delta i)) <= 0 :=
+  O4SupplyCarrierMap.O4FormalSystemRealizationInputs.classOneCap wt
+    I.toFormalRealizationInputs hwt
+
+/-- Positive corrected class-one excess is impossible from the split concrete
+carry-system realization. -/
+theorem no_positive_excess {Row : Type*} {Rows : Finset Row} {Delta : Row -> ZMod 6}
+    (wt : Row -> Rat) (I : O4CarrySystemRealizationInputs Rows Delta)
+    (hwt : forall i, i ∈ Rows -> 0 <= wt i) :
+    Not (0 < Finset.sum Rows
+      (fun i => wt i * P1HotspotAudit.w1 (0 : ZMod 6) (Delta i))) :=
+  O4SupplyCarrierMap.O4FormalSystemRealizationInputs.no_positive_excess wt
+    I.toFormalRealizationInputs hwt
+
+end O4CarrySystemRealizationInputs
+
 /-- Non-vacuity: the all-zero carry is a tag-faithful system (every site reads the zero
 label, so nothing is tagged) and has no atoms — consistent with the descent. -/
 theorem class1SystemOfCarry_zero_no_atom (a v : ℕ) :
@@ -249,7 +451,7 @@ def v30StructuralAtomsStatus : List String :=
   [ "LANE (V30StructuralAtoms) — v30 FOLLOW-UP: attack the TRACTABLE structural atoms " ++
       "of the 11-atom v30 residual (Erdos260V30Endpoint.Erdos260V30Residual) and probe " ++
       "the deep ones.  Additive: ONE new module, imports Lane A (V30Class1Realization) + " ++
-      "Lane C (V30OffPinExitCap), no existing file edited; built standalone.",
+      "Lane C (V30OffPinExitCap) + the O4 formal-system bridge, built standalone.",
     "TRACTABLE 2 — parityZero: DISCHARGED for a concrete ZMod 6 system. " ++
       "Class1FormalSystem.parityZero (Appendix X lem:x-depth-zero-void, v30 line 10347) " ++
       "was the only honest combinatorial residual of Lane A: a retained depth-0 class-1 " ++
@@ -259,9 +461,17 @@ def v30StructuralAtomsStatus : List String :=
       "clean one-site loop has multiplier 2-1=1, hence zero label).  class1SystemOfCarry C " ++
       "clean is the canonical tag-faithful Class1FormalSystem (ZMod 6) with " ++
       "tagged := decide (blockLabel C x 0 != 0); parityZero is PROVED, not assumed.  Hence " ++
-      "class1SystemOfCarry_no_atom (A_{1,v}^deep = empty) and v30Class1Deep_of_carryRealization " ++
-      "deliver DccClass1DeepResidual 0 from JUST the realization bridge — parityZero has LEFT " ++
-      "the residual.",
+      "class1SystemOfCarry_no_atom (A_{1,v}^deep = empty), v30Class1Deep_of_carryRealization, " ++
+      "and v30Class1Deep_field_of_carryRealization deliver the exact keystone class1Deep " ++
+      "field from JUST the realization bridge. V30Class1CarryRealizationInputs packages this " ++
+      "as the exact remaining Lane-A supply surface — parityZero has LEFT the residual.",
+      "O4/V30 BRIDGE: o4_no_failed_row_of_carrySystem and o4_classOne_cap_from_carrySystem " ++
+      "specialize the O4 formal-system bridge to class1SystemOfCarry C clean, so the corrected " ++
+      "class-1 cap follows from only the concrete carry-system realization of failed rows. " ++
+      "O4CarrySystemSupplyInputs packages exactly this residual interface and supplies both " ++
+      "no_failed_row, classOneCap, and no_positive_excess.  O4CarrySystemRealizationInputs " ++
+      "then splits that remaining AA realization into the two row-local obligations that define " ++
+      "an atom: priority-retention in retCore and equality of blockLabel with the ledger quotient.",
     "parityZero HONEST CAVEAT: the discharge realizes the manuscript's TAGGING DISCIPLINE " ++
       "(discrepancies are tagged) at the convention level (tagged := the depth-0 discrepancy " ++
       "detector), faithful to lem:x-depth-zero-void, rather than re-deriving the carry " ++
@@ -319,8 +529,9 @@ def v30StructuralAtomsStatus : List String :=
       "there is a retained formal class-1 atom of depth v >= 1 (the failed (R2) ledger row IS a " ++
       "retained formal row after the audited priority normalization).  CLOSEST IN-TREE ATOM: the " ++
       "descent Class1FormalSystem.atom_void (PROVED, refutes the exposed atom) wired by " ++
-      "v30Class1DeepResidual_of_realization; and (NEW here) the formal system is now CONCRETE " ++
-      "(class1SystemOfCarry, parityZero PROVED).  MISSING: the CONSTRUCTION of the formal atom " ++
+      "v30Class1DeepResidual_of_realization / v30Class1Deep_field_of_carryRealization; and " ++
+      "(NEW here) the formal system is now CONCRETE (class1SystemOfCarry, parityZero PROVED).  " ++
+      "MISSING: the CONSTRUCTION of the formal atom " ++
       "from a failed ledger row — the per-context normal-form identification that the ledger's " ++
       "audited priority selector AGREES with the formal-row selector.  This is COMBINATORIAL " ++
       "(not measure-theoretic) but needs the in-tree audited priority selector / ledger<->row " ++
@@ -341,8 +552,9 @@ def v30StructuralAtomsStatus : List String :=
       "c-spacing are in-tree-supported (RISK e is the least irreducible off-pin risk), but offPin " ++
       "stays carried via RISK b/c.  The deep atoms RISK b, RISK c (measure-theoretic) and U " ++
       "(equivalent to its conclusion) are genuinely irreducible; the AA bridge is a carried " ++
-      "combinatorial normal-form identification.  Net: 1 residual obligation (parityZero) " ++
-      "dischargeable; RISK e sharpened from 'carried' to 'realization-only'.",
+      "combinatorial normal-form identification.  Net: parityZero is discharged by " ++
+      "class1SystemOfCarry; the remaining Lane-A obligation is the Appendix-AA realization " ++
+      "bridge.  RISK e is sharpened from 'carried' to 'realization-only'.",
     "AXIOMS: every key declaration reports exactly [propext, Classical.choice, Quot.sound] or " ++
       "fewer; no sorry / admit / native_decide; no new axiom." ]
 
@@ -360,6 +572,19 @@ fewer. -/
 #print axioms class1SystemOfCarry
 #print axioms class1SystemOfCarry_no_atom
 #print axioms v30Class1Deep_of_carryRealization
+#print axioms v30Class1Deep_field_of_carryRealization
+#print axioms V30Class1CarryRealizationInputs.deepResidual
+#print axioms V30Class1CarryRealizationInputs.class1DeepField
+#print axioms o4_no_failed_row_of_carrySystem
+#print axioms o4_classOne_cap_from_carrySystem
+#print axioms O4CarrySystemSupplyInputs.toFormalSystemInputs
+#print axioms O4CarrySystemSupplyInputs.no_failed_row
+#print axioms O4CarrySystemSupplyInputs.classOneCap
+#print axioms O4CarrySystemRealizationInputs.toFormalRealizationInputs
+#print axioms O4CarrySystemRealizationInputs.toSupplyInputs
+#print axioms O4CarrySystemRealizationInputs.no_failed_row
+#print axioms O4CarrySystemRealizationInputs.classOneCap
+#print axioms O4CarrySystemRealizationInputs.no_positive_excess
 #print axioms class1SystemOfCarry_zero_no_atom
 #print axioms canonGap_le_four_iff
 #print axioms riske_fixedFamilyBand_le_four_iff

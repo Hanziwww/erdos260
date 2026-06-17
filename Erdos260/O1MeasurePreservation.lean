@@ -391,4 +391,98 @@ theorem cycle_charts_balance {C Ω : Type*} [DecidableEq Ω] (c : ℕ) [NeZero c
   exact cycleMap_bijOn Cset (Cset.image (ι a)) (Cset.image (ι (a + 1)))
     (ι a) (ι (a + 1)) (τ a) rfl rfl (hInj (a + 1)) (fun u hu => hcompat a u hu)
 
+/-! ===========================================================================
+    ## Section E.  Packaged O1 residual surface.
+
+    The arithmetic of measure preservation is proved above.  The remaining O1
+    supply from the manuscript is exactly the certified atlas data: injective
+    charts on the common carrier and successor compatibility between adjacent
+    phase fibres.
+    =========================================================================== -/
+
+/-- Residual O1 atlas inputs after the finite-bijection and cycle-balance
+    arithmetic have been discharged. -/
+structure O1CycleChartInputs {C Ω : Type*} [DecidableEq Ω] (c : ℕ) [NeZero c]
+    (Cset : Finset C) (chart : ZMod c → C → Ω) (tau : ZMod c → Ω → Ω) where
+  hInj : ∀ a : ZMod c, Set.InjOn (chart a) ↑Cset
+  hcompat : ∀ (a : ZMod c) (u : C), u ∈ Cset → tau a (chart a u) = chart (a + 1) u
+
+namespace O1CycleChartInputs
+
+/-- Packaged per-edge bijection from the certified cyclic atlas inputs.  This is
+the direct `lem:r-cycle-map-preserves-measure` surface for one adjacent phase
+edge. -/
+theorem edge_bijOn {C Ω : Type*} [DecidableEq Ω] (c : ℕ) [NeZero c]
+    (Cset : Finset C) (chart : ZMod c → C → Ω) (tau : ZMod c → Ω → Ω)
+    (a : ZMod c) (I : O1CycleChartInputs c Cset chart tau) :
+    Set.BijOn (tau a)
+      ↑(Cset.image (chart a))
+      ↑(Cset.image (chart (a + 1))) :=
+  cycleMap_bijOn Cset (Cset.image (chart a)) (Cset.image (chart (a + 1)))
+    (chart a) (chart (a + 1)) (tau a) rfl rfl (I.hInj (a + 1))
+    (fun u hu => I.hcompat a u hu)
+
+/-- Packaged per-edge equivalence of adjacent fibres from the certified cyclic
+atlas inputs.  This is the invertible object behind the per-edge counting
+measure preservation statement. -/
+noncomputable def edge_equiv {C Ω : Type*} [DecidableEq Ω] (c : ℕ) [NeZero c]
+    (Cset : Finset C) (chart : ZMod c → C → Ω) (tau : ZMod c → Ω → Ω)
+    (a : ZMod c) (I : O1CycleChartInputs c Cset chart tau) :
+    {ω : Ω // ω ∈ (↑(Cset.image (chart a)) : Set Ω)} ≃
+      {ω : Ω // ω ∈ (↑(Cset.image (chart (a + 1))) : Set Ω)} :=
+  Set.BijOn.equiv (tau a) (edge_bijOn c Cset chart tau a I)
+
+/-- Packaged per-edge cardinality preservation from the certified cyclic atlas
+inputs. -/
+theorem edge_card_eq {C Ω : Type*} [DecidableEq Ω] (c : ℕ) [NeZero c]
+    (Cset : Finset C) (chart : ZMod c → C → Ω) (tau : ZMod c → Ω → Ω)
+    (a : ZMod c) (I : O1CycleChartInputs c Cset chart tau) :
+    (Cset.image (chart a)).card = (Cset.image (chart (a + 1))).card :=
+  bijOn_finset_card_eq (edge_bijOn c Cset chart tau a I)
+
+/-- Packaged per-edge weighted measure preservation from the certified cyclic
+atlas inputs. -/
+theorem edge_measure_preserving {C Ω M : Type*} [DecidableEq Ω] [AddCommMonoid M]
+    (c : ℕ) [NeZero c] (Cset : Finset C) (chart : ZMod c → C → Ω)
+    (tau : ZMod c → Ω → Ω) (a : ZMod c) (w : Ω → M)
+    (I : O1CycleChartInputs c Cset chart tau) :
+    ∑ ω ∈ Cset.image (chart a), w (tau a ω)
+      = ∑ ω' ∈ Cset.image (chart (a + 1)), w ω' :=
+  bijOn_finset_sum_eq w (edge_bijOn c Cset chart tau a I)
+
+/-- Packaged O1 complete-lap balance from the certified cyclic atlas inputs. -/
+theorem balance {C Ω : Type*} [DecidableEq Ω] (c : ℕ) [NeZero c]
+    (Cset : Finset C) (chart : ZMod c → C → Ω) (tau : ZMod c → Ω → Ω)
+    (E : Finset (ZMod c))
+    (I : O1CycleChartInputs c Cset chart tau) :
+    c * (∑ a ∈ E, (Cset.image (chart a)).card)
+      = E.card * (∑ a : ZMod c, (Cset.image (chart a)).card) :=
+  cycle_charts_balance c Cset chart tau E I.hInj I.hcompat
+
+end O1CycleChartInputs
+
+/-- Machine-readable list of O1 components now closed in Lean. -/
+def o1MeasurePreservationClosedItems : List String :=
+  [ "finite bijections preserve cardinality",
+    "finite bijections preserve counting-measure sums",
+    "cyclic chart transition is a bijection between adjacent fibres",
+    "packaged cyclic atlas inputs give per-edge fibre equivalences",
+    "packaged cyclic atlas inputs preserve per-edge weighted counting measure",
+    "affine and integer-start relabellings are bijective",
+    "per-edge bijections force constant phase mass around ZMod c",
+    "complete-lap balance follows from certified cyclic atlas inputs" ]
+
+/-- Machine-readable list of O1 geometric inputs still external to this file. -/
+def o1MeasurePreservationOpenItems : List String :=
+  [ "charts are injective on the common carrier",
+    "successor transition maps each charted carrier point to the next phase chart" ]
+
+theorem o1MeasurePreservationClosedItems_length :
+    o1MeasurePreservationClosedItems.length = 8 := by
+  rfl
+
+theorem o1MeasurePreservationOpenItems_length :
+    o1MeasurePreservationOpenItems.length = 2 := by
+  rfl
+
 end Erdos260.O1MeasurePreservation

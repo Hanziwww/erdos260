@@ -354,6 +354,13 @@ theorem v30SpanRarity_of_localExitLight (ctx : ActualFailureContext)
     K1SpanRarity ctx :=
   k1acSpanRarity_of_localExitLight ctx hband h
 
+/-- Per-context direct bridge from the exit-mass currency to the exact start
+spacing atom consumed by the densepack support route. -/
+theorem v30StartSpacing_of_localExitLight (ctx : ActualFailureContext)
+    (hband : fixedFamilyRecurrentBand ctx ≤ 4) (h : K1LocalExitLight ctx) :
+    K1StartSpacing ctx :=
+  v30StartSpacing_of_spanRarity ctx (v30SpanRarity_of_localExitLight ctx hband h)
+
 /-- The density field is not consumed by the support-count charge; it closes vacuously
 where the genuine start set vanishes (reused). -/
 theorem v30DensePackDensity_of_emptyStarts (ctx : ActualFailureContext)
@@ -454,6 +461,7 @@ fewer. -/
 #print axioms v30StartSpacing_of_spanRarity
 #print axioms v30DensePackStartSpacingField_of_spanRarity
 #print axioms v30SpanRarity_of_localExitLight
+#print axioms v30StartSpacing_of_localExitLight
 #print axioms v30DensePackDensity_of_emptyStarts
 #print axioms v30DensePackSupportStatus_nonempty
 
