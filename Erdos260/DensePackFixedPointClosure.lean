@@ -754,6 +754,38 @@ def toCycleSplit (R : DensePackDatumSplitResidual) : DensePackCycleSplitResidual
     · exact R.ungatedCoverNat ctx hg hfree hmod
     · exact absurd (class3CycleBand3Free_of_modulus_complement ctx hmod) hfree
 
+/-- Direct gated-shell emptiness projection from the datum-split surface. -/
+theorem densePackStarts_empty_of_gate (R : DensePackDatumSplitResidual)
+    (ctx : ActualFailureContext) (hg : class3Gate ctx) :
+    genuineDensePackStarts ctx = ∅ := by
+  by_cases hfree : Class3TopBandCycleFree ctx
+  · exact densePackStarts_empty_of_gate_topBandCycleFree ctx hg hfree
+  · by_cases hmod : (class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q
+    · exact R.gatedEmpty ctx hg hfree hmod
+    · exact absurd (class3TopBandCycleFree_of_cycleBand3Free ctx
+        (class3CycleBand3Free_of_modulus_complement ctx hmod)) hfree
+
+/-- Direct `r = 0` emptiness projection from the datum-split surface. -/
+theorem densePackStarts_empty_of_r_eq_zero (R : DensePackDatumSplitResidual)
+    (ctx : ActualFailureContext) (hr : ctx.n24CarryData.r = 0) :
+    genuineDensePackStarts ctx = ∅ :=
+  R.densePackStarts_empty_of_gate ctx (class3Gate_of_r_eq_zero ctx hr)
+
+/-- Direct shallow-depth emptiness projection from the datum-split surface. -/
+theorem densePackStarts_empty_of_L_le (R : DensePackDatumSplitResidual)
+    (ctx : ActualFailureContext) (hL : shellLadderDepth ctx ≤ 15420) :
+    genuineDensePackStarts ctx = ∅ :=
+  R.densePackStarts_empty_of_gate ctx (class3Gate_of_L_le ctx hL)
+
+/-- Direct class-3 ledger bridge from the datum-split surface, at any budget. -/
+theorem hDensePackField (R : DensePackDatumSplitResidual)
+    (budget : ∀ ctx : ActualFailureContext, SeparatedPhaseRoutedBudget ctx)
+    (hroute : ∀ ctx : ActualFailureContext, (budget ctx).route = genuineChargeRoute ctx) :
+    ∀ ctx : ActualFailureContext,
+      routedClassMassOf ctx.n24CarryData (budget ctx).route 3
+        ≤ termDensePack (faithfulCapacityPhases budget ctx).toClosurePhaseData :=
+  ((R.toCycleSplit).toRegimeSplit budget).toCorrected.hDensePackField hroute
+
 end DensePackDatumSplitResidual
 
 /-- **The converse weakening**: any wave-3 cycle-split provider restricts to the wave-4
@@ -920,6 +952,10 @@ theorem densePackFixedPointClosureStatus_nonempty :
 #print axioms densePack_datum_value_eq
 #print axioms class3FixedHit_value_eq
 #print axioms DensePackDatumSplitResidual.toCycleSplit
+#print axioms DensePackDatumSplitResidual.densePackStarts_empty_of_gate
+#print axioms DensePackDatumSplitResidual.densePackStarts_empty_of_r_eq_zero
+#print axioms DensePackDatumSplitResidual.densePackStarts_empty_of_L_le
+#print axioms DensePackDatumSplitResidual.hDensePackField
 #print axioms DensePackCycleSplitResidual.toDatumSplit
 #print axioms nonempty_datumSplit_iff_cycleSplit
 #print axioms erdos260_of_datumSplit

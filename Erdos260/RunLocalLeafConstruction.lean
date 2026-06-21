@@ -223,6 +223,18 @@ theorem runSeparatedLocalLeafOpenItems_nonempty :
   intro h
   simp [runSeparatedLocalLeafOpenItems] at h
 
+theorem runSeparatedLocalLeafOpenItems_length :
+    runSeparatedLocalLeafOpenItems.length = 4 := by
+  rfl
+
+theorem runSeparatedLocalLeafOpenItems_eq :
+    runSeparatedLocalLeafOpenItems =
+      [ "construct the run-chain weight family and chain length",
+        "prove the run trichotomy into tower, return, dense-pack, and tail terms",
+        "prove the period-halving estimate along the run chain",
+        "combine local spike, mean-low, boundary, and chain-root terms through runSeparatedLocalLeafFromOutputPackage" ] := by
+  rfl
+
 end
 
 end Erdos260

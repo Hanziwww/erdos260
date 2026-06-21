@@ -177,6 +177,22 @@ def DccClass1DeepResidual (v : ℕ) : Prop :=
         * ctx.n24CarryData.Y
       ≤ erdos260Constants.cStar * erdos260Constants.ξ / 6 * (ctx.shell.X : ℝ)
 
+/-- The exact v19 class-1 deep field rebuilt from the boosted Lane-J
+carry-realization surface.  This names the long field shape produced by
+`dccClass1Deep_field_of_boost` so endpoint residuals can expose it directly. -/
+abbrev Class1DeepField : Prop :=
+  ∀ ctx : ActualFailureContext,
+    1274740 ≤ shellLadderDepth ctx →
+    82 ≤ ctx.n24CarryData.r →
+    1 ≤ ctx.n24CarryData.r →
+    (¬ ∃ cv bv Tv : ℕ,
+      ((class1SlopeDatum ctx).q, (class1SlopeDatum ctx).K₀, cv, bv, Tv)
+          ∈ sreClass1ThresholdTable
+        ∧ shellLadderDepth ctx ≤ Tv) →
+    ((routedFibre ctx.n24CarryData (genuineChargeRoute ctx) 1).card : ℝ)
+        * ctx.n24CarryData.Y
+      ≤ erdos260Constants.cStar * erdos260Constants.ξ / 6 * (ctx.shell.X : ℝ)
+
 /-- **Level `0` is free**: the generic width count `|fibre₁| ≤ W`
 (`tfaFibre_card_le_width`) IS the level-0 aligned supply. -/
 theorem dccAlignedSupply_zero_free : DccClass1AlignedCountSupply 0 := by
@@ -923,6 +939,7 @@ or fewer. -/
 #print axioms dccBoostGate_sharp
 #print axioms dccClass1Absorption_of_spacedCount
 #print axioms dccAlignedSupply_zero_free
+#print axioms Class1DeepField
 #print axioms dccClass1Deep_field_of_boost
 #print axioms dccBoost_zero_recovers
 #print axioms dccResidual_zero_of_field

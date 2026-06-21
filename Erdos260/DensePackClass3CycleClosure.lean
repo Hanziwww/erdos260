@@ -973,6 +973,35 @@ def toRegimeSplit (R : DensePackCycleSplitResidual)
       simp
     · exact R.ungatedCoverNat ctx hg hfree
 
+/-- Direct gated-shell emptiness projection from the cycle-split surface. -/
+theorem densePackStarts_empty_of_gate (R : DensePackCycleSplitResidual)
+    (ctx : ActualFailureContext) (hg : class3Gate ctx) :
+    genuineDensePackStarts ctx = ∅ := by
+  by_cases hfree : Class3TopBandCycleFree ctx
+  · exact densePackStarts_empty_of_gate_topBandCycleFree ctx hg hfree
+  · exact R.gatedEmpty ctx hg hfree
+
+/-- Direct `r = 0` emptiness projection from the cycle-split surface. -/
+theorem densePackStarts_empty_of_r_eq_zero (R : DensePackCycleSplitResidual)
+    (ctx : ActualFailureContext) (hr : ctx.n24CarryData.r = 0) :
+    genuineDensePackStarts ctx = ∅ :=
+  R.densePackStarts_empty_of_gate ctx (class3Gate_of_r_eq_zero ctx hr)
+
+/-- Direct shallow-depth emptiness projection from the cycle-split surface. -/
+theorem densePackStarts_empty_of_L_le (R : DensePackCycleSplitResidual)
+    (ctx : ActualFailureContext) (hL : shellLadderDepth ctx ≤ 15420) :
+    genuineDensePackStarts ctx = ∅ :=
+  R.densePackStarts_empty_of_gate ctx (class3Gate_of_L_le ctx hL)
+
+/-- Direct class-3 ledger bridge from the cycle-split surface, at any budget. -/
+theorem hDensePackField (R : DensePackCycleSplitResidual)
+    (budget : ∀ ctx : ActualFailureContext, SeparatedPhaseRoutedBudget ctx)
+    (hroute : ∀ ctx : ActualFailureContext, (budget ctx).route = genuineChargeRoute ctx) :
+    ∀ ctx : ActualFailureContext,
+      routedClassMassOf ctx.n24CarryData (budget ctx).route 3
+        ≤ termDensePack (faithfulCapacityPhases budget ctx).toClosurePhaseData :=
+  (R.toRegimeSplit budget).hDensePackField hroute
+
 end DensePackCycleSplitResidual
 
 /-- **The converse weakening**: any wave-2 regime-split provider (at any budget) restricts to
@@ -1198,6 +1227,10 @@ theorem densePackClass3CycleClosureStatus_nonempty :
 #print axioms amortizedCover_of_cycle_density
 #print axioms n24_r_pos_of_not_class3Gate
 #print axioms DensePackCycleSplitResidual.toRegimeSplit
+#print axioms DensePackCycleSplitResidual.densePackStarts_empty_of_gate
+#print axioms DensePackCycleSplitResidual.densePackStarts_empty_of_r_eq_zero
+#print axioms DensePackCycleSplitResidual.densePackStarts_empty_of_L_le
+#print axioms DensePackCycleSplitResidual.hDensePackField
 #print axioms DensePackRegimeSplitResidual.toCycleSplit
 #print axioms nonempty_cycleSplit_iff_regimeSplit
 #print axioms erdos260SharpResidualOfCycleSplit

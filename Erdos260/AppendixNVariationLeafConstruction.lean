@@ -1028,6 +1028,18 @@ theorem appendixNVariationLeafOpenItems_nonempty :
   intro h
   simp [appendixNVariationLeafOpenItems] at h
 
+theorem appendixNVariationLeafOpenItems_length :
+    appendixNVariationLeafOpenItems.length = 4 := by
+  rfl
+
+theorem appendixNVariationLeafOpenItems_eq :
+    appendixNVariationLeafOpenItems =
+      [ "N.2.0 first-crossing branch family for the carry hit-gap window",
+        "N.2.1 shell-Q priority record and injectivity/carry-determinacy certificate",
+        "N.2.2 canonical drop-density regularity and integral domination",
+        "N.2.2 rolling-window budget comparison for O_V" ] := by
+  rfl
+
 /-! ## Axiom-cleanliness audit
 
 Every declaration in the provider-shaped N.2 variation leaf above is axiom-clean:

@@ -250,6 +250,18 @@ theorem towerSeparatedLocalLeafOpenItems_nonempty :
   intro h
   simp [towerSeparatedLocalLeafOpenItems] at h
 
+theorem towerSeparatedLocalLeafOpenItems_length :
+    towerSeparatedLocalLeafOpenItems.length = 4 := by
+  rfl
+
+theorem towerSeparatedLocalLeafOpenItems_eq :
+    towerSeparatedLocalLeafOpenItems =
+      [ "construct the finite entry/exit tower event family and charged tower weights",
+        "build the E.2-E.4 carry-fibre recurrent-cycle witness",
+        "prove the L.3 routed-exit estimate into run, return, dense-pack, and CNL-tail destinations",
+        "prove the four absorption bounds and final tower smallness budget, then use towerSeparatedLocalLeafFromOutputPackage" ] := by
+  rfl
+
 end
 
 end Erdos260

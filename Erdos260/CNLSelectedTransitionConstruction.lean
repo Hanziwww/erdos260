@@ -509,7 +509,18 @@ theorem cnlStandardWeightedKraftShellOpenItems_nonempty :
   intro h
   simp [cnlStandardWeightedKraftShellOpenItems] at h
 
+theorem cnlStandardWeightedKraftShellOpenItems_length :
+    cnlStandardWeightedKraftShellOpenItems.length = 4 := by
+  rfl
+
+theorem cnlStandardWeightedKraftShellOpenItems_eq :
+    cnlStandardWeightedKraftShellOpenItems =
+      [ "L.1.1 deterministic selector and priority partition for clean nonseparated transitions",
+        "L.1.2a-L.1.2d removal of SEP, VS, DS, and PKG exits from the surviving clean family",
+        "Nat-valued BND heights and the L.1w/G.35 weighted Kraft bound for surviving clusters",
+        "G.35 scalar shell/interval budget converting the Kraft estimate to the CNL phase term" ] := by
+  rfl
+
 end
 
 end Erdos260
-

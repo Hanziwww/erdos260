@@ -25,6 +25,8 @@ namespace Erdos260
 
 noncomputable section
 
+universe u
+
 /--
 The final manuscript largeness gate for one failing shell.
 
@@ -529,6 +531,36 @@ def toWeightedKraftShellInputData {ctx : ActualFailureContext}
   CNLStandardWeightedKraftShellInputData.ofWeightedKraftManuscriptBudget
     data.transitions data.BNDHeightNat data.M data.shellFactor data.Ij
     data.kraftSum_le data.manuscript_budget
+
+/-- Recover the current actual CNL surface from the standard weighted-Kraft
+shell leaf.  This closes the bookkeeping gap between the proof-v4 CNL provider
+and the current actual provider target: the manuscript-budget form follows by
+multiplying the shell leaf's X-free scalar budget by the nonnegative shell
+size. -/
+def ofWeightedKraftShellInputData {ctx : ActualFailureContext}
+    (data : CNLStandardWeightedKraftShellInputData ctx.shell
+      erdos260Constants.cStar erdos260Constants.ξ) :
+    ActualCNLWeightedKraftData ctx where
+  transitions := data.transitions
+  BNDHeightNat := data.BNDHeightNat
+  M := data.M
+  shellFactor := data.shellFactor
+  Ij := data.Ij
+  kraftSum_le := data.kraftSum_le
+  manuscript_budget := by
+    have hX_nonneg : 0 <= (ctx.shell.X : Real) := Nat.cast_nonneg ctx.shell.X
+    have hmul := mul_le_mul_of_nonneg_right data.scalar_budget hX_nonneg
+    calc
+      (2 : Real) ^ data.M * (data.shellFactor : Real) *
+          (ctx.shell.X : Real) * (data.Ij : Real)
+          =
+        ((2 : Real) ^ data.M * (data.shellFactor : Real) *
+            (data.Ij : Real)) * (ctx.shell.X : Real) := by ring
+      _ <= (erdos260Constants.cStar * erdos260Constants.ξ / 6) *
+          (ctx.shell.X : Real) := hmul
+      _ =
+        erdos260Constants.cStar * erdos260Constants.ξ *
+          (ctx.shell.X : Real) / 6 := by ring
 
 end ActualCNLWeightedKraftData
 
@@ -1092,18 +1124,45 @@ interface gives an actual assembly input object.  This is the generic bridge for
 the many manuscript-shaped provider records exposing a `toActualInputs`
 projection. -/
 theorem globalAssemblyActualInputs_nonempty_of_projection
-    {α : Type} (toActual : α -> GlobalAssemblyActualInputs)
-    (hprovider : Nonempty α) :
+    {Provider : Type u} (toActual : Provider -> GlobalAssemblyActualInputs)
+    (hprovider : Nonempty Provider) :
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro (toActual data)
+
+/-- Any inhabited final actual-consumption interface proves the final theorem.
+This is the standard endpoint for provider routes that have already been
+lowered to `Nonempty GlobalAssemblyActualInputs`. -/
+theorem erdos260_unconditional_from_actual_inputs_nonempty
+    (hinputs : Nonempty GlobalAssemblyActualInputs) :
+    Erdos260Statement :=
+  hinputs.elim erdos260_final_actual
 
 /-- Generic final endpoint for any inhabited provider surface that projects to
 the final actual-consumption interface. -/
 theorem erdos260_unconditional_from_projected_actual_provider
-    {α : Type} (toActual : α -> GlobalAssemblyActualInputs)
-    (hprovider : Nonempty α) :
+    {Provider : Type u} (toActual : Provider -> GlobalAssemblyActualInputs)
+    (hprovider : Nonempty Provider) :
     Erdos260Statement :=
   hprovider.elim fun data => erdos260_final_actual (toActual data)
+
+/-- A concrete final actual input gives the nonempty final actual input
+boundary.  This is the actual-input counterpart to
+`erdos260_unconditional_from_actual_inputs`. -/
+theorem globalAssemblyActualInputs_nonempty_of_actual_inputs
+    (data : GlobalAssemblyActualInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  Nonempty.intro data
+
+/-- Identity bridge for routes already lowered to the final actual input
+boundary. -/
+theorem globalAssemblyActualInputs_nonempty_of_actual_inputs_nonempty
+    (hinputs : Nonempty GlobalAssemblyActualInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  hinputs
+
+/-- Audit-name alias for the generic projected actual-provider bridge. -/
+alias globalAssemblyActualInputs_nonempty_of_projected_actual_provider :=
+  globalAssemblyActualInputs_nonempty_of_projection
 
 /--
 Reduced actual-consumption interface after closing carry, DensePack, Tower, and
@@ -1152,6 +1211,13 @@ theorem erdos260_final_actual_reduced
     (data : GlobalAssemblyActualReducedInputs) : Erdos260Statement :=
   erdos260_final_actual data.toActualInputs
 
+/-- Nonemptiness of the reduced actual interface gives the full actual
+assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_reduced_provider
+    (hprovider : Nonempty GlobalAssemblyActualReducedInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
+
 /--
 Grounded actual-consumption interface after projecting CNL, Return, and Run
 from their local manuscript-shaped data.
@@ -1195,6 +1261,14 @@ theorem erdos260_final_actual_grounded
     (data : GlobalAssemblyActualGroundedInputs) : Erdos260Statement :=
   erdos260_final_actual_reduced data.toReducedInputs
 
+/-- Nonemptiness of the grounded local-data interface gives the full actual
+assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_grounded_provider
+    (hprovider : Nonempty GlobalAssemblyActualGroundedInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact hprovider.elim fun data =>
+    Nonempty.intro data.toReducedInputs.toActualInputs
+
 /--
 Actual interface with the CNL phase exposed as the proof-v4 L.1.2/G.35
 cluster-to-ladder weighted-Kraft shell leaf.
@@ -1237,6 +1311,14 @@ end GlobalAssemblyActualCNLClusterInputs
 theorem erdos260_final_actual_cnlCluster
     (data : GlobalAssemblyActualCNLClusterInputs) : Erdos260Statement :=
   erdos260_final_actual_grounded data.toGroundedInputs
+
+/-- Nonemptiness of the CNL-cluster actual interface gives the full actual
+assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_cnlCluster_provider
+    (hprovider : Nonempty GlobalAssemblyActualCNLClusterInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact hprovider.elim fun data =>
+    Nonempty.intro data.toGroundedInputs.toReducedInputs.toActualInputs
 
 /--
 Leaf-level actual interface for the still-open phase inputs.
@@ -1288,6 +1370,15 @@ end GlobalAssemblyActualLeafInputs
 theorem erdos260_final_actual_leaf
     (data : GlobalAssemblyActualLeafInputs) : Erdos260Statement :=
   erdos260_final_actual_cnlCluster data.toCNLClusterInputs
+
+/-- Nonemptiness of the leaf-level actual interface gives the full actual
+assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_leaf_provider
+    (hprovider : Nonempty GlobalAssemblyActualLeafInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact hprovider.elim fun data =>
+    Nonempty.intro
+      data.toCNLClusterInputs.toGroundedInputs.toReducedInputs.toActualInputs
 
 /-- Definitional six-class accounting against the actual phase masses. -/
 def actualPhaseClassAccounting
@@ -1409,6 +1500,13 @@ theorem erdos260_final_actual_n24Leaf
     (data : GlobalAssemblyActualN24LeafInputs) : Erdos260Statement :=
   erdos260_final_actual data.toActualInputs
 
+/-- Nonemptiness of the N.24 leaf actual interface gives the full actual
+assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_n24Leaf_provider
+    (hprovider : Nonempty GlobalAssemblyActualN24LeafInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
+
 /--
 Actual N.24 interface with the Run phase opened to the closed
 L.4.1/L.4.2/I.5.2 manuscript package.
@@ -1471,6 +1569,14 @@ theorem erdos260_final_actual_runPackageN24
     (data : GlobalAssemblyActualRunPackageN24Inputs) : Erdos260Statement :=
   erdos260_final_actual_n24Leaf data.toN24LeafInputs
 
+/-- Nonemptiness of the run-package N.24 provider gives the full actual
+assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_runPackageN24_provider
+    (hprovider : Nonempty GlobalAssemblyActualRunPackageN24Inputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact hprovider.elim fun data =>
+    Nonempty.intro data.toN24LeafInputs.toActualInputs
+
 /--
 Actual N.24 interface with N.2 opened to the closed N.2.1/N.2.2
 first-crossing/drop-density package, and Run opened to its closed manuscript
@@ -1531,6 +1637,15 @@ theorem erdos260_final_actual_closedN2RunPackage
     (data : GlobalAssemblyActualClosedN2RunPackageInputs) :
     Erdos260Statement :=
   erdos260_final_actual_runPackageN24 data.toRunPackageN24Inputs
+
+/-- Nonemptiness of the closed-N.2/run-package provider gives the full actual
+assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_closedN2RunPackage_provider
+    (hprovider : Nonempty GlobalAssemblyActualClosedN2RunPackageInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact hprovider.elim fun data =>
+    Nonempty.intro
+      data.toRunPackageN24Inputs.toN24LeafInputs.toActualInputs
 
 /--
 Actual interface whose charge input is the closed proof-v4 N.2/N.3 package.
@@ -1638,6 +1753,13 @@ theorem erdos260_final_actual_closedN2N3RunPackage
     Erdos260Statement :=
   erdos260_final_actual data.toActualInputs
 
+/-- Nonemptiness of the closed N.2/N.3 package provider gives the full actual
+assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_closedN2N3RunPackage_provider
+    (hprovider : Nonempty GlobalAssemblyActualClosedN2N3RunPackageInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
+
 /--
 Actual final surface with the CNL provider opened to raw L.1.2/G.35 cluster
 data.
@@ -1702,6 +1824,14 @@ theorem erdos260_final_actual_rawCNLClosedN2N3RunPackage
     Erdos260Statement :=
   erdos260_final_actual_closedN2N3RunPackage
     data.toClosedN2N3RunPackageInputs
+
+/-- Nonemptiness of the raw-CNL closed N.2/N.3 provider gives the full actual
+assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_rawCNLClosedN2N3RunPackage_provider
+    (hprovider : Nonempty GlobalAssemblyActualRawCNLClosedN2N3RunPackageInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact hprovider.elim fun data =>
+    Nonempty.intro data.toClosedN2N3RunPackageInputs.toActualInputs
 
 /--
 Actual final surface with CNL, Return, and Run all opened to their raw
@@ -1773,6 +1903,15 @@ theorem erdos260_final_actual_rawCNLRRClosedN2N3
     Erdos260Statement :=
   erdos260_final_actual_rawCNLClosedN2N3RunPackage
     data.toRawCNLClosedN2N3RunPackageInputs
+
+/-- Nonemptiness of the raw CNL/Return/Run closed N.2/N.3 provider gives the
+full actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_rawCNLRRClosedN2N3_provider
+    (hprovider : Nonempty GlobalAssemblyActualRawCNLRRClosedN2N3Inputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact hprovider.elim fun data =>
+    Nonempty.intro
+      data.toRawCNLClosedN2N3RunPackageInputs.toClosedN2N3RunPackageInputs.toActualInputs
 
 /--
 Actual N.2/N.3 package whose bounded-dirty-return terminal class is backed by
@@ -1949,6 +2088,13 @@ theorem erdos260_final_actual_rawCNLRRClosedN2N3BddL6
     Erdos260Statement :=
   erdos260_final_actual data.toActualInputs
 
+/-- Nonemptiness of the raw CNL/Return/Run Bdd/L6 provider gives the full
+actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_rawCNLRRClosedN2N3BddL6_provider
+    (hprovider : Nonempty GlobalAssemblyActualRawCNLRRClosedN2N3BddL6Inputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
+
 /--
 Actual closed-package final surface with CNL supplied by the direct
 weighted-Kraft shell leaf.  This matches manuscript providers that already
@@ -2078,6 +2224,15 @@ theorem erdos260_unconditional_from_weightedKraftCNLClosedN2N3BddL6RunPackage_pr
   hprovider.elim
     erdos260_final_actual_weightedKraftCNLClosedN2N3BddL6RunPackage
 
+/-- Nonemptiness of the weighted-Kraft closed-package provider gives the full
+actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_weightedKraftCNLClosedN2N3BddL6RunPackage_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualWeightedKraftCNLClosedN2N3BddL6RunPackageInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
+
 /--
 Actual final surface with the six-phase package supplied explicitly.
 
@@ -2171,6 +2326,14 @@ theorem erdos260_unconditional_from_explicitPhaseClosedN2N3BddL6_provider
       Nonempty GlobalAssemblyActualExplicitPhaseClosedN2N3BddL6Inputs) :
     Erdos260Statement :=
   hprovider.elim erdos260_final_actual_explicitPhaseClosedN2N3BddL6
+
+/-- Nonemptiness of the explicit-phase Bdd/L6 provider gives the full actual
+assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_explicitPhaseClosedN2N3BddL6_provider
+    (hprovider :
+      Nonempty GlobalAssemblyActualExplicitPhaseClosedN2N3BddL6Inputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
 
 /--
 Raw actual proof-v4 Lemma 22.1A shell-paid Chernoff data.
@@ -4980,6 +5143,14 @@ theorem erdos260_final_actual_rawCNLRRRawTerminalLowPaid
     Erdos260Statement :=
   erdos260_final_actual_rawCNLRRClosedN2N3BddL6 data.toBddL6Inputs
 
+/-- Nonemptiness of the raw terminal-low-paid actual interface gives the full
+actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_rawCNLRRRawTerminalLowPaid_provider
+    (hprovider : Nonempty GlobalAssemblyActualRawCNLRRRawTerminalLowPaidInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact hprovider.elim fun data =>
+    Nonempty.intro data.toBddL6Inputs.toActualInputs
+
 /--
 Actual final surface with both N.2 and N.3.3/L.6 opened to raw
 manuscript-facing data.
@@ -5064,6 +5235,15 @@ theorem erdos260_final_actual_rawCNLRRRawN2RawTerminalLowPaid
   erdos260_final_actual_rawCNLRRRawTerminalLowPaid
     data.toRawTerminalLowPaidInputs
 
+/-- Nonemptiness of the raw N.2/raw terminal-low-paid provider gives the full
+actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_rawCNLRRRawN2RawTerminalLowPaid_provider
+    (hprovider :
+      Nonempty GlobalAssemblyActualRawCNLRRRawN2RawTerminalLowPaidInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact globalAssemblyActualInputs_nonempty_of_rawCNLRRRawTerminalLowPaid_provider
+    (hprovider.elim fun data => Nonempty.intro data.toRawTerminalLowPaidInputs)
+
 /--
 Actual final surface with raw N.2 and structured N.3.3/L.6 terminal route
 inputs.
@@ -5146,6 +5326,15 @@ theorem erdos260_final_actual_rawCNLRRRawN2StructuredTerminalLowPaid
     Erdos260Statement :=
   erdos260_final_actual_rawCNLRRClosedN2N3BddL6 data.toBddL6Inputs
 
+/-- Nonemptiness of the raw N.2/structured terminal-low-paid provider gives the
+full actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_rawCNLRRRawN2StructuredTerminalLowPaid_provider
+    (hprovider :
+      Nonempty GlobalAssemblyActualRawCNLRRRawN2StructuredTerminalLowPaidInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact hprovider.elim fun data =>
+    Nonempty.intro data.toBddL6Inputs.toActualInputs
+
 /--
 Actual final surface with the shell-paid Chernoff leaf also opened to its raw
 stopped-tree layer-cake data.
@@ -5227,6 +5416,18 @@ theorem erdos260_final_actual_rawChernoffCNLRRRawN2StructuredTerminalLowPaid
     Erdos260Statement :=
   erdos260_final_actual_rawCNLRRRawN2StructuredTerminalLowPaid
     data.toRawN2StructuredTerminalLowPaidInputs
+
+/-- Nonemptiness of the raw-Chernoff/raw-N.2/structured-terminal provider gives
+the full actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_rawChernoffCNLRRRawN2StructuredTerminalLowPaid_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualRawChernoffCNLRRRawN2StructuredTerminalLowPaidInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact
+    globalAssemblyActualInputs_nonempty_of_rawCNLRRRawN2StructuredTerminalLowPaid_provider
+      (hprovider.elim fun data =>
+        Nonempty.intro data.toRawN2StructuredTerminalLowPaidInputs)
 
 /--
 Actual final surface with the shell-paid Chernoff stopped family exposed at
@@ -5312,6 +5513,17 @@ theorem erdos260_final_actual_stoppedTreeChernoffCNLRRRawN2StructuredTerminalLow
     Erdos260Statement :=
   erdos260_final_actual_rawChernoffCNLRRRawN2StructuredTerminalLowPaid
     data.toRawChernoffInputs
+
+/-- Nonemptiness of the stopped-tree Chernoff provider gives the full actual
+assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_stoppedTreeChernoffCNLRRRawN2StructuredTerminalLowPaid_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualStoppedTreeChernoffCNLRRRawN2StructuredTerminalLowPaidInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact
+    globalAssemblyActualInputs_nonempty_of_rawChernoffCNLRRRawN2StructuredTerminalLowPaid_provider
+      (hprovider.elim fun data => Nonempty.intro data.toRawChernoffInputs)
 
 /--
 Actual final surface with the Chernoff stopped-tree shell budget split into
@@ -5412,6 +5624,18 @@ theorem erdos260_final_actual_splitBudgetChernoffCNLRRRawN2StructuredTerminalLow
     Erdos260Statement :=
   erdos260_final_actual_stoppedTreeChernoffCNLRRRawN2StructuredTerminalLowPaid
     data.toStoppedTreeChernoffInputs
+
+/-- Nonemptiness of the split-budget Chernoff provider gives the full actual
+assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_splitBudgetChernoffCNLRRRawN2StructuredTerminalLowPaid_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualSplitBudgetChernoffCNLRRRawN2StructuredTerminalLowPaidInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact
+    globalAssemblyActualInputs_nonempty_of_stoppedTreeChernoffCNLRRRawN2StructuredTerminalLowPaid_provider
+      (hprovider.elim fun data =>
+        Nonempty.intro data.toStoppedTreeChernoffInputs)
 
 /--
 Actual final surface with the Chernoff tail budget exposed as an exponential
@@ -5519,6 +5743,18 @@ theorem erdos260_final_actual_exponentialTailChernoffCNLRRRawN2StructuredTermina
   erdos260_final_actual_splitBudgetChernoffCNLRRRawN2StructuredTerminalLowPaid
     data.toSplitBudgetChernoffInputs
 
+/-- Nonemptiness of the exponential-tail Chernoff provider gives the full
+actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_exponentialTailChernoffCNLRRRawN2StructuredTerminalLowPaid_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualExponentialTailChernoffCNLRRRawN2StructuredTerminalLowPaidInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact
+    globalAssemblyActualInputs_nonempty_of_splitBudgetChernoffCNLRRRawN2StructuredTerminalLowPaid_provider
+      (hprovider.elim fun data =>
+        Nonempty.intro data.toSplitBudgetChernoffInputs)
+
 /--
 Actual final surface with Return and Run scalar smallness exposed as raw
 inequalities.
@@ -5625,6 +5861,18 @@ theorem erdos260_final_actual_scalarRRExponentialTailChernoffCNLRRRawN2Structure
     Erdos260Statement :=
   erdos260_final_actual_exponentialTailChernoffCNLRRRawN2StructuredTerminalLowPaid
     data.toExponentialTailChernoffInputs
+
+/-- Nonemptiness of the scalar Return/Run exponential-tail provider gives the
+full actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_scalarRRExponentialTailChernoffCNLRRRawN2StructuredTerminalLowPaid_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualScalarRRExponentialTailChernoffCNLRRRawN2StructuredTerminalLowPaidInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact
+    globalAssemblyActualInputs_nonempty_of_exponentialTailChernoffCNLRRRawN2StructuredTerminalLowPaid_provider
+      (hprovider.elim fun data =>
+        Nonempty.intro data.toExponentialTailChernoffInputs)
 
 /--
 Actual final surface with Chernoff pointwise tilt and aggregate moment budgets
@@ -5740,6 +5988,18 @@ theorem erdos260_final_actual_tiltMomentChernoffScalarRRCNLRRRawN2StructuredTerm
   erdos260_final_actual_scalarRRExponentialTailChernoffCNLRRRawN2StructuredTerminalLowPaid
     data.toScalarRRExponentialTailInputs
 
+/-- Nonemptiness of the tilt/moment Chernoff scalar Return/Run provider gives
+the full actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_tiltMomentChernoffScalarRRCNLRRRawN2StructuredTerminalLowPaid_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualTiltMomentChernoffScalarRRCNLRRRawN2StructuredTerminalLowPaidInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact
+    globalAssemblyActualInputs_nonempty_of_scalarRRExponentialTailChernoffCNLRRRawN2StructuredTerminalLowPaid_provider
+      (hprovider.elim fun data =>
+        Nonempty.intro data.toScalarRRExponentialTailInputs)
+
 /--
 Actual final surface with Run L.4.1 split and output absorption separated.
 
@@ -5853,6 +6113,18 @@ theorem erdos260_final_actual_splitRunTiltMomentChernoffScalarRRCNLRRRawN2Struct
   erdos260_final_actual_tiltMomentChernoffScalarRRCNLRRRawN2StructuredTerminalLowPaid
     data.toTiltMomentChernoffScalarRRInputs
 
+/-- Nonemptiness of the split-Run tilt/moment Chernoff provider gives the full
+actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_splitRunTiltMomentChernoffScalarRRCNLRRRawN2StructuredTerminalLowPaid_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualSplitRunTiltMomentChernoffScalarRRCNLRRRawN2StructuredTerminalLowPaidInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact
+    globalAssemblyActualInputs_nonempty_of_tiltMomentChernoffScalarRRCNLRRRawN2StructuredTerminalLowPaid_provider
+      (hprovider.elim fun data =>
+        Nonempty.intro data.toTiltMomentChernoffScalarRRInputs)
+
 /--
 Actual final surface with the bounded terminal L.6 paid part exposed in the
 finite-overlap form, and Run L.4.1 split/absorption separated.
@@ -5963,6 +6235,18 @@ theorem erdos260_final_actual_finiteOverlapTerminalSplitRunTiltMomentChernoffSca
   erdos260_final_actual_splitRunTiltMomentChernoffScalarRRCNLRRRawN2StructuredTerminalLowPaid
     data.toSplitRunTiltMomentChernoffScalarRRInputs
 
+/-- Nonemptiness of the finite-overlap terminal/split-Run provider gives the
+full actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_finiteOverlapTerminalSplitRunTiltMomentChernoffScalarRRCNLRRRawN2Structured_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualFiniteOverlapTerminalSplitRunTiltMomentChernoffScalarRRCNLRRRawN2StructuredInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact
+    globalAssemblyActualInputs_nonempty_of_splitRunTiltMomentChernoffScalarRRCNLRRRawN2StructuredTerminalLowPaid_provider
+      (hprovider.elim fun data =>
+        Nonempty.intro data.toSplitRunTiltMomentChernoffScalarRRInputs)
+
 /--
 Actual final surface with the finite part of Lemma 22.1 Chernoff closed by the
 canonical finite-sum budget.
@@ -6048,6 +6332,18 @@ theorem erdos260_final_actual_finiteSumChernoffFiniteOverlapTerminalSplitRunScal
     Erdos260Statement :=
   erdos260_final_actual_finiteOverlapTerminalSplitRunTiltMomentChernoffScalarRRCNLRRRawN2Structured
     data.toFiniteOverlapTerminalSplitRunTiltMomentInputs
+
+/-- Nonemptiness of the finite-sum Chernoff finite-overlap split-Run provider
+gives the full actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_finiteSumChernoffFiniteOverlapTerminalSplitRunScalarRRCNLRRRawN2Structured_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualFiniteSumChernoffFiniteOverlapTerminalSplitRunScalarRRCNLRRRawN2StructuredInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact
+    globalAssemblyActualInputs_nonempty_of_finiteOverlapTerminalSplitRunTiltMomentChernoffScalarRRCNLRRRawN2Structured_provider
+      (hprovider.elim fun data =>
+        Nonempty.intro data.toFiniteOverlapTerminalSplitRunTiltMomentInputs)
 
 /--
 Actual final surface with Return I.5.1/M.2/J.4/L.6 split into its local
@@ -6135,6 +6431,18 @@ theorem erdos260_final_actual_finiteSumChernoffFiniteOverlapTerminalSplitReturnR
     Erdos260Statement :=
   erdos260_final_actual_finiteSumChernoffFiniteOverlapTerminalSplitRunScalarRRCNLRRRawN2Structured
     data.toFiniteSumChernoffFiniteOverlapTerminalSplitRunInputs
+
+/-- Nonemptiness of the finite-sum Chernoff split Return/Run provider gives the
+full actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_finiteSumChernoffFiniteOverlapTerminalSplitReturnRunRRCNLRawN2Structured_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualFiniteSumChernoffFiniteOverlapTerminalSplitReturnRunRRCNLRawN2StructuredInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact
+    globalAssemblyActualInputs_nonempty_of_finiteSumChernoffFiniteOverlapTerminalSplitRunScalarRRCNLRRRawN2Structured_provider
+      (hprovider.elim fun data =>
+        Nonempty.intro data.toFiniteSumChernoffFiniteOverlapTerminalSplitRunInputs)
 
 /--
 Actual final surface with CNL supplied by direct code/fibre Nat-budget data.
@@ -6289,6 +6597,15 @@ theorem erdos260_final_actual_finiteSumChernoffFiniteOverlapTerminalSplitReturnR
     Erdos260Statement :=
   erdos260_final_actual data.toActualInputs
 
+/-- Nonemptiness of the code/fibre CNL finite-sum actual surface gives the full
+actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_finiteSumChernoffFiniteOverlapTerminalSplitReturnRunCodeFibreCNLRawN2Structured_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualFiniteSumChernoffFiniteOverlapTerminalSplitReturnRunCodeFibreCNLRawN2StructuredInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
+
 /--
 Actual final surface with Chernoff tail in zero-length form.
 
@@ -6376,6 +6693,18 @@ theorem erdos260_final_actual_zeroLengthChernoffFiniteOverlapTerminalSplitReturn
   erdos260_final_actual_finiteSumChernoffFiniteOverlapTerminalSplitReturnRunCodeFibreCNLRawN2Structured
     data.toFiniteSumChernoffCodeFibreCNLInputs
 
+/-- Nonemptiness of the zero-length Chernoff code/fibre actual surface gives
+the full actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_zeroLengthChernoffFiniteOverlapTerminalSplitReturnRunCodeFibreCNLRawN2Structured_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualZeroLengthChernoffFiniteOverlapTerminalSplitReturnRunCodeFibreCNLRawN2StructuredInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact
+    globalAssemblyActualInputs_nonempty_of_finiteSumChernoffFiniteOverlapTerminalSplitReturnRunCodeFibreCNLRawN2Structured_provider
+      (hprovider.elim fun data =>
+        Nonempty.intro data.toFiniteSumChernoffCodeFibreCNLInputs)
+
 /--
 Actual final surface with Chernoff tail supplied as a numerator root bound and
 an X-free scalar smallness comparison.
@@ -6461,6 +6790,17 @@ theorem erdos260_final_actual_rootBoundChernoffFiniteOverlapTerminalSplitReturnR
     Erdos260Statement :=
   erdos260_final_actual_zeroLengthChernoffFiniteOverlapTerminalSplitReturnRunCodeFibreCNLRawN2Structured
     data.toZeroLengthChernoffInputs
+
+/-- Nonemptiness of the root-bound Chernoff finite-overlap provider gives the
+full actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_rootBoundChernoffFiniteOverlapTerminalSplitReturnRunCodeFibreCNLRawN2Structured_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualRootBoundChernoffFiniteOverlapTerminalSplitReturnRunCodeFibreCNLRawN2StructuredInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact
+    globalAssemblyActualInputs_nonempty_of_zeroLengthChernoffFiniteOverlapTerminalSplitReturnRunCodeFibreCNLRawN2Structured_provider
+      (hprovider.elim fun data => Nonempty.intro data.toZeroLengthChernoffInputs)
 
 /--
 Actual final surface with the L.6 bounded-class finite-overlap terminal data
@@ -6548,6 +6888,18 @@ theorem erdos260_final_actual_rootBoundChernoffTerminalFieldsSplitReturnRunCodeF
   erdos260_final_actual_rootBoundChernoffFiniteOverlapTerminalSplitReturnRunCodeFibreCNLRawN2Structured
     data.toRootBoundChernoffFiniteOverlapTerminalInputs
 
+/-- Nonemptiness of the root-bound terminal-fields provider gives the full
+actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_rootBoundChernoffTerminalFieldsSplitReturnRunCodeFibreCNLRawN2Structured_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualRootBoundChernoffTerminalFieldsSplitReturnRunCodeFibreCNLRawN2StructuredInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact
+    globalAssemblyActualInputs_nonempty_of_rootBoundChernoffFiniteOverlapTerminalSplitReturnRunCodeFibreCNLRawN2Structured_provider
+      (hprovider.elim fun data =>
+        Nonempty.intro data.toRootBoundChernoffFiniteOverlapTerminalInputs)
+
 /--
 Actual final surface with the terminal-mass N.3.1 compression fields exposed.
 
@@ -6633,6 +6985,17 @@ theorem erdos260_final_actual_rootBoundChernoffTerminalMassFieldsSplitReturnRunC
   erdos260_final_actual_rootBoundChernoffTerminalFieldsSplitReturnRunCodeFibreCNLRawN2Structured
     data.toTerminalFieldsInputs
 
+/-- Nonemptiness of the terminal-mass-fields provider gives the full actual
+assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_rootBoundChernoffTerminalMassFieldsSplitReturnRunCodeFibreCNLRawN2Structured_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualRootBoundChernoffTerminalMassFieldsSplitReturnRunCodeFibreCNLRawN2StructuredInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact
+    globalAssemblyActualInputs_nonempty_of_rootBoundChernoffTerminalFieldsSplitReturnRunCodeFibreCNLRawN2Structured_provider
+      (hprovider.elim fun data => Nonempty.intro data.toTerminalFieldsInputs)
+
 /--
 Actual final surface with terminal-mass and DensePack support fields exposed.
 
@@ -6714,6 +7077,18 @@ theorem erdos260_final_actual_rootBoundChernoffTerminalMassDenseFieldsSplitRetur
     Erdos260Statement :=
   erdos260_final_actual_rootBoundChernoffTerminalMassFieldsSplitReturnRunCodeFibreCNLRawN2Structured
     data.toTerminalMassFieldsInputs
+
+/-- Nonemptiness of the terminal-mass/DensePack-fields provider gives the full
+actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_rootBoundChernoffTerminalMassDenseFieldsSplitReturnRunCodeFibreCNLRawN2Structured_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualRootBoundChernoffTerminalMassDenseFieldsSplitReturnRunCodeFibreCNLRawN2StructuredInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact
+    globalAssemblyActualInputs_nonempty_of_rootBoundChernoffTerminalMassFieldsSplitReturnRunCodeFibreCNLRawN2Structured_provider
+      (hprovider.elim fun data =>
+        Nonempty.intro data.toTerminalMassFieldsInputs)
 
 /--
 Actual final surface with terminal-mass, DensePack, and progress-class fields
@@ -6797,6 +7172,18 @@ theorem erdos260_final_actual_rootBoundChernoffTerminalMassDenseProgressFieldsSp
   erdos260_final_actual_rootBoundChernoffTerminalMassDenseFieldsSplitReturnRunCodeFibreCNLRawN2Structured
     data.toTerminalMassDenseFieldsInputs
 
+/-- Nonemptiness of the terminal-mass/DensePack/progress-fields provider gives
+the full actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_rootBoundChernoffTerminalMassDenseProgressFieldsSplitReturnRunCodeFibreCNLRawN2Structured_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualRootBoundChernoffTerminalMassDenseProgressFieldsSplitReturnRunCodeFibreCNLRawN2StructuredInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact
+    globalAssemblyActualInputs_nonempty_of_rootBoundChernoffTerminalMassDenseFieldsSplitReturnRunCodeFibreCNLRawN2Structured_provider
+      (hprovider.elim fun data =>
+        Nonempty.intro data.toTerminalMassDenseFieldsInputs)
+
 /--
 Actual final surface with terminal-mass, DensePack, progress, and endpoint
 fields exposed directly.
@@ -6878,6 +7265,18 @@ theorem erdos260_final_actual_rootBoundChernoffTerminalMassDenseProgressEndpoint
     Erdos260Statement :=
   erdos260_final_actual_rootBoundChernoffTerminalMassDenseProgressFieldsSplitReturnRunCodeFibreCNLRawN2Structured
     data.toTerminalMassDenseProgressFieldsInputs
+
+/-- Nonemptiness of the terminal-mass/DensePack/progress/endpoint-fields
+provider gives the full actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_rootBoundChernoffTerminalMassDenseProgressEndpointFieldsSplitReturnRunCodeFibreCNLRawN2Structured_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualRootBoundChernoffTerminalMassDenseProgressEndpointFieldsSplitReturnRunCodeFibreCNLRawN2StructuredInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact
+    globalAssemblyActualInputs_nonempty_of_rootBoundChernoffTerminalMassDenseProgressFieldsSplitReturnRunCodeFibreCNLRawN2Structured_provider
+      (hprovider.elim fun data =>
+        Nonempty.intro data.toTerminalMassDenseProgressFieldsInputs)
 
 /--
 Actual final surface with all table-routed terminal class-provider fields
@@ -6962,6 +7361,18 @@ theorem erdos260_final_actual_rootBoundChernoffTerminalAllClassFieldsSplitReturn
   erdos260_final_actual_rootBoundChernoffTerminalMassDenseProgressEndpointFieldsSplitReturnRunCodeFibreCNLRawN2Structured
     data.toTerminalMassDenseProgressEndpointFieldsInputs
 
+/-- Nonemptiness of the all-class terminal-fields provider gives the full
+actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_rootBoundChernoffTerminalAllClassFieldsSplitReturnRunCodeFibreCNLRawN2Structured_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualRootBoundChernoffTerminalAllClassFieldsSplitReturnRunCodeFibreCNLRawN2StructuredInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact
+    globalAssemblyActualInputs_nonempty_of_rootBoundChernoffTerminalMassDenseProgressEndpointFieldsSplitReturnRunCodeFibreCNLRawN2Structured_provider
+      (hprovider.elim fun data =>
+        Nonempty.intro data.toTerminalMassDenseProgressEndpointFieldsInputs)
+
 /--
 Actual final surface with all terminal class-provider fields and the L.6
 bounded-class finite-overlap fields exposed directly.
@@ -7043,6 +7454,18 @@ theorem erdos260_final_actual_rootBoundChernoffTerminalAllFieldsSplitReturnRunCo
     Erdos260Statement :=
   erdos260_final_actual_rootBoundChernoffTerminalAllClassFieldsSplitReturnRunCodeFibreCNLRawN2Structured
     data.toTerminalAllClassFieldsInputs
+
+/-- Nonemptiness of the all terminal-fields provider gives the full actual
+assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_rootBoundChernoffTerminalAllFieldsSplitReturnRunCodeFibreCNLRawN2Structured_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualRootBoundChernoffTerminalAllFieldsSplitReturnRunCodeFibreCNLRawN2StructuredInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact
+    globalAssemblyActualInputs_nonempty_of_rootBoundChernoffTerminalAllClassFieldsSplitReturnRunCodeFibreCNLRawN2Structured_provider
+      (hprovider.elim fun data =>
+        Nonempty.intro data.toTerminalAllClassFieldsInputs)
 
 /-- The actual closure phase assembled by the strongest nonterminal leaves. -/
 def actualClosurePhaseFromRootBoundCodeFibreSplitRR
@@ -7126,6 +7549,27 @@ theorem erdos260_final_actual_rootBoundChernoffTerminalPinnedPhaseAllFieldsSplit
     Erdos260Statement :=
   erdos260_final_actual_rootBoundChernoffTerminalAllFieldsSplitReturnRunCodeFibreCNLRawN2Structured
     data.toTerminalAllFieldsInputs
+
+/-- A nonempty root-bound/code-fibre pinned-phase provider proves the final
+statement. -/
+theorem erdos260_unconditional_from_rootBoundChernoffTerminalPinnedPhaseAllFieldsSplitReturnRunCodeFibreCNLRawN2Structured_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualRootBoundChernoffTerminalPinnedPhaseAllFieldsSplitReturnRunCodeFibreCNLRawN2StructuredInputs) :
+    Erdos260Statement :=
+  hprovider.elim
+    erdos260_final_actual_rootBoundChernoffTerminalPinnedPhaseAllFieldsSplitReturnRunCodeFibreCNLRawN2Structured
+
+/-- Nonemptiness of the code/fibre pinned-phase provider gives the full actual
+assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_rootBoundChernoffTerminalPinnedPhaseAllFieldsSplitReturnRunCodeFibreCNLRawN2Structured_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualRootBoundChernoffTerminalPinnedPhaseAllFieldsSplitReturnRunCodeFibreCNLRawN2StructuredInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact
+    globalAssemblyActualInputs_nonempty_of_rootBoundChernoffTerminalAllFieldsSplitReturnRunCodeFibreCNLRawN2Structured_provider
+      (hprovider.elim fun data => Nonempty.intro data.toTerminalAllFieldsInputs)
 
 /-- The actual closure phase assembled from direct weighted-Kraft CNL data. -/
 def actualClosurePhaseFromRootBoundWeightedKraftSplitRR
@@ -7287,6 +7731,15 @@ theorem erdos260_unconditional_from_rootBoundChernoffTerminalPinnedPhaseAllField
   hprovider.elim
     erdos260_final_actual_rootBoundChernoffTerminalPinnedPhaseAllFieldsSplitReturnRunWeightedKraftCNLRawN2Structured
 
+/-- Nonemptiness of the direct weighted-Kraft pinned-phase provider gives the
+full actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_rootBoundChernoffTerminalPinnedPhaseAllFieldsSplitReturnRunWeightedKraftCNLRawN2Structured_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualRootBoundChernoffTerminalPinnedPhaseAllFieldsSplitReturnRunWeightedKraftCNLRawN2StructuredInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
+
 /--
 Current no-input actual provider target for the final theorem.
 
@@ -7317,6 +7770,14 @@ theorem erdos260_unconditional_from_current_actual_provider
     (hprovider : Nonempty GlobalAssemblyActualCurrentProviderTarget) :
     Erdos260Statement :=
   hprovider.elim erdos260_final_actual_currentProviderTarget
+
+/-- Nonemptiness of the current actual provider gives the final actual
+assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_current_actual_provider
+    (hprovider : Nonempty GlobalAssemblyActualCurrentProviderTarget) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact hprovider.elim fun data =>
+    Nonempty.intro (globalAssemblyActual_from_current_provider data)
 
 /--
 Direct numerator-smallness form of the actual finite-sum Chernoff leaf.
@@ -7554,6 +8015,25 @@ theorem erdos260_unconditional_from_rootSmallChernoff_current_provider
     Erdos260Statement :=
   hprovider.elim erdos260_final_actual_rootSmallChernoffCurrentProvider
 
+/-- The direct root-smallness Chernoff provider inhabits the current final
+actual provider target after forgetting to the root-bound Chernoff surface. -/
+theorem current_actual_provider_nonempty_of_rootSmallChernoff_current_provider
+    (hprovider :
+      Nonempty GlobalAssemblyActualRootSmallChernoffCurrentProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget := by
+  exact hprovider.elim fun data =>
+    Nonempty.intro data.toCurrentProviderTarget
+
+/-- Nonemptiness of the root-smallness current provider gives the full actual
+assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_rootSmallChernoff_current_provider
+    (hprovider :
+      Nonempty GlobalAssemblyActualRootSmallChernoffCurrentProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_current_actual_provider
+    (current_actual_provider_nonempty_of_rootSmallChernoff_current_provider
+      hprovider)
+
 /-- The actual closure phase assembled from direct root-smallness Chernoff data
 and the lower code/fibre Nat-budget CNL surface. -/
 def actualClosurePhaseFromRootSmallCodeFibreSplitRR
@@ -7636,6 +8116,35 @@ structure GlobalAssemblyActualRootSmallChernoffCodeFibreCNLCurrentProviderInputs
 
 namespace GlobalAssemblyActualRootSmallChernoffCodeFibreCNLCurrentProviderInputs
 
+/-- Forget the code/fibre CNL witnesses to the direct weighted-Kraft CNL
+surface used by the current provider target.  The assembled phase is
+definitionally the same, because both routes call `leafPhasesWithWeightedCNL`
+on the same weighted-Kraft shell leaf. -/
+def toRootSmallCurrentProviderInputs
+    (data :
+      GlobalAssemblyActualRootSmallChernoffCodeFibreCNLCurrentProviderInputs) :
+    GlobalAssemblyActualRootSmallChernoffCurrentProviderInputs where
+  chernoff := data.chernoff
+  cnl := fun ctx =>
+    ActualCNLWeightedKraftData.ofWeightedKraftShellInputData
+      ((data.cnl ctx).toWeightedKraftShellInputData)
+  returnPkg := data.returnPkg
+  run := data.run
+  n2 := fun ctx => by
+    simpa [ActualRootSmallChernoffRawN2Data,
+      ActualRootSmallChernoffCodeFibreRawN2Data,
+      actualClosurePhaseFromRootSmallWeightedKraftSplitRR,
+      actualClosurePhaseFromRootSmallCodeFibreSplitRR]
+      using data.n2 ctx
+  terminal := fun ctx => by
+    simpa [ActualRootSmallChernoffPinnedTerminalData,
+      ActualRootSmallChernoffCodeFibrePinnedTerminalData,
+      ActualRootSmallChernoffRawN2Data,
+      ActualRootSmallChernoffCodeFibreRawN2Data,
+      actualClosurePhaseFromRootSmallWeightedKraftSplitRR,
+      actualClosurePhaseFromRootSmallCodeFibreSplitRR]
+      using data.terminal ctx
+
 /-- Project the root-small/code-fibre provider target to the existing
 root-bound/code-fibre pinned-phase surface. -/
 def toRootBoundCodeFibrePinnedPhaseInputs
@@ -7678,6 +8187,50 @@ theorem erdos260_unconditional_from_rootSmallChernoff_codeFibreCNL_current_provi
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_rootSmallChernoffCodeFibreCNLCurrentProvider
+
+/-- Nonemptiness of the root-small/code-fibre current provider also inhabits
+the direct weighted-Kraft current provider surface. -/
+theorem rootSmallChernoff_current_provider_nonempty_of_rootSmallChernoff_codeFibreCNL_current_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualRootSmallChernoffCodeFibreCNLCurrentProviderInputs) :
+    Nonempty GlobalAssemblyActualRootSmallChernoffCurrentProviderInputs := by
+  exact hprovider.elim fun data =>
+    Nonempty.intro data.toRootSmallCurrentProviderInputs
+
+/-- Nonemptiness of the root-small/code-fibre current provider inhabits the
+current final actual provider target after forgetting both the Chernoff
+root-small presentation and the code/fibre CNL witnesses. -/
+theorem current_actual_provider_nonempty_of_rootSmallChernoff_codeFibreCNL_current_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualRootSmallChernoffCodeFibreCNLCurrentProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_rootSmallChernoff_current_provider
+    (rootSmallChernoff_current_provider_nonempty_of_rootSmallChernoff_codeFibreCNL_current_provider
+      hprovider)
+
+/-- Nonemptiness of the root-small/code-fibre current provider gives the full
+actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_rootSmallChernoff_codeFibreCNL_current_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualRootSmallChernoffCodeFibreCNLCurrentProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_current_actual_provider
+    (current_actual_provider_nonempty_of_rootSmallChernoff_codeFibreCNL_current_provider
+      hprovider)
+
+/-- Forget direct root-smallness to recover the root-bound/code-fibre pinned
+phase provider surface. -/
+theorem rootBoundChernoffTerminalPinnedPhaseCodeFibre_provider_nonempty_of_rootSmallChernoff_codeFibreCNL_current_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualRootSmallChernoffCodeFibreCNLCurrentProviderInputs) :
+    Nonempty
+      GlobalAssemblyActualRootBoundChernoffTerminalPinnedPhaseAllFieldsSplitReturnRunCodeFibreCNLRawN2StructuredInputs := by
+  exact hprovider.elim fun data =>
+    Nonempty.intro data.toRootBoundCodeFibrePinnedPhaseInputs
 
 /--
 Root-small Chernoff current provider with CNL exposed at the classical
@@ -7740,6 +8293,50 @@ theorem erdos260_unconditional_from_rootSmallChernoff_classicalCodeFibreCNL_curr
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_rootSmallChernoffClassicalCodeFibreCNLCurrentProvider
+
+/-- Forget the internally chosen classical decidable equality to recover the
+explicit code/fibre CNL current provider surface. -/
+theorem rootSmallChernoffCodeFibreCNL_current_provider_nonempty_of_classical_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualRootSmallChernoffClassicalCodeFibreCNLCurrentProviderInputs) :
+    Nonempty
+      GlobalAssemblyActualRootSmallChernoffCodeFibreCNLCurrentProviderInputs := by
+  exact hprovider.elim fun data =>
+    Nonempty.intro data.toCodeFibreCNLCurrentProviderInputs
+
+/-- Nonemptiness of the root-small/classical-code-fibre current provider also
+inhabits the direct weighted-Kraft current provider surface. -/
+theorem rootSmallChernoff_current_provider_nonempty_of_rootSmallChernoff_classicalCodeFibreCNL_current_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualRootSmallChernoffClassicalCodeFibreCNLCurrentProviderInputs) :
+    Nonempty GlobalAssemblyActualRootSmallChernoffCurrentProviderInputs :=
+  rootSmallChernoff_current_provider_nonempty_of_rootSmallChernoff_codeFibreCNL_current_provider
+    (rootSmallChernoffCodeFibreCNL_current_provider_nonempty_of_classical_provider
+      hprovider)
+
+/-- Nonemptiness of the root-small/classical-code-fibre current provider
+inhabits the current final actual provider target. -/
+theorem current_actual_provider_nonempty_of_rootSmallChernoff_classicalCodeFibreCNL_current_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualRootSmallChernoffClassicalCodeFibreCNLCurrentProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_rootSmallChernoff_current_provider
+    (rootSmallChernoff_current_provider_nonempty_of_rootSmallChernoff_classicalCodeFibreCNL_current_provider
+      hprovider)
+
+/-- Nonemptiness of the root-small/classical-code-fibre current provider gives
+the full actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_rootSmallChernoff_classicalCodeFibreCNL_current_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualRootSmallChernoffClassicalCodeFibreCNLCurrentProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_current_actual_provider
+    (current_actual_provider_nonempty_of_rootSmallChernoff_classicalCodeFibreCNL_current_provider
+      hprovider)
 
 /--
 Actual raw N.24 package for the current preferred route.
@@ -8010,6 +8607,50 @@ theorem erdos260_unconditional_from_rootSmallChernoff_classicalCodeFibreCNL_rawN
   hprovider.elim
     erdos260_final_actual_rootSmallChernoffClassicalCodeFibreCNLRawN24Provider
 
+/-- Expanding the bundled raw N.24 package recovers the classical code/fibre
+CNL current provider surface. -/
+theorem rootSmallChernoffClassicalCodeFibreCNL_current_provider_nonempty_of_rawN24_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualRootSmallChernoffClassicalCodeFibreCNLRawN24ProviderInputs) :
+    Nonempty
+      GlobalAssemblyActualRootSmallChernoffClassicalCodeFibreCNLCurrentProviderInputs := by
+  exact hprovider.elim fun data =>
+    Nonempty.intro data.toClassicalCodeFibreCNLCurrentProviderInputs
+
+/-- Expanding the bundled raw N.24 package and forgetting the code/fibre CNL
+witnesses gives the direct weighted-Kraft root-small current provider. -/
+theorem rootSmallChernoff_current_provider_nonempty_of_rootSmallChernoff_classicalCodeFibreCNL_rawN24_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualRootSmallChernoffClassicalCodeFibreCNLRawN24ProviderInputs) :
+    Nonempty GlobalAssemblyActualRootSmallChernoffCurrentProviderInputs :=
+  rootSmallChernoff_current_provider_nonempty_of_rootSmallChernoff_classicalCodeFibreCNL_current_provider
+    (rootSmallChernoffClassicalCodeFibreCNL_current_provider_nonempty_of_rawN24_provider
+      hprovider)
+
+/-- A nonempty root-small/classical-code-fibre/raw-N.24 provider inhabits the
+current direct weighted-Kraft provider target. -/
+theorem current_actual_provider_nonempty_of_rootSmallChernoff_classicalCodeFibreCNL_rawN24_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualRootSmallChernoffClassicalCodeFibreCNLRawN24ProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_rootSmallChernoff_current_provider
+    (rootSmallChernoff_current_provider_nonempty_of_rootSmallChernoff_classicalCodeFibreCNL_rawN24_provider
+      hprovider)
+
+/-- Nonemptiness of the root-small/classical-code-fibre/raw-N.24 provider gives
+the full actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_rootSmallChernoff_classicalCodeFibreCNL_rawN24_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualRootSmallChernoffClassicalCodeFibreCNLRawN24ProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_current_actual_provider
+    (current_actual_provider_nonempty_of_rootSmallChernoff_classicalCodeFibreCNL_rawN24_provider
+      hprovider)
+
 /--
 Preferred current provider with the Chernoff column fixed to the proof-v4
 tilt `3 / 2` and canonical height `Nat.floor ctx.n24CarryLocal.Y`.
@@ -8066,6 +8707,56 @@ theorem erdos260_unconditional_from_fixedTiltChernoff_classicalCodeFibreCNL_rawN
   hprovider.elim
     erdos260_final_actual_fixedTiltChernoffClassicalCodeFibreCNLRawN24Provider
 
+/-- Forget the fixed proof-v4 tilt and canonical-Y choices to recover the
+root-small raw-N.24 preferred provider surface. -/
+theorem rootSmallChernoffClassicalCodeFibreCNL_rawN24_provider_nonempty_of_fixedTilt_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualFixedTiltChernoffClassicalCodeFibreCNLRawN24ProviderInputs) :
+    Nonempty
+      GlobalAssemblyActualRootSmallChernoffClassicalCodeFibreCNLRawN24ProviderInputs := by
+  exact hprovider.elim fun data =>
+    Nonempty.intro data.toRootSmallRawN24ProviderInputs
+
+/-- Forget fixed-tilt/canonical-Y Chernoff choices, expand raw N.24, and forget
+code/fibre CNL witnesses to obtain the direct weighted-Kraft root-small current
+provider. -/
+theorem rootSmallChernoff_current_provider_nonempty_of_fixedTilt_classicalCodeFibreCNL_rawN24_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualFixedTiltChernoffClassicalCodeFibreCNLRawN24ProviderInputs) :
+    Nonempty GlobalAssemblyActualRootSmallChernoffCurrentProviderInputs :=
+  rootSmallChernoff_current_provider_nonempty_of_rootSmallChernoff_classicalCodeFibreCNL_rawN24_provider
+    (rootSmallChernoffClassicalCodeFibreCNL_rawN24_provider_nonempty_of_fixedTilt_provider
+      hprovider)
+
+/-- A nonempty fixed-tilt/classical-code-fibre/raw-N.24 provider inhabits the
+current direct weighted-Kraft provider target. -/
+theorem current_actual_provider_nonempty_of_fixedTilt_classicalCodeFibreCNL_rawN24_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualFixedTiltChernoffClassicalCodeFibreCNLRawN24ProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_rootSmallChernoff_current_provider
+    (rootSmallChernoff_current_provider_nonempty_of_fixedTilt_classicalCodeFibreCNL_rawN24_provider
+      hprovider)
+
+/-- Nonemptiness of the fixed-tilt/classical-code-fibre/raw-N.24 provider gives
+the full actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_fixedTilt_classicalCodeFibreCNL_rawN24_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualFixedTiltChernoffClassicalCodeFibreCNLRawN24ProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_current_actual_provider
+    (current_actual_provider_nonempty_of_fixedTilt_classicalCodeFibreCNL_rawN24_provider
+      hprovider)
+
+/-- Audit-name alias retaining the Chernoff component name used by the matching
+conditional theorem. -/
+alias globalAssemblyActualInputs_nonempty_of_fixedTiltChernoff_classicalCodeFibreCNL_rawN24_provider :=
+  globalAssemblyActualInputs_nonempty_of_fixedTilt_classicalCodeFibreCNL_rawN24_provider
+
 /-- Stable name for the currently preferred no-input target.
 
 The target can be lowered further as more manuscript objects are exposed; the
@@ -8085,6 +8776,35 @@ theorem erdos260_unconditional_from_preferred_actual_provider
     (hprovider : Nonempty GlobalAssemblyActualPreferredProviderTarget) :
     Erdos260Statement :=
   hprovider.elim erdos260_final_actual_preferredProviderTarget
+
+/-- Nonemptiness of the stable preferred provider reaches the root-bound
+code/fibre pinned-phase provider surface by forgetting fixed-tilt, bundled
+N.24, and classical-code choices. -/
+theorem rootBoundChernoffTerminalPinnedPhaseCodeFibre_provider_nonempty_of_preferred_actual_provider
+    (hprovider : Nonempty GlobalAssemblyActualPreferredProviderTarget) :
+    Nonempty
+      GlobalAssemblyActualRootBoundChernoffTerminalPinnedPhaseAllFieldsSplitReturnRunCodeFibreCNLRawN2StructuredInputs := by
+  exact hprovider.elim fun data =>
+    let rawN24 := data.toRootSmallRawN24ProviderInputs
+    let classical := rawN24.toClassicalCodeFibreCNLCurrentProviderInputs
+    let codeFibre := classical.toCodeFibreCNLCurrentProviderInputs
+    Nonempty.intro codeFibre.toRootBoundCodeFibrePinnedPhaseInputs
+
+/-- Nonemptiness of the stable preferred provider inhabits the current direct
+weighted-Kraft provider target. -/
+theorem current_actual_provider_nonempty_of_preferred_actual_provider
+    (hprovider : Nonempty GlobalAssemblyActualPreferredProviderTarget) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_fixedTilt_classicalCodeFibreCNL_rawN24_provider
+    hprovider
+
+/-- Nonemptiness of the stable preferred provider also gives the final
+actual-consumption assembly object through the current provider target. -/
+theorem globalAssemblyActualInputs_nonempty_of_preferred_actual_provider
+    (hprovider : Nonempty GlobalAssemblyActualPreferredProviderTarget) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_current_actual_provider
+    (current_actual_provider_nonempty_of_preferred_actual_provider hprovider)
 
 /-- Structured audit row for one field of the current actual-shell provider
 target. -/
@@ -8113,7 +8833,7 @@ def erdos260CurrentActualProviderFieldAudits :
     { slot := "CNL"
       target := "forall ctx, ActualCNLWeightedKraftData ctx"
       connectedProjection :=
-        "ActualCNLWeightedKraftData.toWeightedKraftShellInputData"
+        "ActualCNLWeightedKraftData.ofWeightedKraftShellInputData / toWeightedKraftShellInputData"
       sourceModule := "CNLSelectedTransitionConstruction"
       remainingData :=
         "surviving selected transitions, Nat BND heights, weighted Kraft bound, and G.35 scalar shell/interval budget"
@@ -8157,6 +8877,52 @@ theorem erdos260CurrentActualProviderFieldAudits_length :
     erdos260CurrentActualProviderFieldAudits.length = 6 := by
   rfl
 
+/-- Open-item counts for the current actual-shell no-input target columns. -/
+theorem erdos260CurrentActualProviderOpenItemCounts :
+    erdos260CurrentActualProviderFieldAudits.map
+        (fun row => row.openItems.length) =
+      [4, 4, 4, 4, 4, 7] := by
+  rfl
+
+/-- Total named open leaf items for the current actual-shell no-input target. -/
+theorem erdos260CurrentActualProviderOpenItemCount_sum :
+    (erdos260CurrentActualProviderFieldAudits.map
+        (fun row => row.openItems.length)).sum = 27 := by
+  rfl
+
+/-- Flattened low-level checklist for the six manuscript data columns needed by
+the current actual-provider no-input target. -/
+def erdos260CurrentActualProviderOpenItems : List String :=
+  erdos260CurrentActualProviderFieldAudits.flatMap (fun row => row.openItems)
+
+theorem erdos260CurrentActualProviderOpenItems_length_eq_sum :
+    erdos260CurrentActualProviderOpenItems.length =
+      (erdos260CurrentActualProviderFieldAudits.map
+        (fun row => row.openItems.length)).sum := by
+  simp [erdos260CurrentActualProviderOpenItems]
+
+theorem erdos260CurrentActualProviderOpenItems_length :
+    erdos260CurrentActualProviderOpenItems.length = 27 := by
+  rw [erdos260CurrentActualProviderOpenItems_length_eq_sum,
+    erdos260CurrentActualProviderOpenItemCount_sum]
+
+theorem erdos260CurrentActualProviderOpenItems_nonempty :
+    erdos260CurrentActualProviderOpenItems = [] -> False := by
+  intro h
+  have hlen := congrArg List.length h
+  simp [erdos260CurrentActualProviderOpenItems_length] at hlen
+
+/-- Provider-data readiness for the current no-input endpoint.  It is stronger
+than the three-item installation checklist below: all six concrete manuscript
+columns must have no remaining leaf obligations. -/
+def erdos260CurrentActualProviderDataReady : Prop :=
+  erdos260CurrentActualProviderOpenItems = []
+
+theorem erdos260CurrentActualProviderData_not_ready :
+    Not erdos260CurrentActualProviderDataReady := by
+  intro h
+  exact erdos260CurrentActualProviderOpenItems_nonempty h
+
 /-- The six real manuscript data columns still needed for the current
 actual-shell no-input target, exposed as short labels for compact reports. -/
 def erdos260CurrentActualProviderFields : List String :=
@@ -8168,6 +8934,18 @@ theorem erdos260CurrentActualProviderFields_length :
   simp [erdos260CurrentActualProviderFields,
     erdos260CurrentActualProviderFieldAudits_length]
 
+/-- Exact field labels for the current actual-shell provider frontier.  This is
+the machine-checkable version of the six-column audit summarized in the README. -/
+theorem erdos260CurrentActualProviderFields_eq :
+    erdos260CurrentActualProviderFields =
+      [ "Chernoff: forall ctx, ActualShellPaidChernoffFiniteSumRootBoundScalarTailFieldsData ctx",
+        "CNL: forall ctx, ActualCNLWeightedKraftData ctx",
+        "Return: forall ctx, ActualReturnRawI51M2J4L6SplitScalarData ctx",
+        "Run: forall ctx, ActualRunRawL41L42I52SplitAbsorptionScalarData ctx",
+        "Appendix N.2: forall ctx, ActualRawN2FirstCrossingData ctx (termRun (actual phase ctx))",
+        "Appendix N.3.3/L.6: forall ctx, ActualStructuredTerminalPinnedPhaseAllFieldsLowPaidData ctx ..." ] := by
+  rfl
+
 /-- The final no-input theorem is deliberately left open until the current
 actual provider target is inhabited by real manuscript data. -/
 def erdos260CurrentActualNoInputOpenItems : List String :=
@@ -8175,10 +8953,55 @@ def erdos260CurrentActualNoInputOpenItems : List String :=
     "define erdos260_unconditional by applying erdos260_final_actual_currentProviderTarget to that value",
     "verify #print axioms erdos260_unconditional has only propext, Classical.choice, and Quot.sound" ]
 
+/-- Number of final no-input installation tasks still open at the current
+actual-provider boundary. -/
+theorem erdos260CurrentActualNoInputOpenItems_length :
+    erdos260CurrentActualNoInputOpenItems.length = 3 := by
+  rfl
+
 theorem erdos260CurrentActualNoInputOpenItems_nonempty :
     erdos260CurrentActualNoInputOpenItems = [] -> False := by
   intro h
   simp [erdos260CurrentActualNoInputOpenItems] at h
+
+/-- The current actual-provider no-input endpoint is ready exactly when its
+installation checklist is empty.  At present this proposition is false by the
+audit theorem below. -/
+def erdos260CurrentActualNoInputReady : Prop :=
+  erdos260CurrentActualNoInputOpenItems = []
+
+theorem erdos260CurrentActualNoInput_not_ready :
+    Not erdos260CurrentActualNoInputReady := by
+  intro h
+  exact erdos260CurrentActualNoInputOpenItems_nonempty h
+
+/-- Combined current endpoint checklist: the low-level manuscript provider data
+plus the final no-input installation tasks.  This is the Lean-side source for
+the compact README audit count. -/
+def erdos260CurrentActualEndpointOpenItems : List String :=
+  erdos260CurrentActualProviderOpenItems ++ erdos260CurrentActualNoInputOpenItems
+
+theorem erdos260CurrentActualEndpointOpenItems_length :
+    erdos260CurrentActualEndpointOpenItems.length = 30 := by
+  simp [erdos260CurrentActualEndpointOpenItems,
+    erdos260CurrentActualProviderOpenItems_length,
+    erdos260CurrentActualNoInputOpenItems_length]
+
+theorem erdos260CurrentActualEndpointOpenItems_nonempty :
+    erdos260CurrentActualEndpointOpenItems = [] -> False := by
+  intro h
+  have hlen := congrArg List.length h
+  simp [erdos260CurrentActualEndpointOpenItems_length] at hlen
+
+/-- Current no-input endpoint readiness: all manuscript provider rows and all
+installation tasks must be closed. -/
+def erdos260CurrentActualEndpointReady : Prop :=
+  erdos260CurrentActualEndpointOpenItems = []
+
+theorem erdos260CurrentActualEndpoint_not_ready :
+    Not erdos260CurrentActualEndpointReady := by
+  intro h
+  exact erdos260CurrentActualEndpointOpenItems_nonempty h
 
 /-- The actual phase package assembled from the proof-v4 leaf-level objects
 that are present in the Appendix N audit surface. -/
@@ -8284,6 +9107,19 @@ theorem erdos260_final_actual_proofV4_leaf
     Erdos260Statement :=
   erdos260_final_actual data.toActualInputs
 
+/-- A nonempty proof-v4 leaf provider proves the final statement. -/
+theorem erdos260_unconditional_from_proofV4_leaf_provider
+    (hprovider : Nonempty GlobalAssemblyActualProofV4LeafInputs) :
+    Erdos260Statement :=
+  hprovider.elim erdos260_final_actual_proofV4_leaf
+
+/-- Nonemptiness of the explicit proof-v4 leaf provider gives the final
+actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_proofV4_leaf_provider
+    (hprovider : Nonempty GlobalAssemblyActualProofV4LeafInputs) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
+
 /--
 Short name for the strongest existing proof-v4 separated Appendix N leaf
 surface.  This is the manuscript-shaped provider boundary currently audited in
@@ -8345,6 +9181,14 @@ def actualCNLWeightedKraft (data : AppendixNActualProofV4LeafInputs)
   data.cnl ctx.shell (data.actualPin ctx).hc0Small
     ctx.shell_startThreshold_le
 
+/-- The same proof-v4 CNL weighted-Kraft leaf, repackaged in the current actual
+provider target's CNL field shape. -/
+def actualCNLWeightedKraftData (data : AppendixNActualProofV4LeafInputs)
+    (ctx : ActualFailureContext) :
+    ActualCNLWeightedKraftData ctx :=
+  ActualCNLWeightedKraftData.ofWeightedKraftShellInputData
+    (data.actualCNLWeightedKraft ctx)
+
 /-- The grounded CNL local package induced by the proof-v4 weighted-Kraft leaf. -/
 def actualCNLGrounded (data : AppendixNActualProofV4LeafInputs)
     (ctx : ActualFailureContext) :
@@ -8390,6 +9234,18 @@ def actualRunRaw (data : AppendixNActualProofV4LeafInputs)
     ActualRunRawL41L42I52Data ctx :=
   ActualRunRawL41L42I52Data.ofSeparatedLeaf
     (data.run ctx.shell (data.actualPin ctx) ctx.shell_startThreshold_le)
+
+/-- The current actual closure phase assembled from the proof-v4 Appendix N
+leaf provider, once the remaining current Chernoff root-bound field is supplied.
+This is the common phase used by the raw N.2 and pinned-terminal fields below. -/
+def currentPhase (data : AppendixNActualProofV4LeafInputs)
+    (ctx : ActualFailureContext)
+    (chernoff : ActualShellPaidChernoffFiniteSumRootBoundScalarTailFieldsData ctx) :
+    ClosurePhaseData erdos260Constants.cStar erdos260Constants.ξ
+      (ctx.shell.X : Real) :=
+  actualClosurePhaseFromRootBoundWeightedKraftSplitRR ctx
+    chernoff (data.actualCNLWeightedKraftData ctx)
+    (data.actualReturnSplit ctx) (data.actualRunSplit ctx)
 
 /-- The proof-v4 canonical-Y variation leaf at the actual failing shell. -/
 def actualVariationLeaf (data : AppendixNActualProofV4LeafInputs)
@@ -8491,6 +9347,351 @@ theorem globalAssemblyActualInputs_nonempty_of_appendixN_leaf_provider
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
 
+/-- Nonemptiness of the strongest Appendix N manuscript provider gives the
+explicit proof-v4 leaf provider surface. -/
+theorem globalAssemblyActualProofV4LeafInputs_nonempty_of_appendixN_leaf_provider
+    (hprovider : Nonempty AppendixNActualProofV4LeafInputs) :
+    Nonempty GlobalAssemblyActualProofV4LeafInputs := by
+  exact hprovider.elim fun data => Nonempty.intro data.toActualProofV4LeafInputs
+
+/-- The strongest Appendix N manuscript provider supplies the current actual CNL
+field directly, after the weighted-Kraft shell-to-actual projection above. -/
+theorem actualCNLWeightedKraftData_nonempty_of_appendixN_leaf_provider
+    (hprovider : Nonempty AppendixNActualProofV4LeafInputs) :
+    Nonempty (forall ctx : ActualFailureContext, ActualCNLWeightedKraftData ctx) := by
+  exact hprovider.elim fun data =>
+    Nonempty.intro (fun ctx => data.actualCNLWeightedKraftData ctx)
+
+/-- The strongest Appendix N manuscript provider supplies the current actual
+Return split field directly. -/
+theorem actualReturnSplit_nonempty_of_appendixN_leaf_provider
+    (hprovider : Nonempty AppendixNActualProofV4LeafInputs) :
+    Nonempty
+      (forall ctx : ActualFailureContext,
+        ActualReturnRawI51M2J4L6SplitScalarData ctx) := by
+  exact hprovider.elim fun data =>
+    Nonempty.intro (fun ctx => data.actualReturnSplit ctx)
+
+/-- The strongest Appendix N manuscript provider supplies the current actual
+Run split/absorption field directly. -/
+theorem actualRunSplit_nonempty_of_appendixN_leaf_provider
+    (hprovider : Nonempty AppendixNActualProofV4LeafInputs) :
+    Nonempty
+      (forall ctx : ActualFailureContext,
+        ActualRunRawL41L42I52SplitAbsorptionScalarData ctx) := by
+  exact hprovider.elim fun data =>
+    Nonempty.intro (fun ctx => data.actualRunSplit ctx)
+
+/--
+Completion boundary for the current actual provider target after reusing the
+Appendix N proof-v4 leaf provider for the already-connected CNL, Return, and
+Run slots.
+
+The remaining fields are exactly the current target's nontrivial unmatched
+slots: the root-bound Chernoff scalar-tail leaf, raw N.2 first-crossing data on
+the assembled phase, and the pinned all-fields terminal leaf on that same
+phase.
+-/
+structure AppendixNActualProofV4CurrentProviderCompletion where
+  leaf : AppendixNActualProofV4LeafInputs
+  chernoff : forall ctx : ActualFailureContext,
+    ActualShellPaidChernoffFiniteSumRootBoundScalarTailFieldsData ctx
+  n2 : forall ctx : ActualFailureContext,
+    ActualRawN2FirstCrossingData ctx
+      (termRun (leaf.currentPhase ctx (chernoff ctx)))
+  terminal : forall ctx : ActualFailureContext,
+    ActualStructuredTerminalPinnedPhaseAllFieldsLowPaidData
+      ctx
+      ((chernoff ctx).toChernoffLeaf)
+      (leaf.currentPhase ctx (chernoff ctx))
+      ((n2 ctx).toVariationData)
+      (termDensePack (leaf.currentPhase ctx (chernoff ctx)))
+      (termChernoff (leaf.currentPhase ctx (chernoff ctx)))
+      (termReturn (leaf.currentPhase ctx (chernoff ctx)))
+      (termCnl (leaf.currentPhase ctx (chernoff ctx)))
+      (termTower (leaf.currentPhase ctx (chernoff ctx)))
+
+namespace AppendixNActualProofV4CurrentProviderCompletion
+
+/-- Project the Appendix N completion boundary to the current actual provider
+target by filling CNL/Return/Run from the proof-v4 leaf provider. -/
+def toCurrentProviderTarget
+    (data : AppendixNActualProofV4CurrentProviderCompletion) :
+    GlobalAssemblyActualCurrentProviderTarget where
+  chernoff := data.chernoff
+  cnl := fun ctx => data.leaf.actualCNLWeightedKraftData ctx
+  returnPkg := fun ctx => data.leaf.actualReturnSplit ctx
+  run := fun ctx => data.leaf.actualRunSplit ctx
+  n2 := fun ctx => by
+    simpa [AppendixNActualProofV4LeafInputs.currentPhase] using data.n2 ctx
+  terminal := fun ctx => by
+    simpa [AppendixNActualProofV4LeafInputs.currentPhase] using
+      data.terminal ctx
+
+end AppendixNActualProofV4CurrentProviderCompletion
+
+/--
+Root-small Chernoff specialization of the Appendix N current-provider
+completion boundary.
+
+The proof-v4 Appendix N leaf still supplies CNL, Return, and Run.  Compared
+with `AppendixNActualProofV4CurrentProviderCompletion`, this lowers the
+remaining Chernoff field from the root-bound scalar-tail surface to the direct
+root-small estimate used in the proof-v4 finite-sum argument.
+-/
+structure AppendixNActualProofV4RootSmallCurrentProviderCompletion where
+  leaf : AppendixNActualProofV4LeafInputs
+  chernoff : forall ctx : ActualFailureContext,
+    ActualShellPaidChernoffFiniteSumRootSmallTailFieldsData ctx
+  n2 : forall ctx : ActualFailureContext,
+    ActualRootSmallChernoffRawN2Data ctx
+      (chernoff ctx)
+      (leaf.actualCNLWeightedKraftData ctx)
+      (leaf.actualReturnSplit ctx)
+      (leaf.actualRunSplit ctx)
+  terminal : forall ctx : ActualFailureContext,
+    ActualRootSmallChernoffPinnedTerminalData ctx
+      (chernoff ctx)
+      (leaf.actualCNLWeightedKraftData ctx)
+      (leaf.actualReturnSplit ctx)
+      (leaf.actualRunSplit ctx)
+      (n2 ctx)
+
+namespace AppendixNActualProofV4RootSmallCurrentProviderCompletion
+
+/-- Repackage the Appendix N root-small completion directly as the
+root-small current-provider surface: the proof-v4 leaf supplies the current
+CNL, Return, and Run fields, while the completion supplies Chernoff, N.2, and
+the pinned terminal package on the same assembled phase. -/
+def toRootSmallCurrentProviderInputs
+    (data : AppendixNActualProofV4RootSmallCurrentProviderCompletion) :
+    GlobalAssemblyActualRootSmallChernoffCurrentProviderInputs where
+  chernoff := data.chernoff
+  cnl := fun ctx => data.leaf.actualCNLWeightedKraftData ctx
+  returnPkg := fun ctx => data.leaf.actualReturnSplit ctx
+  run := fun ctx => data.leaf.actualRunSplit ctx
+  n2 := data.n2
+  terminal := data.terminal
+
+/-- Forget the direct root-small Chernoff presentation to recover the current
+Appendix N completion boundary. -/
+def toCurrentProviderCompletion
+    (data : AppendixNActualProofV4RootSmallCurrentProviderCompletion) :
+    AppendixNActualProofV4CurrentProviderCompletion where
+  leaf := data.leaf
+  chernoff := fun ctx =>
+    (data.chernoff ctx).toRootBoundScalarTailFieldsData
+  n2 := fun ctx => by
+    simpa [AppendixNActualProofV4LeafInputs.currentPhase,
+      ActualRootSmallChernoffRawN2Data,
+      actualClosurePhaseFromRootSmallWeightedKraftSplitRR]
+      using data.n2 ctx
+  terminal := fun ctx => by
+    simpa [AppendixNActualProofV4LeafInputs.currentPhase,
+      ActualRootSmallChernoffPinnedTerminalData,
+      ActualRootSmallChernoffRawN2Data,
+      actualClosurePhaseFromRootSmallWeightedKraftSplitRR]
+      using data.terminal ctx
+
+end AppendixNActualProofV4RootSmallCurrentProviderCompletion
+
+/--
+Fixed-tilt canonical-Y specialization of the Appendix N current-provider
+completion boundary.
+
+This matches the preferred proof-v4 Chernoff normalization: the tilt is
+`proofV4ChernoffTilt = 3 / 2` and the height is
+`Nat.floor ctx.n24CarryLocal.Y`.  The other current-provider fields are still
+filled from the proof-v4 Appendix N leaf.
+-/
+structure AppendixNActualProofV4FixedTiltCurrentProviderCompletion where
+  leaf : AppendixNActualProofV4LeafInputs
+  chernoff : forall ctx : ActualFailureContext,
+    ActualShellPaidChernoffFiniteSumFixedTiltCanonicalYRootSmallData ctx
+  n2 : forall ctx : ActualFailureContext,
+    ActualRootSmallChernoffRawN2Data ctx
+      ((chernoff ctx).toRootSmallTailFieldsData)
+      (leaf.actualCNLWeightedKraftData ctx)
+      (leaf.actualReturnSplit ctx)
+      (leaf.actualRunSplit ctx)
+  terminal : forall ctx : ActualFailureContext,
+    ActualRootSmallChernoffPinnedTerminalData ctx
+      ((chernoff ctx).toRootSmallTailFieldsData)
+      (leaf.actualCNLWeightedKraftData ctx)
+      (leaf.actualReturnSplit ctx)
+      (leaf.actualRunSplit ctx)
+      (n2 ctx)
+
+namespace AppendixNActualProofV4FixedTiltCurrentProviderCompletion
+
+/-- Repackage the fixed-tilt canonical-Y Appendix N completion directly as the
+root-small current-provider surface by forgetting the fixed Chernoff
+normalization. -/
+def toRootSmallCurrentProviderInputs
+    (data : AppendixNActualProofV4FixedTiltCurrentProviderCompletion) :
+    GlobalAssemblyActualRootSmallChernoffCurrentProviderInputs where
+  chernoff := fun ctx => (data.chernoff ctx).toRootSmallTailFieldsData
+  cnl := fun ctx => data.leaf.actualCNLWeightedKraftData ctx
+  returnPkg := fun ctx => data.leaf.actualReturnSplit ctx
+  run := fun ctx => data.leaf.actualRunSplit ctx
+  n2 := data.n2
+  terminal := data.terminal
+
+/-- Forget the fixed proof-v4 tilt and canonical-Y choices to recover the
+root-small Appendix N completion boundary. -/
+def toRootSmallCurrentProviderCompletion
+    (data : AppendixNActualProofV4FixedTiltCurrentProviderCompletion) :
+    AppendixNActualProofV4RootSmallCurrentProviderCompletion where
+  leaf := data.leaf
+  chernoff := fun ctx => (data.chernoff ctx).toRootSmallTailFieldsData
+  n2 := data.n2
+  terminal := data.terminal
+
+end AppendixNActualProofV4FixedTiltCurrentProviderCompletion
+
+/-- The Appendix N current-provider completion boundary is sufficient for the
+current actual provider target. -/
+theorem current_actual_provider_nonempty_of_appendixN_currentProviderCompletion
+    (hprovider :
+      Nonempty AppendixNActualProofV4CurrentProviderCompletion) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget := by
+  exact hprovider.elim fun data =>
+    Nonempty.intro data.toCurrentProviderTarget
+
+/-- Final theorem from the Appendix N current-provider completion boundary. -/
+theorem erdos260_final_actual_from_appendixN_currentProviderCompletion
+    (data : AppendixNActualProofV4CurrentProviderCompletion) :
+    Erdos260Statement :=
+  erdos260_final_actual_currentProviderTarget data.toCurrentProviderTarget
+
+/-- Nonemptiness of the Appendix N current-provider completion boundary proves
+the final theorem. -/
+theorem erdos260_unconditional_from_appendixN_currentProviderCompletion_provider
+    (hprovider :
+      Nonempty AppendixNActualProofV4CurrentProviderCompletion) :
+    Erdos260Statement := by
+  exact hprovider.elim
+    erdos260_final_actual_from_appendixN_currentProviderCompletion
+
+/-- The Appendix N current-provider completion also gives the final
+actual-consumption assembly object. -/
+theorem globalAssemblyActualInputs_nonempty_of_appendixN_currentProviderCompletion
+    (hprovider :
+      Nonempty AppendixNActualProofV4CurrentProviderCompletion) :
+    Nonempty GlobalAssemblyActualInputs := by
+  exact hprovider.elim fun data =>
+    Nonempty.intro
+      (globalAssemblyActual_from_current_provider data.toCurrentProviderTarget)
+
+/-- Audit-name alias matching the Appendix N current-provider conditional
+endpoint. -/
+alias globalAssemblyActualInputs_nonempty_of_appendixN_currentProviderCompletion_provider :=
+  globalAssemblyActualInputs_nonempty_of_appendixN_currentProviderCompletion
+
+/-- A root-small Appendix N completion boundary gives the current completion
+boundary after forgetting the direct Chernoff presentation. -/
+theorem appendixN_currentProviderCompletion_nonempty_of_rootSmallCompletion
+    (hprovider :
+      Nonempty AppendixNActualProofV4RootSmallCurrentProviderCompletion) :
+    Nonempty AppendixNActualProofV4CurrentProviderCompletion := by
+  exact hprovider.elim fun data =>
+    Nonempty.intro data.toCurrentProviderCompletion
+
+/-- The root-small Appendix N completion directly inhabits the root-small
+current-provider surface. -/
+theorem rootSmallChernoff_current_provider_nonempty_of_appendixN_rootSmall_currentProviderCompletion
+    (hprovider :
+      Nonempty AppendixNActualProofV4RootSmallCurrentProviderCompletion) :
+    Nonempty GlobalAssemblyActualRootSmallChernoffCurrentProviderInputs := by
+  exact hprovider.elim fun data =>
+    Nonempty.intro data.toRootSmallCurrentProviderInputs
+
+/-- A root-small Appendix N completion boundary is sufficient for the current
+actual provider target. -/
+theorem current_actual_provider_nonempty_of_appendixN_rootSmall_currentProviderCompletion
+    (hprovider :
+      Nonempty AppendixNActualProofV4RootSmallCurrentProviderCompletion) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_appendixN_currentProviderCompletion
+    (appendixN_currentProviderCompletion_nonempty_of_rootSmallCompletion
+      hprovider)
+
+/-- Nonemptiness of the root-small Appendix N completion boundary proves the
+final statement. -/
+theorem erdos260_unconditional_from_appendixN_rootSmall_currentProviderCompletion_provider
+    (hprovider :
+      Nonempty AppendixNActualProofV4RootSmallCurrentProviderCompletion) :
+    Erdos260Statement :=
+  erdos260_unconditional_from_appendixN_currentProviderCompletion_provider
+    (appendixN_currentProviderCompletion_nonempty_of_rootSmallCompletion
+      hprovider)
+
+/-- The root-small Appendix N completion also gives the final
+actual-consumption assembly object. -/
+theorem globalAssemblyActualInputs_nonempty_of_appendixN_rootSmall_currentProviderCompletion
+    (hprovider :
+      Nonempty AppendixNActualProofV4RootSmallCurrentProviderCompletion) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_appendixN_currentProviderCompletion
+    (appendixN_currentProviderCompletion_nonempty_of_rootSmallCompletion
+      hprovider)
+
+/-- Audit-name alias matching the Appendix N root-small completion endpoint. -/
+alias globalAssemblyActualInputs_nonempty_of_appendixN_rootSmall_currentProviderCompletion_provider :=
+  globalAssemblyActualInputs_nonempty_of_appendixN_rootSmall_currentProviderCompletion
+
+/-- A fixed-tilt canonical-Y Appendix N completion boundary gives the
+root-small completion boundary after forgetting the fixed choices. -/
+theorem appendixN_rootSmallCurrentProviderCompletion_nonempty_of_fixedTiltCompletion
+    (hprovider :
+      Nonempty AppendixNActualProofV4FixedTiltCurrentProviderCompletion) :
+    Nonempty AppendixNActualProofV4RootSmallCurrentProviderCompletion := by
+  exact hprovider.elim fun data =>
+    Nonempty.intro data.toRootSmallCurrentProviderCompletion
+
+/-- The fixed-tilt canonical-Y Appendix N completion directly inhabits the
+root-small current-provider surface. -/
+theorem rootSmallChernoff_current_provider_nonempty_of_appendixN_fixedTilt_currentProviderCompletion
+    (hprovider :
+      Nonempty AppendixNActualProofV4FixedTiltCurrentProviderCompletion) :
+    Nonempty GlobalAssemblyActualRootSmallChernoffCurrentProviderInputs := by
+  exact hprovider.elim fun data =>
+    Nonempty.intro data.toRootSmallCurrentProviderInputs
+
+/-- A fixed-tilt canonical-Y Appendix N completion boundary is sufficient for
+the current actual provider target. -/
+theorem current_actual_provider_nonempty_of_appendixN_fixedTilt_currentProviderCompletion
+    (hprovider :
+      Nonempty AppendixNActualProofV4FixedTiltCurrentProviderCompletion) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_appendixN_rootSmall_currentProviderCompletion
+    (appendixN_rootSmallCurrentProviderCompletion_nonempty_of_fixedTiltCompletion
+      hprovider)
+
+/-- Nonemptiness of the fixed-tilt canonical-Y Appendix N completion boundary
+proves the final statement. -/
+theorem erdos260_unconditional_from_appendixN_fixedTilt_currentProviderCompletion_provider
+    (hprovider :
+      Nonempty AppendixNActualProofV4FixedTiltCurrentProviderCompletion) :
+    Erdos260Statement :=
+  erdos260_unconditional_from_appendixN_rootSmall_currentProviderCompletion_provider
+    (appendixN_rootSmallCurrentProviderCompletion_nonempty_of_fixedTiltCompletion
+      hprovider)
+
+/-- The fixed-tilt canonical-Y Appendix N completion also gives the final
+actual-consumption assembly object. -/
+theorem globalAssemblyActualInputs_nonempty_of_appendixN_fixedTilt_currentProviderCompletion
+    (hprovider :
+      Nonempty AppendixNActualProofV4FixedTiltCurrentProviderCompletion) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_appendixN_rootSmall_currentProviderCompletion
+    (appendixN_rootSmallCurrentProviderCompletion_nonempty_of_fixedTiltCompletion
+      hprovider)
+
+/-- Audit-name alias matching the Appendix N fixed-tilt completion endpoint. -/
+alias globalAssemblyActualInputs_nonempty_of_appendixN_fixedTilt_currentProviderCompletion_provider :=
+  globalAssemblyActualInputs_nonempty_of_appendixN_fixedTilt_currentProviderCompletion
+
 /--
 Final bridge through the explicit proof-v4 leaf-consumption surface, derived
 from the strongest Appendix N manuscript provider.
@@ -8504,6 +9705,9 @@ theorem erdos260_final_actual_proofV4_leaf_from_appendixN_leaf_inputs
 #print axioms erdos260_final_actual_grounded
 #print axioms erdos260_final_actual_cnlCluster
 #print axioms erdos260_final_actual_leaf
+#print axioms globalAssemblyActualInputs_nonempty_of_projection
+#print axioms erdos260_unconditional_from_actual_inputs_nonempty
+#print axioms erdos260_unconditional_from_projected_actual_provider
 #print axioms erdos260_final_actual_n24Leaf
 #print axioms erdos260_final_actual_runPackageN24
 #print axioms erdos260_final_actual_closedN2RunPackage
@@ -8537,23 +9741,61 @@ theorem erdos260_final_actual_proofV4_leaf_from_appendixN_leaf_inputs
 #print axioms erdos260_final_actual_rootBoundChernoffTerminalAllClassFieldsSplitReturnRunCodeFibreCNLRawN2Structured
 #print axioms erdos260_final_actual_rootBoundChernoffTerminalAllFieldsSplitReturnRunCodeFibreCNLRawN2Structured
 #print axioms erdos260_final_actual_rootBoundChernoffTerminalPinnedPhaseAllFieldsSplitReturnRunCodeFibreCNLRawN2Structured
+#print axioms erdos260_unconditional_from_rootBoundChernoffTerminalPinnedPhaseAllFieldsSplitReturnRunCodeFibreCNLRawN2Structured_provider
 #print axioms erdos260_final_actual_currentProviderTarget
 #print axioms erdos260_unconditional_from_current_actual_provider
+#print axioms globalAssemblyActualInputs_nonempty_of_current_actual_provider
 #print axioms erdos260_final_actual_rootSmallChernoffCurrentProvider
 #print axioms erdos260_unconditional_from_rootSmallChernoff_current_provider
+#print axioms current_actual_provider_nonempty_of_rootSmallChernoff_current_provider
 #print axioms erdos260_final_actual_rootSmallChernoffCodeFibreCNLCurrentProvider
 #print axioms erdos260_unconditional_from_rootSmallChernoff_codeFibreCNL_current_provider
+#print axioms rootSmallChernoff_current_provider_nonempty_of_rootSmallChernoff_codeFibreCNL_current_provider
+#print axioms current_actual_provider_nonempty_of_rootSmallChernoff_codeFibreCNL_current_provider
+#print axioms rootBoundChernoffTerminalPinnedPhaseCodeFibre_provider_nonempty_of_rootSmallChernoff_codeFibreCNL_current_provider
 #print axioms erdos260_final_actual_rootSmallChernoffClassicalCodeFibreCNLCurrentProvider
 #print axioms erdos260_unconditional_from_rootSmallChernoff_classicalCodeFibreCNL_current_provider
+#print axioms rootSmallChernoffCodeFibreCNL_current_provider_nonempty_of_classical_provider
+#print axioms rootSmallChernoff_current_provider_nonempty_of_rootSmallChernoff_classicalCodeFibreCNL_current_provider
+#print axioms current_actual_provider_nonempty_of_rootSmallChernoff_classicalCodeFibreCNL_current_provider
 #print axioms erdos260_final_actual_rootSmallChernoffClassicalCodeFibreCNLRawN24Provider
 #print axioms erdos260_unconditional_from_rootSmallChernoff_classicalCodeFibreCNL_rawN24_provider
+#print axioms rootSmallChernoffClassicalCodeFibreCNL_current_provider_nonempty_of_rawN24_provider
+#print axioms rootSmallChernoff_current_provider_nonempty_of_rootSmallChernoff_classicalCodeFibreCNL_rawN24_provider
+#print axioms current_actual_provider_nonempty_of_rootSmallChernoff_classicalCodeFibreCNL_rawN24_provider
 #print axioms erdos260_final_actual_fixedTiltChernoffClassicalCodeFibreCNLRawN24Provider
 #print axioms erdos260_unconditional_from_fixedTiltChernoff_classicalCodeFibreCNL_rawN24_provider
+#print axioms rootSmallChernoffClassicalCodeFibreCNL_rawN24_provider_nonempty_of_fixedTilt_provider
+#print axioms rootSmallChernoff_current_provider_nonempty_of_fixedTilt_classicalCodeFibreCNL_rawN24_provider
+#print axioms current_actual_provider_nonempty_of_fixedTilt_classicalCodeFibreCNL_rawN24_provider
 #print axioms erdos260_final_actual_preferredProviderTarget
 #print axioms erdos260_unconditional_from_preferred_actual_provider
+#print axioms rootBoundChernoffTerminalPinnedPhaseCodeFibre_provider_nonempty_of_preferred_actual_provider
+#print axioms current_actual_provider_nonempty_of_preferred_actual_provider
+#print axioms globalAssemblyActualInputs_nonempty_of_preferred_actual_provider
 #print axioms erdos260_final_actual_proofV4_leaf
+#print axioms erdos260_unconditional_from_proofV4_leaf_provider
+#print axioms globalAssemblyActualInputs_nonempty_of_proofV4_leaf_provider
 #print axioms erdos260_final_actual_from_appendixN_leaf_inputs
 #print axioms erdos260_unconditional_from_appendixN_leaf_provider
+#print axioms globalAssemblyActualProofV4LeafInputs_nonempty_of_appendixN_leaf_provider
+#print axioms actualCNLWeightedKraftData_nonempty_of_appendixN_leaf_provider
+#print axioms actualReturnSplit_nonempty_of_appendixN_leaf_provider
+#print axioms actualRunSplit_nonempty_of_appendixN_leaf_provider
+#print axioms current_actual_provider_nonempty_of_appendixN_currentProviderCompletion
+#print axioms erdos260_final_actual_from_appendixN_currentProviderCompletion
+#print axioms erdos260_unconditional_from_appendixN_currentProviderCompletion_provider
+#print axioms globalAssemblyActualInputs_nonempty_of_appendixN_currentProviderCompletion
+#print axioms appendixN_currentProviderCompletion_nonempty_of_rootSmallCompletion
+#print axioms rootSmallChernoff_current_provider_nonempty_of_appendixN_rootSmall_currentProviderCompletion
+#print axioms current_actual_provider_nonempty_of_appendixN_rootSmall_currentProviderCompletion
+#print axioms erdos260_unconditional_from_appendixN_rootSmall_currentProviderCompletion_provider
+#print axioms globalAssemblyActualInputs_nonempty_of_appendixN_rootSmall_currentProviderCompletion
+#print axioms appendixN_rootSmallCurrentProviderCompletion_nonempty_of_fixedTiltCompletion
+#print axioms rootSmallChernoff_current_provider_nonempty_of_appendixN_fixedTilt_currentProviderCompletion
+#print axioms current_actual_provider_nonempty_of_appendixN_fixedTilt_currentProviderCompletion
+#print axioms erdos260_unconditional_from_appendixN_fixedTilt_currentProviderCompletion_provider
+#print axioms globalAssemblyActualInputs_nonempty_of_appendixN_fixedTilt_currentProviderCompletion
 #print axioms erdos260_final_actual_proofV4_leaf_from_appendixN_leaf_inputs
 
 end

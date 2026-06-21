@@ -834,6 +834,34 @@ def toCorrected (R : DensePackRegimeSplitResidual budget) :
       exact termDensePack_faithful_nonneg budget ctx
     · exact R.ungatedCover ctx hg
 
+/-- **Direct ledger bridge from the regime split.**  The split surface is losslessly converted to
+the corrected residue, then consumed by the corrected class-3 `hDensePack` bridge.  This exposes the
+exact field needed by upper assemblies without making callers unfold `toCorrected`. -/
+theorem hDensePackField (R : DensePackRegimeSplitResidual budget)
+    (hroute : ∀ ctx : ActualFailureContext, (budget ctx).route = genuineChargeRoute ctx) :
+    ∀ ctx : ActualFailureContext,
+      routedClassMassOf ctx.n24CarryData (budget ctx).route 3
+        ≤ termDensePack (faithfulCapacityPhases budget ctx).toClosurePhaseData :=
+  R.toCorrected.hDensePackField hroute
+
+/-- Direct gated-shell emptiness projection from the regime-split surface. -/
+theorem densePackStarts_empty_of_gate (R : DensePackRegimeSplitResidual budget)
+    (ctx : ActualFailureContext) (hg : class3Gate ctx) :
+    genuineDensePackStarts ctx = ∅ :=
+  R.gatedEmpty ctx hg
+
+/-- Direct `r = 0` emptiness projection from the regime-split surface. -/
+theorem densePackStarts_empty_of_r_eq_zero (R : DensePackRegimeSplitResidual budget)
+    (ctx : ActualFailureContext) (hr : ctx.n24CarryData.r = 0) :
+    genuineDensePackStarts ctx = ∅ :=
+  R.densePackStarts_empty_of_gate ctx (class3Gate_of_r_eq_zero ctx hr)
+
+/-- Direct shallow-depth emptiness projection from the regime-split surface. -/
+theorem densePackStarts_empty_of_L_le (R : DensePackRegimeSplitResidual budget)
+    (ctx : ActualFailureContext) (hL : shellLadderDepth ctx ≤ 15420) :
+    genuineDensePackStarts ctx = ∅ :=
+  R.densePackStarts_empty_of_gate ctx (class3Gate_of_L_le ctx hL)
+
 end DensePackRegimeSplitResidual
 
 /-- **The corrected residue projects onto the regime split** — `gatedEmpty` is the K.1 gate
@@ -976,8 +1004,9 @@ def densePackCorrectedClosureStatus : List String :=
       "DensePackRegimeSplitResidual.toCorrected and DensePackCorrectedResidue.toRegimeSplit " ++
       "prove the surfaces EQUIVALENT (nonempty_densePackCorrected_iff_regimeSplit): the " ++
       "corrected atom IS exactly gated emptiness + deep ungated K.1.1/K.1/K.1.2. " ++
-      "Constructor densePackCorrectedOfRegimes; endpoints erdos260_p9V3_of_class3StartsEmpty " ++
-      "and erdos260_p9V3_of_densePackRegimeSplit.",
+      "DensePackRegimeSplitResidual.hDensePackField exposes the exact class-3 ledger field directly " ++
+      "from the split surface. Constructor densePackCorrectedOfRegimes; endpoints " ++
+      "erdos260_p9V3_of_class3StartsEmpty and erdos260_p9V3_of_densePackRegimeSplit.",
     "RESIDUAL (honest, what remains open) - (a) gatedEmpty: emptiness on gated shells, " ++
       "equivalently no top-band start carries the two pins (the r = 0 case is the single " ++
       "topmost-start exclusion); (b) on ungated shells (part of r = 1, all r >= 2): the " ++
@@ -1040,6 +1069,10 @@ theorem densePackCorrectedClosureStatus_nonempty :
 #print axioms routedFibre_three_empty_of_class3StartsEmpty
 #print axioms class3Ledger_of_class3StartsEmpty
 #print axioms DensePackRegimeSplitResidual.toCorrected
+#print axioms DensePackRegimeSplitResidual.hDensePackField
+#print axioms DensePackRegimeSplitResidual.densePackStarts_empty_of_gate
+#print axioms DensePackRegimeSplitResidual.densePackStarts_empty_of_r_eq_zero
+#print axioms DensePackRegimeSplitResidual.densePackStarts_empty_of_L_le
 #print axioms DensePackCorrectedResidue.toRegimeSplit
 #print axioms nonempty_densePackCorrected_iff_regimeSplit
 #print axioms densePackCorrectedOfRegimes

@@ -207,6 +207,18 @@ theorem returnSeparatedLocalLeafOpenItems_nonempty :
   intro h
   simp [returnSeparatedLocalLeafOpenItems] at h
 
+theorem returnSeparatedLocalLeafOpenItems_length :
+    returnSeparatedLocalLeafOpenItems.length = 4 := by
+  rfl
+
+theorem returnSeparatedLocalLeafOpenItems_eq :
+    returnSeparatedLocalLeafOpenItems =
+      [ "construct ordinary-short and semiperiodic short-return contributions",
+        "build the OLC multiplicity, epsilon, ML-budget, and return-budget data",
+        "prove the nonlocal-long return bound",
+        "combine these estimates through ReturnFourPieceData.ofOLCMultiplicity and returnSeparatedLocalLeafFromFourPiece" ] := by
+  rfl
+
 end
 
 end Erdos260

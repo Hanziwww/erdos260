@@ -715,6 +715,24 @@ def Class0BigOrderHorn (ctx : ActualFailureContext) : Prop :=
                 < 16 * slopeOrbit (class1SlopeDatum ctx).q (class1SlopeDatum ctx).K₀
                     (cycleRep c k)
 
+/-- The exact three-lane class-0 mass field consumed by the wave-18 frontier and
+absorption surfaces.  This is the expanded shape rebuilt by
+`nsgFrontierClass0Mass_of_gates`, with the big-order certificate packaged as
+`Class0BigOrderHorn`. -/
+abbrev Class0MassField : Prop :=
+  ∀ ctx : ActualFailureContext,
+    (Class0DatumSurvivor ctx →
+      routedClassMassOf ctx.n24CarryData (genuineChargeRoute ctx) 0
+        ≤ erdos260Constants.cStar * erdos260Constants.ξ / 6 * (ctx.shell.X : ℝ)) ∧
+    (48 ≤ (class1SlopeDatum ctx).q → (class1SlopeDatum ctx).q < 96 →
+      Class0CycleMeetsShallow ctx →
+      routedClassMassOf ctx.n24CarryData (genuineChargeRoute ctx) 0
+        ≤ erdos260Constants.cStar * erdos260Constants.ξ / 6 * (ctx.shell.X : ℝ)) ∧
+    (96 ≤ (class1SlopeDatum ctx).q →
+      Class0BigOrderHorn ctx
+      ∨ routedClassMassOf ctx.n24CarryData (genuineChargeRoute ctx) 0
+          ≤ erdos260Constants.cStar * erdos260Constants.ξ / 6 * (ctx.shell.X : ℝ))
+
 /-- **The narrow-support gate data for the three class-0 lanes** — the wave-19 named
 conditional: per-lane gate levels with their closing regimes (the big lane keeps the
 order horn as an alternative, exactly as the v18 field does). -/
@@ -908,6 +926,7 @@ end Erdos260
 #print axioms Erdos260.nsgMidRegime_pin
 #print axioms Erdos260.narrowSupportRegimeTable_length
 #print axioms Erdos260.narrowSupportRegimeTable_correct
+#print axioms Erdos260.Class0MassField
 #print axioms Erdos260.nsgFrontierClass0Mass_of_gates
 #print axioms Erdos260.nsgGates_of_fibreEmpty
 #print axioms Erdos260.narrowSupportGateStatus_nonempty

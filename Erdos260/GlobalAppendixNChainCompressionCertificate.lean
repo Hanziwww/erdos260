@@ -27,6 +27,8 @@ open MeasureTheory
 
 noncomputable section
 
+universe u
+
 /-- The fully separated proof-v4 provider surface that remains to be inhabited
 before a no-input certificate can be installed. -/
 abbrev GlobalAppendixNChainCompressionProofV4LeafInputs :=
@@ -4355,6 +4357,15 @@ theorem globalAssemblyActualInputs_nonempty_of_closedTRTN24BddL6StrictProviderLe
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
 
+/-- Audit-name alias for the explicit-phase split-TRT L.6 provider surface. -/
+theorem globalAssemblyActualInputs_nonempty_of_closedTRTN24BddL6StrictProviderLeaf_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNChainCompressionProofV4ClosedTRTN24BddL6StrictProviderLeafInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_closedTRTN24BddL6StrictProviderLeaf
+    hprovider
+
 /-- A nonempty split-TRT L.6-backed strict provider surface proves the final
 statement through the explicit-phase/L.6 bridge. -/
 theorem erdos260_unconditional_from_closedTRTN24BddL6StrictProviderLeaf_explicitPhase_provider
@@ -4766,6 +4777,15 @@ theorem globalAssemblyActualInputs_nonempty_of_closedGroundedTRTN24BddL6StrictPr
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
 
+/-- Audit-name alias for the explicit-phase grounded TRT/N.24 provider surface. -/
+theorem globalAssemblyActualInputs_nonempty_of_closedGroundedTRTN24BddL6StrictProviderLeaf_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNChainCompressionProofV4ClosedGroundedTRTN24BddL6StrictProviderLeafInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_closedGroundedTRTN24BddL6StrictProviderLeaf
+    hprovider
+
 /-- A nonempty preferred strict package-level TRT/N.24 provider surface proves
 the final statement through the explicit-phase/L.6 bridge. -/
 theorem erdos260_unconditional_from_closedGroundedTRTN24BddL6StrictProviderLeaf_explicitPhase_provider
@@ -4933,6 +4953,16 @@ theorem globalAssemblyActualInputs_nonempty_of_closedGroundedTRTCanonicalYN24Bdd
         GlobalAppendixNChainCompressionProofV4ClosedGroundedTRTCanonicalYN24BddL6StrictProviderLeafInputs) :
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
+
+/-- Audit-name alias for the explicit-phase canonical-Y N.24/L.6 provider
+surface. -/
+theorem globalAssemblyActualInputs_nonempty_of_closedGroundedTRTCanonicalYN24BddL6StrictProviderLeaf_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNChainCompressionProofV4ClosedGroundedTRTCanonicalYN24BddL6StrictProviderLeafInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_closedGroundedTRTCanonicalYN24BddL6StrictProviderLeaf
+    hprovider
 
 /-- A nonempty canonical-Y N.24 plus L.6 strict provider surface proves the
 final statement through the explicit-phase/L.6 bridge. -/
@@ -5563,6 +5593,16 @@ theorem globalAssemblyActualInputs_nonempty_of_directCNLDirtyGroundedTRTN24BddL6
         GlobalAppendixNChainCompressionProofV4DirectCNLDirtyGroundedTRTN24BddL6LeafInputs) :
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
+
+/-- Audit-name alias for the explicit-phase direct CNL/Dirty/TRT/N.24
+provider surface. -/
+theorem globalAssemblyActualInputs_nonempty_of_directCNLDirtyGroundedTRTN24BddL6Leaf_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNChainCompressionProofV4DirectCNLDirtyGroundedTRTN24BddL6LeafInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_directCNLDirtyGroundedTRTN24BddL6Leaf
+    hprovider
 
 /-- Nonempty manuscript-direct CNL/Dirty/TRT/N.24 provider surface implies the
 final statement through the explicit-phase/L.6 bridge. -/
@@ -6568,6 +6608,16 @@ theorem globalAssemblyActualInputs_nonempty_of_directCNLDirtyGroundedTRTCanonica
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
 
+/-- Audit-name alias for the explicit-phase separated canonical-Y
+terminal-leaf provider surface. -/
+theorem globalAssemblyActualInputs_nonempty_of_directCNLDirtyGroundedTRTCanonicalYVariationTerminalLeafLowPaidLeaf_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNChainCompressionProofV4DirectCNLDirtyGroundedTRTCanonicalYVariationTerminalLeafLowPaidLeafInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_directCNLDirtyGroundedTRTCanonicalYVariationTerminalLeafLowPaidLeaf
+    hprovider
+
 /-- Nonempty separated canonical-Y terminal-leaf provider surface implies the
 final statement through the explicit-phase/L.6 bridge. -/
 theorem erdos260_unconditional_from_directCNLDirtyGroundedTRTCanonicalYVariationTerminalLeafLowPaidLeaf_explicitPhase_provider
@@ -6671,6 +6721,16 @@ theorem globalAssemblyActualInputs_nonempty_of_directCNLDirtyGroundedTRTCanonica
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
 
+/-- Audit-name alias for the explicit-phase separated canonical-Y
+terminal-absorption provider surface. -/
+theorem globalAssemblyActualInputs_nonempty_of_directCNLDirtyGroundedTRTCanonicalYVariationTerminalLowPaidLeaf_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNChainCompressionProofV4DirectCNLDirtyGroundedTRTCanonicalYVariationTerminalLowPaidLeafInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_directCNLDirtyGroundedTRTCanonicalYVariationTerminalLowPaidLeaf
+    hprovider
+
 /-- Nonempty separated canonical-Y terminal-absorption provider surface implies
 the final statement through the explicit-phase/L.6 bridge. -/
 theorem erdos260_unconditional_from_directCNLDirtyGroundedTRTCanonicalYVariationTerminalLowPaidLeaf_explicitPhase_provider
@@ -6767,6 +6827,16 @@ theorem globalAssemblyActualInputs_nonempty_of_directCNLDirtyGroundedTRTCanonica
         GlobalAppendixNChainCompressionProofV4DirectCNLDirtyGroundedTRTCanonicalYN24LowPaidLeafInputs) :
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
+
+/-- Audit-name alias for the explicit-phase canonical-Y N.24 low/paid
+provider surface. -/
+theorem globalAssemblyActualInputs_nonempty_of_directCNLDirtyGroundedTRTCanonicalYN24LowPaidLeaf_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNChainCompressionProofV4DirectCNLDirtyGroundedTRTCanonicalYN24LowPaidLeafInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_directCNLDirtyGroundedTRTCanonicalYN24LowPaidLeaf
+    hprovider
 
 /-- Nonempty canonical-Y N.24 plus low/paid split provider surface implies the
 final statement through the explicit-phase/L.6 bridge. -/
@@ -9357,6 +9427,204 @@ theorem preferredActualProviderTarget_nonempty_of_layerCakeChernoff_classicalCod
     preferredActualProviderTarget_nonempty_of_layerCakeChernoff_classicalCodeFibreCNL_rawReturnRunFields_rawN2ActualPhaseTerminal_provider
       ⟨data.toRawN2ActualPhaseTerminalProviderInputs⟩
 
+/-- The raw-code/fibre CNL fixed-tilt compact provider reaches the current
+actual-provider target through the preferred provider. -/
+theorem current_actual_provider_nonempty_of_fixedTiltChernoff_rawCodeFibreCNL_rawN24_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualFixedTiltChernoffRawCodeFibreCNLRawN24ProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_fixedTiltChernoff_rawCodeFibreCNL_rawN24_provider
+      hprovider)
+
+/-- The raw-code/fibre CNL fixed-tilt compact provider gives the final actual
+assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_fixedTiltChernoff_rawCodeFibreCNL_rawN24_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualFixedTiltChernoffRawCodeFibreCNLRawN24ProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_fixedTiltChernoff_rawCodeFibreCNL_rawN24_provider
+      hprovider)
+
+/-- The raw CNL/Return/Run fixed-tilt compact provider reaches the current
+actual-provider target through the preferred provider. -/
+theorem current_actual_provider_nonempty_of_fixedTiltChernoff_rawCodeFibreCNL_rawReturnRun_rawN24_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualFixedTiltChernoffRawCodeFibreCNLRawReturnRunRawN24ProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_fixedTiltChernoff_rawCodeFibreCNL_rawReturnRun_rawN24_provider
+      hprovider)
+
+/-- The raw CNL/Return/Run fixed-tilt compact provider gives the final actual
+assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_fixedTiltChernoff_rawCodeFibreCNL_rawReturnRun_rawN24_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualFixedTiltChernoffRawCodeFibreCNLRawReturnRunRawN24ProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_fixedTiltChernoff_rawCodeFibreCNL_rawReturnRun_rawN24_provider
+      hprovider)
+
+/-- The raw CNL/Return/Run fixed-tilt split-N.2 provider reaches the current
+actual-provider target through the preferred provider. -/
+theorem current_actual_provider_nonempty_of_fixedTiltChernoff_rawCodeFibreCNL_rawReturnRun_rawN2PinnedTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualFixedTiltChernoffRawCodeFibreCNLRawReturnRunRawN2PinnedTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_fixedTiltChernoff_rawCodeFibreCNL_rawReturnRun_rawN2PinnedTerminal_provider
+      hprovider)
+
+/-- The raw CNL/Return/Run fixed-tilt split-N.2 provider gives the final
+actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_fixedTiltChernoff_rawCodeFibreCNL_rawReturnRun_rawN2PinnedTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualFixedTiltChernoffRawCodeFibreCNLRawReturnRunRawN2PinnedTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_fixedTiltChernoff_rawCodeFibreCNL_rawReturnRun_rawN2PinnedTerminal_provider
+      hprovider)
+
+/-- The layer-cake raw CNL/Return/Run pinned-terminal provider reaches the
+current actual-provider target through the preferred provider. -/
+theorem current_actual_provider_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_rawReturnRun_rawN2PinnedTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualLayerCakeChernoffRawCodeFibreCNLRawReturnRunRawN2PinnedTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_rawReturnRun_rawN2PinnedTerminal_provider
+      hprovider)
+
+/-- The layer-cake raw CNL/Return/Run pinned-terminal provider gives the final
+actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_rawReturnRun_rawN2PinnedTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualLayerCakeChernoffRawCodeFibreCNLRawReturnRunRawN2PinnedTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_rawReturnRun_rawN2PinnedTerminal_provider
+      hprovider)
+
+/-- The layer-cake raw CNL/Return/Run all-fields-terminal provider reaches the
+current actual-provider target through the preferred provider. -/
+theorem current_actual_provider_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_rawReturnRun_rawN2AllFieldsTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualLayerCakeChernoffRawCodeFibreCNLRawReturnRunRawN2AllFieldsTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_rawReturnRun_rawN2AllFieldsTerminal_provider
+      hprovider)
+
+/-- The layer-cake raw CNL/Return/Run all-fields-terminal provider gives the
+final actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_rawReturnRun_rawN2AllFieldsTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualLayerCakeChernoffRawCodeFibreCNLRawReturnRunRawN2AllFieldsTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_rawReturnRun_rawN2AllFieldsTerminal_provider
+      hprovider)
+
+/-- The layer-cake raw Return/Run-field all-fields-terminal provider reaches
+the current actual-provider target through the preferred provider. -/
+theorem current_actual_provider_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_rawReturnRunFields_rawN2AllFieldsTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualLayerCakeChernoffRawCodeFibreCNLRawReturnRunFieldsRawN2AllFieldsTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_rawReturnRunFields_rawN2AllFieldsTerminal_provider
+      hprovider)
+
+/-- The layer-cake raw Return/Run-field all-fields-terminal provider gives the
+final actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_rawReturnRunFields_rawN2AllFieldsTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualLayerCakeChernoffRawCodeFibreCNLRawReturnRunFieldsRawN2AllFieldsTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_rawReturnRunFields_rawN2AllFieldsTerminal_provider
+      hprovider)
+
+/-- The layer-cake raw Return/Run-field actual-phase terminal provider reaches
+the current actual-provider target through the preferred provider. -/
+theorem current_actual_provider_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_rawReturnRunFields_rawN2ActualPhaseTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualLayerCakeChernoffRawCodeFibreCNLRawReturnRunFieldsRawN2ActualPhaseTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_rawReturnRunFields_rawN2ActualPhaseTerminal_provider
+      hprovider)
+
+/-- The layer-cake raw Return/Run-field actual-phase terminal provider gives
+the final actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_rawReturnRunFields_rawN2ActualPhaseTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualLayerCakeChernoffRawCodeFibreCNLRawReturnRunFieldsRawN2ActualPhaseTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_rawReturnRunFields_rawN2ActualPhaseTerminal_provider
+      hprovider)
+
+/-- The layer-cake classical-code/fibre actual-phase terminal provider reaches
+the current actual-provider target through the preferred provider. -/
+theorem current_actual_provider_nonempty_of_layerCakeChernoff_classicalCodeFibreCNL_rawReturnRunFields_rawN2ActualPhaseTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualLayerCakeChernoffClassicalCodeFibreCNLRawReturnRunFieldsRawN2ActualPhaseTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_layerCakeChernoff_classicalCodeFibreCNL_rawReturnRunFields_rawN2ActualPhaseTerminal_provider
+      hprovider)
+
+/-- The layer-cake classical-code/fibre actual-phase terminal provider gives
+the final actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_layerCakeChernoff_classicalCodeFibreCNL_rawReturnRunFields_rawN2ActualPhaseTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualLayerCakeChernoffClassicalCodeFibreCNLRawReturnRunFieldsRawN2ActualPhaseTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_layerCakeChernoff_classicalCodeFibreCNL_rawReturnRunFields_rawN2ActualPhaseTerminal_provider
+      hprovider)
+
+/-- The layer-cake classical-code/fibre record-density actual-phase provider
+reaches the current actual-provider target through the preferred provider. -/
+theorem current_actual_provider_nonempty_of_layerCakeChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2ActualPhaseTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualLayerCakeChernoffClassicalCodeFibreCNLRawReturnRunFieldsRecordDensityN2ActualPhaseTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_layerCakeChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2ActualPhaseTerminal_provider
+      hprovider)
+
+/-- The layer-cake classical-code/fibre record-density actual-phase provider
+gives the final actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_layerCakeChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2ActualPhaseTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualLayerCakeChernoffClassicalCodeFibreCNLRawReturnRunFieldsRecordDensityN2ActualPhaseTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_layerCakeChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2ActualPhaseTerminal_provider
+      hprovider)
+
 /-- A nonempty record-density N.2 preferred provider proves the final
 statement. -/
 theorem erdos260_unconditional_from_layerCakeChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2ActualPhaseTerminal_provider
@@ -9482,6 +9750,28 @@ theorem preferredActualProviderTarget_nonempty_of_layerCakeChernoff_classicalCod
   exact
     preferredActualProviderTarget_nonempty_of_layerCakeChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2ActualPhaseTerminal_provider
       ⟨data.toRecordDensityN2ActualPhaseTerminalProviderInputs⟩
+
+/-- The layer-cake all-fields terminal provider also reaches the current
+actual-provider target used by the no-input audit in `UnconditionalTheorem`. -/
+theorem current_actual_provider_nonempty_of_layerCakeChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2AllFieldsTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualLayerCakeChernoffClassicalCodeFibreCNLRawReturnRunFieldsRecordDensityN2AllFieldsTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_layerCakeChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2AllFieldsTerminal_provider
+      hprovider)
+
+/-- The layer-cake all-fields terminal provider gives the final actual
+assembly input object after projection through the current provider target. -/
+theorem globalAssemblyActualInputs_nonempty_of_layerCakeChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2AllFieldsTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualLayerCakeChernoffClassicalCodeFibreCNLRawReturnRunFieldsRecordDensityN2AllFieldsTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_layerCakeChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2AllFieldsTerminal_provider
+      hprovider)
 
 /-- A nonempty all-fields terminal record-density N.2 preferred provider proves
 the final statement. -/
@@ -9617,6 +9907,28 @@ theorem preferredActualProviderTarget_nonempty_of_tailSmallChernoff_classicalCod
     preferredActualProviderTarget_nonempty_of_fixedTiltChernoff_rawCodeFibreCNL_rawReturnRun_rawN2PinnedTerminal_provider
       ⟨data.toFixedTiltRawCodeFibreCNLRawReturnRunRawN2PinnedTerminalProviderInputs⟩
 
+/-- The tail-small all-fields terminal provider reaches the current
+actual-provider target after the preferred-provider projection. -/
+theorem current_actual_provider_nonempty_of_tailSmallChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2AllFieldsTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualTailSmallChernoffClassicalCodeFibreCNLRawReturnRunFieldsRecordDensityN2AllFieldsTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_tailSmallChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2AllFieldsTerminal_provider
+      hprovider)
+
+/-- The tail-small all-fields terminal provider gives the final actual
+assembly input object through the current actual provider target. -/
+theorem globalAssemblyActualInputs_nonempty_of_tailSmallChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2AllFieldsTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualTailSmallChernoffClassicalCodeFibreCNLRawReturnRunFieldsRecordDensityN2AllFieldsTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_tailSmallChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2AllFieldsTerminal_provider
+      hprovider)
+
 /-- A nonempty tail-small Chernoff preferred provider proves the final
 statement. -/
 theorem erdos260_unconditional_from_tailSmallChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2AllFieldsTerminal_provider
@@ -9745,6 +10057,29 @@ theorem preferredActualProviderTarget_nonempty_of_tailSmallChernoff_classicalCod
   exact
     preferredActualProviderTarget_nonempty_of_tailSmallChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2AllFieldsTerminal_provider
       ⟨data.toTailSmallChernoffAllFieldsTerminalProviderInputs⟩
+
+/-- The matched-CNL tail-small provider reaches the current actual-provider
+target, preserving the terminal CNL identification while using the preferred
+provider projection. -/
+theorem current_actual_provider_nonempty_of_tailSmallChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2AllFieldsTerminalMatchedCNL_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualTailSmallChernoffClassicalCodeFibreCNLRawReturnRunFieldsRecordDensityN2AllFieldsTerminalMatchedCNLProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_tailSmallChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2AllFieldsTerminalMatchedCNL_provider
+      hprovider)
+
+/-- The matched-CNL tail-small provider gives the final actual assembly input
+object through the current actual provider target. -/
+theorem globalAssemblyActualInputs_nonempty_of_tailSmallChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2AllFieldsTerminalMatchedCNL_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualTailSmallChernoffClassicalCodeFibreCNLRawReturnRunFieldsRecordDensityN2AllFieldsTerminalMatchedCNLProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_tailSmallChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2AllFieldsTerminalMatchedCNL_provider
+      hprovider)
 
 /-- A nonempty matched-CNL tail-small provider proves the final statement. -/
 theorem erdos260_unconditional_from_tailSmallChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2AllFieldsTerminalMatchedCNL_provider
@@ -9881,6 +10216,28 @@ theorem preferredActualProviderTarget_nonempty_of_shellPaidChernoff_classicalCod
     preferredActualProviderTarget_nonempty_of_fixedTiltChernoff_rawCodeFibreCNL_rawReturnRun_rawN2PinnedTerminal_provider
       ⟨data.toFixedTiltRawCodeFibreCNLRawReturnRunRawN2PinnedTerminalProviderInputs⟩
 
+/-- The safe shell-paid matched-CNL provider reaches the current actual-provider
+target after projection through the stable preferred provider. -/
+theorem current_actual_provider_nonempty_of_shellPaidChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2AllFieldsTerminalMatchedCNL_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualShellPaidChernoffClassicalCodeFibreCNLRawReturnRunFieldsRecordDensityN2AllFieldsTerminalMatchedCNLProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_shellPaidChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2AllFieldsTerminalMatchedCNL_provider
+      hprovider)
+
+/-- The safe shell-paid matched-CNL provider gives the final actual assembly
+input object through the current actual provider target. -/
+theorem globalAssemblyActualInputs_nonempty_of_shellPaidChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2AllFieldsTerminalMatchedCNL_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualShellPaidChernoffClassicalCodeFibreCNLRawReturnRunFieldsRecordDensityN2AllFieldsTerminalMatchedCNLProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_shellPaidChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2AllFieldsTerminalMatchedCNL_provider
+      hprovider)
+
 /-- A nonempty safe shell-paid Chernoff preferred provider proves the final
 statement. -/
 theorem erdos260_unconditional_from_shellPaidChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2AllFieldsTerminalMatchedCNL_provider
@@ -9983,6 +10340,28 @@ theorem preferredActualProviderTarget_nonempty_of_shellPaidChernoff_classicalCod
     preferredActualProviderTarget_nonempty_of_fixedTiltChernoff_rawCodeFibreCNL_rawReturnRun_rawN2PinnedTerminal_provider
       ⟨data.toFixedTiltRawCodeFibreCNLRawReturnRunRawN2PinnedTerminalProviderInputs⟩
 
+/-- The safe actual-phase terminal provider reaches the current actual-provider
+target through the stable preferred provider. -/
+theorem current_actual_provider_nonempty_of_shellPaidChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2ActualPhaseTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualShellPaidChernoffClassicalCodeFibreCNLRawReturnRunFieldsRecordDensityN2ActualPhaseTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_shellPaidChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2ActualPhaseTerminal_provider
+      hprovider)
+
+/-- The safe actual-phase terminal provider gives the final actual assembly
+input object through the current actual provider target. -/
+theorem globalAssemblyActualInputs_nonempty_of_shellPaidChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2ActualPhaseTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualShellPaidChernoffClassicalCodeFibreCNLRawReturnRunFieldsRecordDensityN2ActualPhaseTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_shellPaidChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2ActualPhaseTerminal_provider
+      hprovider)
+
 /-- A nonempty safe actual-phase terminal provider proves the final statement. -/
 theorem erdos260_unconditional_from_shellPaidChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2ActualPhaseTerminal_provider
     (hprovider :
@@ -10045,6 +10424,24 @@ theorem preferredActualProviderTarget_nonempty_of_lowestPreferredProviderTarget
     Nonempty GlobalAssemblyActualPreferredProviderTarget :=
   preferredActualProviderTarget_nonempty_of_shellPaidChernoff_classicalCodeFibreCNL_rawReturnRunFields_recordDensityN2ActualPhaseTerminal_provider
     hprovider
+
+/-- The lowest connected preferred provider target reaches the current actual
+provider target. -/
+theorem current_actual_provider_nonempty_of_lowestPreferredProviderTarget
+    (hprovider : Nonempty GlobalAssemblyActualLowestPreferredProviderTarget) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_lowestPreferredProviderTarget
+      hprovider)
+
+/-- The lowest connected preferred provider target gives the final actual
+assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_lowestPreferredProviderTarget
+    (hprovider : Nonempty GlobalAssemblyActualLowestPreferredProviderTarget) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_lowestPreferredProviderTarget
+      hprovider)
 
 /-- A nonempty lowest connected preferred provider target proves the final
 statement. -/
@@ -10142,11 +10539,33 @@ theorem globalAppendixNLowestPreferredProviderFields_length :
   simp [globalAppendixNLowestPreferredProviderFields,
     globalAppendixNLowestPreferredProviderFieldAudits_length]
 
+set_option maxRecDepth 2000
+
+/-- Exact field labels for the current lowest preferred provider frontier.  This
+pins the six manuscript data columns used by the Appendix N certificate audit. -/
+theorem globalAppendixNLowestPreferredProviderFields_eq :
+    globalAppendixNLowestPreferredProviderFields =
+      [ "Chernoff: forall ctx, ActualShellPaidChernoffFiniteSumFixedTiltCanonicalYRootSmallData ctx",
+        "CNL: GlobalAppendixNProofV4ClassicalCodeFibreCNLFieldsProvider",
+        "Return: GlobalAppendixNProofV4RawReturnOLCMultiplicityFieldsProvider",
+        "Run: GlobalAppendixNProofV4RawRunTrichotomyHalfDecreaseFieldsProvider",
+        "Appendix N.2: forall ctx, AppendixNRawN2FirstCrossingFields.RecordDensityInput ctx.n24CarryLocal ctx.hc0Small ctx.n24SupportCount_pos (termRun actualPhase)",
+        "Appendix N.3.3/L.6 terminal: forall ctx, ActualFixedTiltChernoffClassicalCodeFibreActualPhaseAllFieldsTerminalData ctx (chernoff ctx) (cnl ctx) (returnPkg ctx) (run ctx) ((n2 ctx).toRawN2FirstCrossingFields.toActualRawN2FirstCrossingData)" ] := by
+  rfl
+
+set_option maxRecDepth 1000
+
 /-- Open-item counts at the lowest preferred provider frontier. -/
 theorem globalAppendixNLowestPreferredProviderOpenItemCounts :
     globalAppendixNLowestPreferredProviderFieldAudits.map
         (fun row => row.openItems.length) =
       [4, 4, 4, 4, 4, 7] := by
+  rfl
+
+/-- Total number of named open leaf items at the lowest preferred provider frontier. -/
+theorem globalAppendixNLowestPreferredProviderOpenItemCount_sum :
+    (globalAppendixNLowestPreferredProviderFieldAudits.map
+        (fun row => row.openItems.length)).sum = 27 := by
   rfl
 
 /--
@@ -10545,6 +10964,17 @@ theorem erdos260_unconditional_from_manuscriptRegular_closedN2FiniteOverlapTermi
   hprovider.elim
     erdos260_final_actual_manuscriptRegular_closedN2FiniteOverlapTerminal
 
+/-- The fully actual manuscript-regular closed-N.2 finite-overlap target also
+inhabits the generic final actual-consumption interface. -/
+theorem globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2FiniteOverlapTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualManuscriptRegularClosedN2FiniteOverlapTerminalInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_rawCNLRRClosedN2N3BddL6_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toRawCNLRRClosedN2N3BddL6Inputs)
+
 /--
 Fully actual manuscript-regular closed-N.2 target where the terminal column is
 given at the proof-v4 structured finite-overlap boundary, still indexed by the
@@ -10651,6 +11081,17 @@ theorem erdos260_unconditional_from_manuscriptRegular_closedN2StructuredFiniteOv
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_manuscriptRegular_closedN2StructuredFiniteOverlapTerminal
+
+/-- The proof-v4 structured finite-overlap terminal target also inhabits the
+generic final actual-consumption interface. -/
+theorem globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2StructuredFiniteOverlapTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualManuscriptRegularClosedN2StructuredFiniteOverlapTerminalInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2FiniteOverlapTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toClosedN2FiniteOverlapTerminalInputs)
 
 /--
 Fully actual manuscript-regular closed-N.2 target with the N.3.3/L.6 terminal
@@ -10763,6 +11204,16 @@ theorem erdos260_unconditional_from_manuscriptRegular_closedN2TerminalAllFields_
     Erdos260Statement :=
   hprovider.elim erdos260_final_actual_manuscriptRegular_closedN2TerminalAllFields
 
+/-- The fully opened terminal-all-fields target also inhabits the generic
+final actual-consumption interface. -/
+theorem globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2TerminalAllFields_provider
+    (hprovider :
+      Nonempty GlobalAssemblyActualManuscriptRegularClosedN2TerminalAllFieldsInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2FiniteOverlapTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toClosedN2FiniteOverlapTerminalInputs)
+
 /--
 Fully actual manuscript-regular closed-N.2 target whose opened terminal column
 is pinned to the actual assembled phase, with the CNL leaf supplied separately
@@ -10866,6 +11317,17 @@ theorem erdos260_unconditional_from_manuscriptRegular_closedN2PinnedPhaseTermina
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_manuscriptRegular_closedN2PinnedPhaseTerminalAllFields
+
+/-- The pinned all-fields target inherits the generic actual-consumption
+interface after forgetting the phase pin. -/
+theorem globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2PinnedPhaseTerminalAllFields_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualManuscriptRegularClosedN2PinnedPhaseTerminalAllFieldsInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2TerminalAllFields_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toClosedN2TerminalAllFieldsInputs)
 
 /--
 Fully actual manuscript-regular closed-N.2 target with all terminal fields
@@ -10985,6 +11447,17 @@ theorem erdos260_unconditional_from_manuscriptRegular_closedN2PhaseAlignedTermin
   hprovider.elim
     erdos260_final_actual_manuscriptRegular_closedN2PhaseAlignedTerminalAllFields
 
+/-- The phase-aligned all-fields target inherits the generic
+actual-consumption interface after pinning the phase. -/
+theorem globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2PhaseAlignedTerminalAllFields_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualManuscriptRegularClosedN2PhaseAlignedTerminalAllFieldsInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2PinnedPhaseTerminalAllFields_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toClosedN2PinnedPhaseTerminalAllFieldsInputs)
+
 /--
 Fully actual manuscript-regular closed-N.2 target with the finite-overlap
 terminal fields exposed.
@@ -11078,6 +11551,17 @@ theorem erdos260_unconditional_from_manuscriptRegular_closedN2FiniteOverlapField
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_manuscriptRegular_closedN2FiniteOverlapFieldsTerminal
+
+/-- The field-exposed closed-N.2 finite-overlap target inhabits the generic
+actual-consumption interface after forgetting the exposed terminal fields. -/
+theorem globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2FiniteOverlapFieldsTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualManuscriptRegularClosedN2FiniteOverlapFieldsTerminalInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2FiniteOverlapTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toClosedN2FiniteOverlapTerminalInputs)
 
 /--
 Fully actual manuscript-regular target with raw N.2 and finite-overlap terminal
@@ -11173,6 +11657,18 @@ theorem erdos260_unconditional_from_manuscriptRegular_rawN2FiniteOverlapTerminal
   hprovider.elim
     erdos260_final_actual_manuscriptRegular_rawN2FiniteOverlapTerminal
 
+/-- The fully actual manuscript-regular raw-N.2 finite-overlap target also
+inhabits the generic final actual-consumption interface. -/
+theorem globalAssemblyActualInputs_nonempty_of_manuscriptRegular_rawN2FiniteOverlapTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualManuscriptRegularRawN2FiniteOverlapTerminalInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_rawChernoffCNLRRRawN2StructuredTerminalLowPaid_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro
+        data.toRawChernoffCNLRRRawN2StructuredTerminalLowPaidInputs)
+
 /--
 Fully actual manuscript-regular target with the bounded-class finite-overlap
 terminal certificate kept field-exposed.
@@ -11264,6 +11760,17 @@ theorem erdos260_unconditional_from_manuscriptRegular_rawN2FiniteOverlapFieldsTe
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_manuscriptRegular_rawN2FiniteOverlapFieldsTerminal
+
+/-- The field-exposed raw-N.2 finite-overlap target inhabits the generic
+actual-consumption interface after forgetting the exposed terminal fields. -/
+theorem globalAssemblyActualInputs_nonempty_of_manuscriptRegular_rawN2FiniteOverlapFieldsTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualManuscriptRegularRawN2FiniteOverlapFieldsTerminalInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_rawN2FiniteOverlapTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toRawN2FiniteOverlapTerminalInputs)
 
 namespace GlobalAssemblyActualFiniteOverlapTerminalSplitRunTiltMomentChernoffScalarRRCNLRRRawN2StructuredInputs
 
@@ -11460,6 +11967,17 @@ theorem erdos260_unconditional_from_carryStoppedChernoff_rawClusterCNL_rawReturn
   hprovider.elim
     erdos260_final_actual_carryStoppedChernoff_rawClusterCNL_rawReturnRunFields_recordDensityN2ActualPhaseTerminal_provider
 
+/-- The pinned actual-phase manuscript-regular provider inhabits the generic
+actual-consumption interface through the raw actual structured-terminal bridge. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedChernoff_rawClusterCNL_rawReturnRunFields_recordDensityN2ActualPhaseTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedChernoffRawClusterCNLRawReturnRunFieldsRecordDensityN2ActualPhaseTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_rawChernoffCNLRRRawN2StructuredTerminalLowPaid_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toRawChernoffCNLRRRawN2StructuredTerminalLowPaidInputs)
+
 set_option linter.unusedVariables false in
 /--
 Manuscript-regular actual provider with terminal data lowered to the proof-v4
@@ -11546,6 +12064,18 @@ theorem erdos260_unconditional_from_carryStoppedChernoff_rawClusterCNL_rawReturn
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_carryStoppedChernoff_rawClusterCNL_rawReturnRunFields_recordDensityN2StructuredTerminal_provider
+
+/-- The proof-v4 structured-terminal manuscript-regular provider inhabits the
+generic actual-consumption interface through the raw actual structured-terminal
+bridge. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedChernoff_rawClusterCNL_rawReturnRunFields_recordDensityN2StructuredTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedChernoffRawClusterCNLRawReturnRunFieldsRecordDensityN2StructuredTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_rawChernoffCNLRRRawN2StructuredTerminalLowPaid_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toRawChernoffCNLRRRawN2StructuredTerminalLowPaidInputs)
 
 set_option linter.unusedVariables false in
 /--
@@ -11682,6 +12212,17 @@ theorem erdos260_unconditional_from_carryStoppedChernoff_rawClusterCNL_rawReturn
   hprovider.elim
     erdos260_final_actual_carryStoppedChernoff_rawClusterCNL_rawReturnRunFields_recordDensityN2FiniteOverlapTerminal_provider
 
+/-- The proof-v4 finite-overlap manuscript-regular provider inhabits the
+generic actual-consumption interface through the fully actual raw-N.2 target. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedChernoff_rawClusterCNL_rawReturnRunFields_recordDensityN2FiniteOverlapTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedChernoffRawClusterCNLRawReturnRunFieldsRecordDensityN2FiniteOverlapTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_rawN2FiniteOverlapTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toManuscriptRegularRawN2FiniteOverlapTerminalInputs)
+
 set_option linter.unusedVariables false in
 /--
 Manuscript-regular actual provider whose terminal column is supplied as the
@@ -11813,6 +12354,17 @@ theorem erdos260_unconditional_from_carryStoppedChernoff_rawClusterCNL_rawReturn
   hprovider.elim
     erdos260_final_actual_carryStoppedChernoff_rawClusterCNL_rawReturnRunFields_recordDensityN2ActualFiniteOverlapTerminal_provider
 
+/-- The record-density actual finite-overlap terminal provider also inhabits
+the generic final actual-consumption interface. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedChernoff_rawClusterCNL_rawReturnRunFields_recordDensityN2ActualFiniteOverlapTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedChernoffRawClusterCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_rawN2FiniteOverlapTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toManuscriptRegularRawN2FiniteOverlapTerminalInputs)
+
 set_option linter.unusedVariables false in
 /--
 Variant of the actual finite-overlap terminal route where the bounded-class
@@ -11938,6 +12490,18 @@ theorem erdos260_unconditional_from_carryStoppedChernoff_rawClusterCNL_rawReturn
   hprovider.elim
     erdos260_final_actual_carryStoppedChernoff_rawClusterCNL_rawReturnRunFields_recordDensityN2ActualFiniteOverlapFieldsTerminal_provider
 
+/-- The field-exposed record-density actual finite-overlap terminal provider
+also inhabits the generic final actual-consumption interface. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedChernoff_rawClusterCNL_rawReturnRunFields_recordDensityN2ActualFiniteOverlapFieldsTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedChernoffRawClusterCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_rawN2FiniteOverlapFieldsTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro
+        data.toManuscriptRegularRawN2FiniteOverlapFieldsTerminalInputs)
+
 set_option linter.unusedVariables false in
 /--
 Manuscript-regular actual provider with N.2 lowered from the proof-v4
@@ -12045,6 +12609,17 @@ theorem erdos260_unconditional_from_carryStoppedChernoff_rawClusterCNL_rawReturn
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_carryStoppedChernoff_rawClusterCNL_rawReturnRunFields_rawN2ActualFiniteOverlapTerminal_provider
+
+/-- The raw-N.2 actual finite-overlap provider also inhabits the generic final
+actual-consumption interface. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedChernoff_rawClusterCNL_rawReturnRunFields_rawN2ActualFiniteOverlapTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedChernoffRawClusterCNLRawReturnRunFieldsRawN2ActualFiniteOverlapTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_rawN2FiniteOverlapTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toManuscriptRegularRawN2FiniteOverlapTerminalInputs)
 
 set_option linter.unusedVariables false in
 /--
@@ -12155,6 +12730,18 @@ theorem erdos260_unconditional_from_carryStoppedChernoff_rawClusterCNL_rawReturn
   hprovider.elim
     erdos260_final_actual_carryStoppedChernoff_rawClusterCNL_rawReturnRunFields_rawN2ActualFiniteOverlapFieldsTerminal_provider
 
+/-- The field-exposed raw-N.2 actual finite-overlap provider also inhabits the
+generic final actual-consumption interface. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedChernoff_rawClusterCNL_rawReturnRunFields_rawN2ActualFiniteOverlapFieldsTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedChernoffRawClusterCNLRawReturnRunFieldsRawN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_rawN2FiniteOverlapFieldsTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro
+        data.toManuscriptRegularRawN2FiniteOverlapFieldsTerminalInputs)
+
 set_option linter.unusedVariables false in
 /--
 Raw-cluster manuscript route with closed N.2 variation data already built on
@@ -12240,6 +12827,17 @@ theorem erdos260_unconditional_from_carryStoppedChernoff_rawClusterCNL_rawReturn
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_carryStoppedChernoff_rawClusterCNL_rawReturnRunFields_closedN2ActualFiniteOverlapTerminal_provider
+
+/-- The closed-N.2 actual finite-overlap provider also inhabits the generic
+final actual-consumption interface. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedChernoff_rawClusterCNL_rawReturnRunFields_closedN2ActualFiniteOverlapTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedChernoffRawClusterCNLRawReturnRunFieldsClosedN2ActualFiniteOverlapTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2FiniteOverlapTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toManuscriptRegularClosedN2FiniteOverlapTerminalInputs)
 
 set_option linter.unusedVariables false in
 /--
@@ -12351,6 +12949,18 @@ theorem erdos260_unconditional_from_carryStoppedChernoff_rawClusterCNL_rawReturn
   hprovider.elim
     erdos260_final_actual_carryStoppedChernoff_rawClusterCNL_rawReturnRunFields_closedN2ActualFiniteOverlapFieldsTerminal_provider
 
+/-- The field-exposed closed-N.2 actual finite-overlap provider also inhabits
+the generic final actual-consumption interface. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedChernoff_rawClusterCNL_rawReturnRunFields_closedN2ActualFiniteOverlapFieldsTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedChernoffRawClusterCNLRawReturnRunFieldsClosedN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2FiniteOverlapFieldsTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro
+        data.toManuscriptRegularClosedN2FiniteOverlapFieldsTerminalInputs)
+
 set_option linter.unusedVariables false in
 /--
 Proof-object CNL variant of the closed-N.2 actual finite-overlap terminal
@@ -12444,6 +13054,17 @@ theorem erdos260_unconditional_from_carryStoppedChernoff_proofObjectCNL_rawRetur
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_carryStoppedChernoff_proofObjectCNL_rawReturnRunFields_closedN2ActualFiniteOverlapTerminal_provider
+
+/-- The proof-object CNL closed-N.2 actual finite-overlap provider also
+inhabits the generic final actual-consumption interface. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedChernoff_proofObjectCNL_rawReturnRunFields_closedN2ActualFiniteOverlapTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsClosedN2ActualFiniteOverlapTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2FiniteOverlapTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toManuscriptRegularClosedN2FiniteOverlapTerminalInputs)
 
 set_option linter.unusedVariables false in
 /-- Proof-object CNL closed-N.2 route with fully exposed terminal fields. -/
@@ -12546,6 +13167,18 @@ theorem erdos260_unconditional_from_carryStoppedChernoff_proofObjectCNL_rawRetur
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_carryStoppedChernoff_proofObjectCNL_rawReturnRunFields_closedN2ActualFiniteOverlapFieldsTerminal_provider
+
+/-- The field-exposed proof-object CNL closed-N.2 actual finite-overlap provider
+also inhabits the generic final actual-consumption interface. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedChernoff_proofObjectCNL_rawReturnRunFields_closedN2ActualFiniteOverlapFieldsTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsClosedN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2FiniteOverlapFieldsTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro
+        data.toManuscriptRegularClosedN2FiniteOverlapFieldsTerminalInputs)
 
 set_option linter.unusedVariables false in
 /--
@@ -12650,6 +13283,17 @@ theorem erdos260_unconditional_from_carryStoppedTreeLayerCakeChernoff_proofObjec
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_rawReturnRunFields_closedN2ActualFiniteOverlapTerminal_provider
+
+/-- The layer-cake proof-object CNL closed-N.2 actual finite-overlap provider
+also inhabits the generic final actual-consumption interface. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_rawReturnRunFields_closedN2ActualFiniteOverlapTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLRawReturnRunFieldsClosedN2ActualFiniteOverlapTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2FiniteOverlapTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toManuscriptRegularClosedN2FiniteOverlapTerminalInputs)
 
 set_option linter.unusedVariables false in
 /-- Layer-cake/proof-object closed-N.2 route with fully exposed terminal fields. -/
@@ -12759,6 +13403,19 @@ theorem erdos260_unconditional_from_carryStoppedTreeLayerCakeChernoff_proofObjec
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_rawReturnRunFields_closedN2ActualFiniteOverlapFieldsTerminal_provider
+
+/-- The field-exposed layer-cake proof-object CNL closed-N.2 actual
+finite-overlap provider also inhabits the generic final actual-consumption
+interface. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_rawReturnRunFields_closedN2ActualFiniteOverlapFieldsTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLRawReturnRunFieldsClosedN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2FiniteOverlapFieldsTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro
+        data.toManuscriptRegularClosedN2FiniteOverlapFieldsTerminalInputs)
 
 set_option linter.unusedVariables false in
 /--
@@ -12875,6 +13532,17 @@ theorem erdos260_unconditional_from_carryStoppedTreeLayerCakeChernoff_proofObjec
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_returnRunPackages_closedN2ActualFiniteOverlapTerminal_provider
+
+/-- The Return/Run package closed-N.2 actual finite-overlap provider also
+inhabits the generic final actual-consumption interface. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_returnRunPackages_closedN2ActualFiniteOverlapTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLReturnRunPackagesClosedN2ActualFiniteOverlapTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2FiniteOverlapTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toManuscriptRegularClosedN2FiniteOverlapTerminalInputs)
 
 set_option linter.unusedVariables false in
 /--
@@ -13005,6 +13673,18 @@ theorem erdos260_unconditional_from_carryStoppedTreeLayerCakeChernoff_proofObjec
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_returnRunPackages_closedN2ActualFiniteOverlapFieldsTerminal_provider
+
+/-- The field-exposed Return/Run package closed-N.2 actual finite-overlap
+provider also inhabits the generic final actual-consumption interface. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_returnRunPackages_closedN2ActualFiniteOverlapFieldsTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLReturnRunPackagesClosedN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2FiniteOverlapFieldsTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro
+        data.toManuscriptRegularClosedN2FiniteOverlapFieldsTerminalInputs)
 
 set_option linter.unusedVariables false in
 /--
@@ -13147,6 +13827,17 @@ theorem erdos260_unconditional_from_carryStoppedTreeLayerCakeChernoff_proofObjec
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_trtPackages_closedN2ActualFiniteOverlapTerminal_provider
+
+/-- The full TRT package closed-N.2 actual finite-overlap provider also
+inhabits the generic final actual-consumption interface. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_trtPackages_closedN2ActualFiniteOverlapTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLTRTPackagesClosedN2ActualFiniteOverlapTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2FiniteOverlapTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toManuscriptRegularClosedN2FiniteOverlapTerminalInputs)
 
 set_option linter.unusedVariables false in
 /-- Full TRT package variant with fully exposed finite-overlap terminal fields. -/
@@ -13300,6 +13991,18 @@ theorem erdos260_unconditional_from_carryStoppedTreeLayerCakeChernoff_proofObjec
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_trtPackages_closedN2ActualFiniteOverlapFieldsTerminal_provider
+
+/-- The field-exposed full TRT package closed-N.2 actual finite-overlap provider
+also inhabits the generic final actual-consumption interface. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_trtPackages_closedN2ActualFiniteOverlapFieldsTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLTRTPackagesClosedN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2FiniteOverlapFieldsTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro
+        data.toManuscriptRegularClosedN2FiniteOverlapFieldsTerminalInputs)
 
 /-- The actual phase used by the manuscript-regular full TRT-package route. -/
 def actualClosurePhaseFromCarryStoppedLayerCakeProofObjectCNLTRTPackagesRR
@@ -13480,6 +14183,17 @@ theorem erdos260_unconditional_from_carryStoppedTreeLayerCakeChernoff_proofObjec
   hprovider.elim
     erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_trtPackages_canonicalYVariationLeafActualFiniteOverlapTerminal_provider
 
+/-- The canonical-Y leaf actual finite-overlap provider also inhabits the
+generic final actual-consumption interface. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_trtPackages_canonicalYVariationLeafActualFiniteOverlapTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLTRTPackagesCanonicalYVariationLeafActualFiniteOverlapTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2FiniteOverlapTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toManuscriptRegularClosedN2FiniteOverlapTerminalInputs)
+
 set_option linter.unusedVariables false in
 /-- Canonical-Y variation leaf route with fully exposed terminal fields. -/
 structure GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLTRTPackagesCanonicalYVariationLeafActualFiniteOverlapFieldsTerminalProviderInputs where
@@ -13593,6 +14307,18 @@ theorem erdos260_unconditional_from_carryStoppedTreeLayerCakeChernoff_proofObjec
   hprovider.elim
     erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_trtPackages_canonicalYVariationLeafActualFiniteOverlapFieldsTerminal_provider
 
+/-- The field-exposed canonical-Y leaf actual finite-overlap provider also
+inhabits the generic final actual-consumption interface. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_trtPackages_canonicalYVariationLeafActualFiniteOverlapFieldsTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLTRTPackagesCanonicalYVariationLeafActualFiniteOverlapFieldsTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2FiniteOverlapFieldsTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro
+        data.toManuscriptRegularClosedN2FiniteOverlapFieldsTerminalInputs)
+
 set_option linter.unusedVariables false in
 /--
 Canonical-Y leaf route whose N.3.3/L.6 terminal column is supplied at the
@@ -13693,6 +14419,17 @@ theorem erdos260_unconditional_from_carryStoppedTreeLayerCakeChernoff_proofObjec
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_trtPackages_canonicalYVariationLeafStructuredFiniteOverlapTerminal_provider
+
+/-- The canonical-Y structured finite-overlap provider also inhabits the
+generic final actual-consumption interface. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_trtPackages_canonicalYVariationLeafStructuredFiniteOverlapTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLTRTPackagesCanonicalYVariationLeafStructuredFiniteOverlapTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2FiniteOverlapTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toManuscriptRegularClosedN2FiniteOverlapTerminalInputs)
 
 set_option linter.unusedVariables false in
 /--
@@ -13821,6 +14558,17 @@ theorem erdos260_unconditional_from_carryStoppedTreeLayerCakeChernoff_proofObjec
   hprovider.elim
     erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_trtPackages_canonicalYVariationLeafTerminalAllFields_provider
 
+/-- The canonical-Y terminal-all-fields provider inherits the generic final
+actual-consumption interface through its finite-overlap projection. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_trtPackages_canonicalYVariationLeafTerminalAllFields_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLTRTPackagesCanonicalYVariationLeafTerminalAllFieldsProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_trtPackages_canonicalYVariationLeafActualFiniteOverlapTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toCanonicalYVariationLeafActualFiniteOverlapTerminalProviderInputs)
+
 set_option linter.unusedVariables false in
 /--
 Canonical-Y leaf route with opened N.3.3/L.6 terminal fields pinned to the
@@ -13945,6 +14693,17 @@ theorem erdos260_unconditional_from_carryStoppedTreeLayerCakeChernoff_proofObjec
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_trtPackages_canonicalYVariationLeafPinnedPhaseTerminalAllFields_provider
+
+/-- The pinned terminal-all-fields provider inherits the generic final
+actual-consumption interface through the unpinned all-fields projection. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_trtPackages_canonicalYVariationLeafPinnedPhaseTerminalAllFields_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLTRTPackagesCanonicalYVariationLeafPinnedPhaseTerminalAllFieldsProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_trtPackages_canonicalYVariationLeafTerminalAllFields_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toCanonicalYVariationLeafTerminalAllFieldsProviderInputs)
 
 set_option linter.unusedVariables false in
 /--
@@ -14085,6 +14844,17 @@ theorem erdos260_unconditional_from_carryStoppedTreeLayerCakeChernoff_proofObjec
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_trtPackages_canonicalYVariationLeafPhaseAlignedTerminalAllFields_provider
+
+/-- The proof-object CNL phase-aligned full-TRT provider inherits the generic
+actual-consumption interface by pinning its phase-aligned terminal data. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_trtPackages_canonicalYVariationLeafPhaseAlignedTerminalAllFields_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLTRTPackagesCanonicalYVariationLeafPhaseAlignedTerminalAllFieldsProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_trtPackages_canonicalYVariationLeafPinnedPhaseTerminalAllFields_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toCanonicalYVariationLeafPinnedPhaseTerminalAllFieldsProviderInputs)
 
 namespace GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLTRTPackagesCanonicalYVariationLeafPinnedPhaseTerminalAllFieldsProviderInputs
 
@@ -14294,6 +15064,17 @@ theorem erdos260_unconditional_from_carryStoppedTreeLayerCakeChernoff_rawCluster
   hprovider.elim
     erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_rawClusterCNL_trtPackages_canonicalYVariationLeafPhaseAlignedTerminalAllFields_provider
 
+/-- The raw-cluster CNL full-TRT phase-aligned provider inherits the generic
+actual-consumption interface through the proof-object CNL packaging. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_rawClusterCNL_trtPackages_canonicalYVariationLeafPhaseAlignedTerminalAllFields_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffRawClusterCNLTRTPackagesCanonicalYVariationLeafPhaseAlignedTerminalAllFieldsProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_trtPackages_canonicalYVariationLeafPhaseAlignedTerminalAllFields_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toProofObjectCNLPhaseAlignedTerminalAllFieldsProviderInputs)
+
 set_option linter.unusedVariables false in
 /--
 Area-layer Chernoff variant of the full TRT-package canonical-Y route.  This
@@ -14405,6 +15186,17 @@ theorem erdos260_unconditional_from_carryStoppedTreeAreaLayerChernoff_rawCluster
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_carryStoppedTreeAreaLayerChernoff_rawClusterCNL_trtPackages_canonicalYVariationLeafPhaseAlignedTerminalAllFields_provider
+
+/-- The area-layer full-TRT phase-aligned provider inhabits the generic
+actual-consumption interface through the fully actual phase-aligned target. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedTreeAreaLayerChernoff_rawClusterCNL_trtPackages_canonicalYVariationLeafPhaseAlignedTerminalAllFields_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedTreeAreaLayerChernoffRawClusterCNLTRTPackagesCanonicalYVariationLeafPhaseAlignedTerminalAllFieldsProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2PhaseAlignedTerminalAllFields_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toManuscriptRegularClosedN2PhaseAlignedTerminalAllFieldsInputs)
 
 namespace GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffRawClusterCNLTRTPackagesCanonicalYVariationLeafPhaseAlignedTerminalAllFieldsProviderInputs
 
@@ -14611,6 +15403,17 @@ theorem erdos260_unconditional_from_carryStoppedTreeLayerCakeChernoff_rawCluster
   hprovider.elim
     erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_rawClusterCNL_separatedTRTFields_canonicalYVariationLeafPhaseAlignedTerminalAllFields_provider
 
+/-- The layer-cake separated-TRT canonical-Y phase-aligned provider inhabits
+the generic actual-consumption interface through the fully actual target. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_rawClusterCNL_separatedTRTFields_canonicalYVariationLeafPhaseAlignedTerminalAllFields_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffRawClusterCNLSeparatedTRTFieldsCanonicalYVariationLeafPhaseAlignedTerminalAllFieldsProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2PhaseAlignedTerminalAllFields_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toManuscriptRegularClosedN2PhaseAlignedTerminalAllFieldsInputs)
+
 /-- The actual phase for the manuscript-regular separated raw-TRT route when
 Chernoff is already supplied at the full carry-stopped tree area-layer surface. -/
 def actualClosurePhaseFromCarryStoppedTreeAreaLayerRawClusterCNLSeparatedTRTFieldsRR
@@ -14728,6 +15531,17 @@ theorem erdos260_unconditional_from_carryStoppedTreeAreaLayerChernoff_rawCluster
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_carryStoppedTreeAreaLayerChernoff_rawClusterCNL_separatedTRTFields_canonicalYVariationLeafPhaseAlignedTerminalAllFields_provider
+
+/-- The area-layer separated-TRT canonical-Y phase-aligned provider inhabits
+the generic actual-consumption interface through the fully actual target. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedTreeAreaLayerChernoff_rawClusterCNL_separatedTRTFields_canonicalYVariationLeafPhaseAlignedTerminalAllFields_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedTreeAreaLayerChernoffRawClusterCNLSeparatedTRTFieldsCanonicalYVariationLeafPhaseAlignedTerminalAllFieldsProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2PhaseAlignedTerminalAllFields_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toManuscriptRegularClosedN2PhaseAlignedTerminalAllFieldsInputs)
 
 namespace GlobalAssemblyActualCarryStoppedTreeAreaLayerChernoffRawClusterCNLTRTPackagesCanonicalYVariationLeafPhaseAlignedTerminalAllFieldsProviderInputs
 
@@ -14995,6 +15809,18 @@ theorem erdos260_unconditional_from_carryStoppedTreeAreaLayerChernoff_rawCluster
   hprovider.elim
     erdos260_final_actual_carryStoppedTreeAreaLayerChernoff_rawClusterCNL_separatedTRTFields_rawN2PhaseAlignedTerminalAllFields_provider
 
+/-- The area-layer separated-TRT raw actual N.2 phase-aligned provider
+inhabits the generic actual-consumption interface through the fully actual
+target. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedTreeAreaLayerChernoff_rawClusterCNL_separatedTRTFields_rawN2PhaseAlignedTerminalAllFields_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedTreeAreaLayerChernoffRawClusterCNLSeparatedTRTFieldsRawN2PhaseAlignedTerminalAllFieldsProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2PhaseAlignedTerminalAllFields_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toManuscriptRegularClosedN2PhaseAlignedTerminalAllFieldsInputs)
+
 set_option linter.unusedVariables false in
 /--
 Record-density N.2 version of the area-layer Chernoff / raw-cluster CNL /
@@ -15127,6 +15953,18 @@ theorem erdos260_unconditional_from_carryStoppedTreeAreaLayerChernoff_rawCluster
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_carryStoppedTreeAreaLayerChernoff_rawClusterCNL_separatedTRTFields_recordDensityN2PhaseAlignedTerminalAllFields_provider
+
+/-- The area-layer record-density N.2 phase-aligned provider inherits the
+generic actual-consumption interface after forgetting the record-density
+presentation of N.2. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedTreeAreaLayerChernoff_rawClusterCNL_separatedTRTFields_recordDensityN2PhaseAlignedTerminalAllFields_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedTreeAreaLayerChernoffRawClusterCNLSeparatedTRTFieldsRecordDensityN2PhaseAlignedTerminalAllFieldsProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_carryStoppedTreeAreaLayerChernoff_rawClusterCNL_separatedTRTFields_rawN2PhaseAlignedTerminalAllFields_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toRawN2PhaseAlignedTerminalAllFieldsProviderInputs)
 
 set_option linter.unusedVariables false in
 /--
@@ -15266,6 +16104,18 @@ theorem erdos260_unconditional_from_carryStoppedTreeLayerCakeChernoff_rawCluster
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_rawClusterCNL_separatedTRTFields_rawN2PhaseAlignedTerminalAllFields_provider
+
+/-- The layer-cake separated-TRT raw actual N.2 phase-aligned provider
+inhabits the generic actual-consumption interface through the fully actual
+target. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_rawClusterCNL_separatedTRTFields_rawN2PhaseAlignedTerminalAllFields_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffRawClusterCNLSeparatedTRTFieldsRawN2PhaseAlignedTerminalAllFieldsProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_closedN2PhaseAlignedTerminalAllFields_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toManuscriptRegularClosedN2PhaseAlignedTerminalAllFieldsInputs)
 
 set_option linter.unusedVariables false in
 /--
@@ -15448,6 +16298,18 @@ theorem erdos260_unconditional_from_carryStoppedTreeLayerCakeChernoff_rawCluster
   hprovider.elim
     erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_rawClusterCNL_separatedTRTFields_recordDensityN2PhaseAlignedTerminalAllFields_provider
 
+/-- The layer-cake record-density N.2 phase-aligned provider inherits the
+generic actual-consumption interface after forgetting the record-density
+presentation of N.2. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_rawClusterCNL_separatedTRTFields_recordDensityN2PhaseAlignedTerminalAllFields_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffRawClusterCNLSeparatedTRTFieldsRecordDensityN2PhaseAlignedTerminalAllFieldsProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_rawClusterCNL_separatedTRTFields_rawN2PhaseAlignedTerminalAllFields_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toRawN2PhaseAlignedTerminalAllFieldsProviderInputs)
+
 set_option linter.unusedVariables false in
 /--
 Proof-object CNL variant of the raw actual N.2 / actual finite-overlap
@@ -15541,6 +16403,18 @@ theorem erdos260_unconditional_from_carryStoppedChernoff_proofObjectCNL_rawRetur
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_carryStoppedChernoff_proofObjectCNL_rawReturnRunFields_rawN2ActualFiniteOverlapTerminal_provider
+
+/-- The proof-object CNL raw actual N.2 / actual finite-overlap provider
+inhabits the generic actual-consumption interface through the fully actual
+raw-N.2 manuscript target. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedChernoff_proofObjectCNL_rawReturnRunFields_rawN2ActualFiniteOverlapTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsRawN2ActualFiniteOverlapTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_rawN2FiniteOverlapTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toManuscriptRegularRawN2FiniteOverlapTerminalInputs)
 
 set_option linter.unusedVariables false in
 /-- Proof-object CNL raw actual N.2 route with fully exposed terminal fields. -/
@@ -15642,6 +16516,18 @@ theorem erdos260_unconditional_from_carryStoppedChernoff_proofObjectCNL_rawRetur
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_carryStoppedChernoff_proofObjectCNL_rawReturnRunFields_rawN2ActualFiniteOverlapFieldsTerminal_provider
+
+/-- The field-exposed proof-object raw actual N.2 finite-overlap provider
+inhabits the generic actual-consumption interface through the field-exposed
+fully actual manuscript target. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedChernoff_proofObjectCNL_rawReturnRunFields_rawN2ActualFiniteOverlapFieldsTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsRawN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_rawN2FiniteOverlapFieldsTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toManuscriptRegularRawN2FiniteOverlapFieldsTerminalInputs)
 
 set_option linter.unusedVariables false in
 /--
@@ -15745,6 +16631,18 @@ theorem erdos260_unconditional_from_carryStoppedTreeLayerCakeChernoff_proofObjec
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_rawReturnRunFields_rawN2ActualFiniteOverlapTerminal_provider
+
+/-- The layer-cake proof-object raw actual N.2 finite-overlap provider
+inhabits the generic actual-consumption interface through the fully actual
+raw-N.2 manuscript target. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_rawReturnRunFields_rawN2ActualFiniteOverlapTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLRawReturnRunFieldsRawN2ActualFiniteOverlapTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_rawN2FiniteOverlapTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toManuscriptRegularRawN2FiniteOverlapTerminalInputs)
 
 set_option linter.unusedVariables false in
 /-- Layer-cake/proof-object raw actual N.2 route with fully exposed terminal fields. -/
@@ -15853,6 +16751,18 @@ theorem erdos260_unconditional_from_carryStoppedTreeLayerCakeChernoff_proofObjec
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_rawReturnRunFields_rawN2ActualFiniteOverlapFieldsTerminal_provider
+
+/-- The field-exposed layer-cake proof-object raw actual N.2 finite-overlap
+provider inhabits the generic actual-consumption interface through the
+field-exposed fully actual manuscript target. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_rawReturnRunFields_rawN2ActualFiniteOverlapFieldsTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLRawReturnRunFieldsRawN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_rawN2FiniteOverlapFieldsTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toManuscriptRegularRawN2FiniteOverlapFieldsTerminalInputs)
 
 set_option linter.unusedVariables false in
 /--
@@ -15988,6 +16898,18 @@ theorem erdos260_unconditional_from_carryStoppedChernoff_proofObjectCNL_rawRetur
   hprovider.elim
     erdos260_final_actual_carryStoppedChernoff_proofObjectCNL_rawReturnRunFields_recordDensityN2FiniteOverlapTerminal_provider
 
+/-- The proof-object CNL proof-v4 finite-overlap manuscript-regular provider
+inhabits the generic actual-consumption interface through the fully actual
+raw-N.2 target. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedChernoff_proofObjectCNL_rawReturnRunFields_recordDensityN2FiniteOverlapTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2FiniteOverlapTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_rawN2FiniteOverlapTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toManuscriptRegularRawN2FiniteOverlapTerminalInputs)
+
 set_option linter.unusedVariables false in
 /--
 Proof-object CNL variant of the manuscript-regular actual route whose terminal
@@ -16118,6 +17040,18 @@ theorem erdos260_unconditional_from_carryStoppedChernoff_proofObjectCNL_rawRetur
   hprovider.elim
     erdos260_final_actual_carryStoppedChernoff_proofObjectCNL_rawReturnRunFields_recordDensityN2ActualFiniteOverlapTerminal_provider
 
+/-- The proof-object CNL record-density N.2 actual finite-overlap provider
+inhabits the generic actual-consumption interface through the fully actual
+raw-N.2 manuscript target. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedChernoff_proofObjectCNL_rawReturnRunFields_recordDensityN2ActualFiniteOverlapTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_rawN2FiniteOverlapTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toManuscriptRegularRawN2FiniteOverlapTerminalInputs)
+
 set_option linter.unusedVariables false in
 /--
 Proof-object CNL variant where the actual finite-overlap terminal certificate is
@@ -16245,6 +17179,18 @@ theorem erdos260_unconditional_from_carryStoppedChernoff_proofObjectCNL_rawRetur
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_carryStoppedChernoff_proofObjectCNL_rawReturnRunFields_recordDensityN2ActualFiniteOverlapFieldsTerminal_provider
+
+/-- The field-exposed proof-object record-density N.2 actual finite-overlap
+provider inhabits the generic actual-consumption interface through the
+field-exposed fully actual manuscript target. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedChernoff_proofObjectCNL_rawReturnRunFields_recordDensityN2ActualFiniteOverlapFieldsTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_rawN2FiniteOverlapFieldsTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toManuscriptRegularRawN2FiniteOverlapFieldsTerminalInputs)
 
 set_option linter.unusedVariables false in
 /--
@@ -16394,6 +17340,18 @@ theorem erdos260_unconditional_from_carryStoppedTreeLayerCakeChernoff_proofObjec
   hprovider.elim
     erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_rawReturnRunFields_recordDensityN2FiniteOverlapTerminal_provider
 
+/-- The layer-cake proof-object CNL proof-v4 finite-overlap provider inhabits
+the generic actual-consumption interface through the fully actual raw-N.2
+target. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_rawReturnRunFields_recordDensityN2FiniteOverlapTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2FiniteOverlapTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_rawN2FiniteOverlapTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toManuscriptRegularRawN2FiniteOverlapTerminalInputs)
+
 set_option linter.unusedVariables false in
 /--
 Layer-cake Chernoff/proof-object CNL route whose terminal column is supplied as
@@ -16534,6 +17492,18 @@ theorem erdos260_unconditional_from_carryStoppedTreeLayerCakeChernoff_proofObjec
   hprovider.elim
     erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_rawReturnRunFields_recordDensityN2ActualFiniteOverlapTerminal_provider
 
+/-- The layer-cake proof-object record-density N.2 actual finite-overlap
+provider inhabits the generic actual-consumption interface through the fully
+actual raw-N.2 manuscript target. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_rawReturnRunFields_recordDensityN2ActualFiniteOverlapTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_rawN2FiniteOverlapTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toManuscriptRegularRawN2FiniteOverlapTerminalInputs)
+
 set_option linter.unusedVariables false in
 /--
 Layer-cake Chernoff/proof-object CNL route with fully exposed actual
@@ -16669,6 +17639,18 @@ theorem erdos260_unconditional_from_carryStoppedTreeLayerCakeChernoff_proofObjec
     Erdos260Statement :=
   hprovider.elim
     erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_rawReturnRunFields_recordDensityN2ActualFiniteOverlapFieldsTerminal_provider
+
+/-- The field-exposed layer-cake proof-object record-density N.2 actual
+finite-overlap provider inhabits the generic actual-consumption interface
+through the field-exposed fully actual manuscript target. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_proofObjectCNL_rawReturnRunFields_recordDensityN2ActualFiniteOverlapFieldsTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffProofObjectCNLRawReturnRunFieldsRecordDensityN2ActualFiniteOverlapFieldsTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_manuscriptRegular_rawN2FiniteOverlapFieldsTerminal_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toManuscriptRegularRawN2FiniteOverlapFieldsTerminalInputs)
 
 /-- Split a per-shell manuscript TRT package provider into the separated
 Tower/Return/Run provider bundle used by older audit surfaces. -/
@@ -16900,6 +17882,18 @@ theorem erdos260_unconditional_from_carryStoppedTreeAreaLayerChernoff_rawCluster
   hprovider.elim
     erdos260_final_actual_carryStoppedTreeAreaLayerChernoff_rawClusterCNL_rawTRTFields_recordDensityN2PhaseAlignedTerminalAllFields_provider
 
+/-- The area-layer raw-TRT-bundle record-density provider inherits the generic
+actual-consumption interface after splitting the bundle into separated
+Tower/Return/Run fields. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedTreeAreaLayerChernoff_rawClusterCNL_rawTRTFields_recordDensityN2PhaseAlignedTerminalAllFields_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedTreeAreaLayerChernoffRawClusterCNLRawTRTFieldsRecordDensityN2PhaseAlignedTerminalAllFieldsProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_carryStoppedTreeAreaLayerChernoff_rawClusterCNL_separatedTRTFields_recordDensityN2PhaseAlignedTerminalAllFields_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toSeparatedTRTFieldsRecordDensityN2PhaseAlignedTerminalAllFieldsProviderInputs)
+
 /--
 Raw-cluster CNL / raw TRT-bundle variant of the phase-aligned route with N.2
 kept at the record-density first-crossing boundary.
@@ -17090,6 +18084,18 @@ theorem erdos260_unconditional_from_carryStoppedTreeLayerCakeChernoff_rawCluster
   hprovider.elim
     erdos260_final_actual_carryStoppedTreeLayerCakeChernoff_rawClusterCNL_rawTRTFields_recordDensityN2PhaseAlignedTerminalAllFields_provider
 
+/-- The layer-cake raw-TRT-bundle record-density provider inherits the generic
+actual-consumption interface after splitting the bundle into separated
+Tower/Return/Run fields. -/
+theorem globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_rawClusterCNL_rawTRTFields_recordDensityN2PhaseAlignedTerminalAllFields_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualCarryStoppedTreeLayerCakeChernoffRawClusterCNLRawTRTFieldsRecordDensityN2PhaseAlignedTerminalAllFieldsProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_carryStoppedTreeLayerCakeChernoff_rawClusterCNL_separatedTRTFields_recordDensityN2PhaseAlignedTerminalAllFields_provider
+    (hprovider.elim fun data =>
+      Nonempty.intro data.toSeparatedTRTFieldsRecordDensityN2PhaseAlignedTerminalAllFieldsProviderInputs)
+
 /--
 Lowest preferred provider with Return and Run supplied from one raw proof-v4
 TRT field bundle.
@@ -17239,6 +18245,12 @@ theorem globalAppendixNRawTRTLowestPreferredProviderOpenItemCounts :
     globalAppendixNRawTRTLowestPreferredProviderFieldAudits.map
         (fun row => row.openItems.length) =
       [4, 4, 12, 4, 7] := by
+  rfl
+
+/-- Total named open leaf items at the raw-TRT-bundle lowest preferred frontier. -/
+theorem globalAppendixNRawTRTLowestPreferredProviderOpenItemCount_sum :
+    (globalAppendixNRawTRTLowestPreferredProviderFieldAudits.map
+        (fun row => row.openItems.length)).sum = 31 := by
   rfl
 
 /--
@@ -18017,6 +19029,182 @@ theorem preferredActualProviderTarget_nonempty_of_layerCakeChernoff_classicalCod
     (layerCakeClassicalCodeFibreCNLClosedTRTPackagesRawN2ActualPhaseTerminalProvider_nonempty_of_closedN2ActualPhaseTerminal_provider
       hprovider)
 
+/-- The shell-paid classical-code/fibre raw-TRT compact provider reaches the
+current actual-provider target through the preferred provider. -/
+theorem current_actual_provider_nonempty_of_shellPaidChernoff_classicalCodeFibreCNL_rawTRTFields_rawN24_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualShellPaidChernoffClassicalCodeFibreCNLRawTRTFieldsRawN24ProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_shellPaidChernoff_classicalCodeFibreCNL_rawTRTFields_rawN24_provider
+      hprovider)
+
+/-- The shell-paid classical-code/fibre raw-TRT compact provider gives the
+final actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_shellPaidChernoff_classicalCodeFibreCNL_rawTRTFields_rawN24_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualShellPaidChernoffClassicalCodeFibreCNLRawTRTFieldsRawN24ProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_shellPaidChernoff_classicalCodeFibreCNL_rawTRTFields_rawN24_provider
+      hprovider)
+
+/-- The shell-paid raw-code/fibre raw-TRT compact provider reaches the current
+actual-provider target through the preferred provider. -/
+theorem current_actual_provider_nonempty_of_shellPaidChernoff_rawCodeFibreCNL_rawTRTFields_rawN24_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualShellPaidChernoffRawCodeFibreCNLRawTRTFieldsRawN24ProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_shellPaidChernoff_rawCodeFibreCNL_rawTRTFields_rawN24_provider
+      hprovider)
+
+/-- The shell-paid raw-code/fibre raw-TRT compact provider gives the final
+actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_shellPaidChernoff_rawCodeFibreCNL_rawTRTFields_rawN24_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualShellPaidChernoffRawCodeFibreCNLRawTRTFieldsRawN24ProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_shellPaidChernoff_rawCodeFibreCNL_rawTRTFields_rawN24_provider
+      hprovider)
+
+/-- The layer-cake raw-code/fibre raw-TRT compact provider reaches the current
+actual-provider target through the preferred provider. -/
+theorem current_actual_provider_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_rawTRTFields_rawN24_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualLayerCakeChernoffRawCodeFibreCNLRawTRTFieldsRawN24ProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_rawTRTFields_rawN24_provider
+      hprovider)
+
+/-- The layer-cake raw-code/fibre raw-TRT compact provider gives the final
+actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_rawTRTFields_rawN24_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualLayerCakeChernoffRawCodeFibreCNLRawTRTFieldsRawN24ProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_rawTRTFields_rawN24_provider
+      hprovider)
+
+/-- The layer-cake raw-code/fibre split-N.2 actual-phase terminal provider
+reaches the current actual-provider target. -/
+theorem current_actual_provider_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_rawTRTFields_rawN2ActualPhaseTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualLayerCakeChernoffRawCodeFibreCNLRawTRTFieldsRawN2ActualPhaseTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_rawTRTFields_rawN2ActualPhaseTerminal_provider
+      hprovider)
+
+/-- The layer-cake raw-code/fibre split-N.2 actual-phase terminal provider
+gives the final actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_rawTRTFields_rawN2ActualPhaseTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualLayerCakeChernoffRawCodeFibreCNLRawTRTFieldsRawN2ActualPhaseTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_rawTRTFields_rawN2ActualPhaseTerminal_provider
+      hprovider)
+
+/-- The separated Tower/Return/Run split-N.2 actual-phase terminal provider
+reaches the current actual-provider target. -/
+theorem current_actual_provider_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_separatedTRTFields_rawN2ActualPhaseTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualLayerCakeChernoffRawCodeFibreCNLSeparatedTRTFieldsRawN2ActualPhaseTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_separatedTRTFields_rawN2ActualPhaseTerminal_provider
+      hprovider)
+
+/-- The separated Tower/Return/Run split-N.2 actual-phase terminal provider
+gives the final actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_separatedTRTFields_rawN2ActualPhaseTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualLayerCakeChernoffRawCodeFibreCNLSeparatedTRTFieldsRawN2ActualPhaseTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_layerCakeChernoff_rawCodeFibreCNL_separatedTRTFields_rawN2ActualPhaseTerminal_provider
+      hprovider)
+
+/-- The classical code/fibre separated-TRT split-N.2 actual-phase terminal
+provider reaches the current actual-provider target. -/
+theorem current_actual_provider_nonempty_of_layerCakeChernoff_classicalCodeFibreCNL_separatedTRTFields_rawN2ActualPhaseTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualLayerCakeChernoffClassicalCodeFibreCNLSeparatedTRTFieldsRawN2ActualPhaseTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_layerCakeChernoff_classicalCodeFibreCNL_separatedTRTFields_rawN2ActualPhaseTerminal_provider
+      hprovider)
+
+/-- The classical code/fibre separated-TRT split-N.2 actual-phase terminal
+provider gives the final actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_layerCakeChernoff_classicalCodeFibreCNL_separatedTRTFields_rawN2ActualPhaseTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualLayerCakeChernoffClassicalCodeFibreCNLSeparatedTRTFieldsRawN2ActualPhaseTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_layerCakeChernoff_classicalCodeFibreCNL_separatedTRTFields_rawN2ActualPhaseTerminal_provider
+      hprovider)
+
+/-- The closed-TRT package split-N.2 actual-phase terminal provider reaches the
+current actual-provider target. -/
+theorem current_actual_provider_nonempty_of_layerCakeChernoff_classicalCodeFibreCNL_closedTRTPackages_rawN2ActualPhaseTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualLayerCakeChernoffClassicalCodeFibreCNLClosedTRTPackagesRawN2ActualPhaseTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_layerCakeChernoff_classicalCodeFibreCNL_closedTRTPackages_rawN2ActualPhaseTerminal_provider
+      hprovider)
+
+/-- The closed-TRT package split-N.2 actual-phase terminal provider gives the
+final actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_layerCakeChernoff_classicalCodeFibreCNL_closedTRTPackages_rawN2ActualPhaseTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualLayerCakeChernoffClassicalCodeFibreCNLClosedTRTPackagesRawN2ActualPhaseTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_layerCakeChernoff_classicalCodeFibreCNL_closedTRTPackages_rawN2ActualPhaseTerminal_provider
+      hprovider)
+
+/-- The closed-N.2/closed-TRT actual-phase terminal provider reaches the
+current actual-provider target. -/
+theorem current_actual_provider_nonempty_of_layerCakeChernoff_classicalCodeFibreCNL_closedTRTPackages_closedN2ActualPhaseTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualLayerCakeChernoffClassicalCodeFibreCNLClosedTRTPackagesClosedN2ActualPhaseTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_layerCakeChernoff_classicalCodeFibreCNL_closedTRTPackages_closedN2ActualPhaseTerminal_provider
+      hprovider)
+
+/-- The closed-N.2/closed-TRT actual-phase terminal provider gives the final
+actual assembly input object. -/
+theorem globalAssemblyActualInputs_nonempty_of_layerCakeChernoff_classicalCodeFibreCNL_closedTRTPackages_closedN2ActualPhaseTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualLayerCakeChernoffClassicalCodeFibreCNLClosedTRTPackagesClosedN2ActualPhaseTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_layerCakeChernoff_classicalCodeFibreCNL_closedTRTPackages_closedN2ActualPhaseTerminal_provider
+      hprovider)
+
 /-- Nonemptiness of the classical-code/fibre compact provider inhabits the
 raw-code/fibre compact provider surface. -/
 theorem rawCodeFibreCNLRawTRTRawN24Provider_nonempty_of_shellPaidChernoff_classicalCodeFibreCNL_rawTRTFields_rawN24_provider
@@ -18041,6 +19229,39 @@ theorem rawTRTRawN24Provider_nonempty_of_shellPaidChernoff_classicalCodeFibreCNL
       GlobalAssemblyActualShellPaidChernoffClassicalCodeFibreCNLRawTRTFieldsRawN24ProviderInputs := by
   rcases hprovider with ⟨data⟩
   exact ⟨data.toRawTRTFieldsRawN24ProviderInputs⟩
+
+/-- Nonemptiness of the five-column raw-TRT lowest route inhabits the stable
+preferred actual-provider target through the compact raw-N.24 factorization. -/
+theorem preferredActualProviderTarget_nonempty_of_shellPaidChernoff_classicalCodeFibreCNL_rawTRTFields_recordDensityN2ActualPhaseTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualShellPaidChernoffClassicalCodeFibreCNLRawTRTFieldsRecordDensityN2ActualPhaseTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualPreferredProviderTarget :=
+  preferredActualProviderTarget_nonempty_of_shellPaidChernoff_classicalCodeFibreCNL_rawTRTFields_rawN24_provider
+    (rawTRTRawN24Provider_nonempty_of_shellPaidChernoff_classicalCodeFibreCNL_rawTRTFields_recordDensityN2ActualPhaseTerminal_provider
+      hprovider)
+
+/-- The five-column raw-TRT lowest route reaches the current actual-provider
+target through the preferred provider projection. -/
+theorem current_actual_provider_nonempty_of_shellPaidChernoff_classicalCodeFibreCNL_rawTRTFields_recordDensityN2ActualPhaseTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualShellPaidChernoffClassicalCodeFibreCNLRawTRTFieldsRecordDensityN2ActualPhaseTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualCurrentProviderTarget :=
+  current_actual_provider_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_shellPaidChernoff_classicalCodeFibreCNL_rawTRTFields_recordDensityN2ActualPhaseTerminal_provider
+      hprovider)
+
+/-- The five-column raw-TRT lowest route gives the final actual assembly input
+object. -/
+theorem globalAssemblyActualInputs_nonempty_of_shellPaidChernoff_classicalCodeFibreCNL_rawTRTFields_recordDensityN2ActualPhaseTerminal_provider
+    (hprovider :
+      Nonempty
+        GlobalAssemblyActualShellPaidChernoffClassicalCodeFibreCNLRawTRTFieldsRecordDensityN2ActualPhaseTerminalProviderInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_preferred_actual_provider
+    (preferredActualProviderTarget_nonempty_of_shellPaidChernoff_classicalCodeFibreCNL_rawTRTFields_recordDensityN2ActualPhaseTerminal_provider
+      hprovider)
 
 /-- A nonempty four-column raw-TRT/raw-N.24 provider proves the final
 statement. -/
@@ -18196,6 +19417,12 @@ theorem globalAppendixNRawTRTRawN24PreferredProviderOpenItemCounts :
       [4, 4, 12, 11] := by
   rfl
 
+/-- Total named open leaf items at the compact raw-TRT/raw-N.24 frontier. -/
+theorem globalAppendixNRawTRTRawN24PreferredProviderOpenItemCount_sum :
+    (globalAppendixNRawTRTRawN24PreferredProviderFieldAudits.map
+        (fun row => row.openItems.length)).sum = 31 := by
+  rfl
+
 /-- Field audit for the compact raw-code/fibre CNL raw-TRT/raw-N.24 target. -/
 def globalAppendixNRawCodeFibreCNLRawTRTRawN24PreferredProviderFieldAudits :
     List GlobalAppendixNLowestPreferredProviderFieldAudit :=
@@ -18249,6 +19476,12 @@ theorem globalAppendixNRawCodeFibreCNLRawTRTRawN24PreferredProviderOpenItemCount
       [4, 4, 12, 11] := by
   rfl
 
+/-- Total named open leaf items at the raw-code/fibre CNL raw-TRT/raw-N.24 frontier. -/
+theorem globalAppendixNRawCodeFibreCNLRawTRTRawN24PreferredProviderOpenItemCount_sum :
+    (globalAppendixNRawCodeFibreCNLRawTRTRawN24PreferredProviderFieldAudits.map
+        (fun row => row.openItems.length)).sum = 31 := by
+  rfl
+
 /-- Field audit for the compact layer-cake Chernoff/raw-code-fibre
 CNL/raw-TRT/raw-N.24 target. -/
 def globalAppendixNLayerCakeChernoffRawCodeFibreCNLRawTRTRawN24PreferredProviderFieldAudits :
@@ -18300,6 +19533,12 @@ theorem globalAppendixNLayerCakeChernoffRawCodeFibreCNLRawTRTRawN24PreferredProv
     globalAppendixNLayerCakeChernoffRawCodeFibreCNLRawTRTRawN24PreferredProviderFieldAudits.map
         (fun row => row.openItems.length) =
       [4, 4, 12, 11] := by
+  rfl
+
+/-- Total named open leaf items at the layer-cake/raw-code raw-TRT/raw-N.24 frontier. -/
+theorem globalAppendixNLayerCakeChernoffRawCodeFibreCNLRawTRTRawN24PreferredProviderOpenItemCount_sum :
+    (globalAppendixNLayerCakeChernoffRawCodeFibreCNLRawTRTRawN24PreferredProviderFieldAudits.map
+        (fun row => row.openItems.length)).sum = 31 := by
   rfl
 
 /-- Field audit for the layer-cake Chernoff/raw-code/fibre CNL/raw-TRT target
@@ -18361,6 +19600,12 @@ theorem globalAppendixNLayerCakeChernoffRawCodeFibreCNLRawTRTRawN2ActualPhaseTer
     globalAppendixNLayerCakeChernoffRawCodeFibreCNLRawTRTRawN2ActualPhaseTerminalPreferredProviderFieldAudits.map
         (fun row => row.openItems.length) =
       [4, 4, 12, 4, 7] := by
+  rfl
+
+/-- Total named open leaf items at the layer-cake/raw-code raw-TRT split-N.24 frontier. -/
+theorem globalAppendixNLayerCakeChernoffRawCodeFibreCNLRawTRTRawN2ActualPhaseTerminalPreferredProviderOpenItemCount_sum :
+    (globalAppendixNLayerCakeChernoffRawCodeFibreCNLRawTRTRawN2ActualPhaseTerminalPreferredProviderFieldAudits.map
+        (fun row => row.openItems.length)).sum = 31 := by
   rfl
 
 /-- Field audit for the layer-cake Chernoff/raw-code/fibre CNL preferred target
@@ -18435,6 +19680,12 @@ theorem globalAppendixNLayerCakeChernoffRawCodeFibreCNLSeparatedTRTRawN2ActualPh
     globalAppendixNLayerCakeChernoffRawCodeFibreCNLSeparatedTRTRawN2ActualPhaseTerminalPreferredProviderFieldAudits.map
         (fun row => row.openItems.length) =
       [4, 4, 4, 4, 4, 4, 7] := by
+  rfl
+
+/-- Total named open leaf items at the layer-cake/raw-code separated-TRT split-N.24 frontier. -/
+theorem globalAppendixNLayerCakeChernoffRawCodeFibreCNLSeparatedTRTRawN2ActualPhaseTerminalPreferredProviderOpenItemCount_sum :
+    (globalAppendixNLayerCakeChernoffRawCodeFibreCNLSeparatedTRTRawN2ActualPhaseTerminalPreferredProviderFieldAudits.map
+        (fun row => row.openItems.length)).sum = 31 := by
   rfl
 
 /-- Field audit for the layer-cake Chernoff/classical code-fibre CNL preferred
@@ -18512,6 +19763,12 @@ theorem globalAppendixNLayerCakeChernoffClassicalCodeFibreCNLSeparatedTRTRawN2Ac
       [4, 4, 4, 4, 4, 4, 7] := by
   rfl
 
+/-- Total named open leaf items at the layer-cake/classical separated-TRT split-N.24 frontier. -/
+theorem globalAppendixNLayerCakeChernoffClassicalCodeFibreCNLSeparatedTRTRawN2ActualPhaseTerminalPreferredProviderOpenItemCount_sum :
+    (globalAppendixNLayerCakeChernoffClassicalCodeFibreCNLSeparatedTRTRawN2ActualPhaseTerminalPreferredProviderFieldAudits.map
+        (fun row => row.openItems.length)).sum = 31 := by
+  rfl
+
 /-- Field audit for the layer-cake Chernoff/classical CNL target where
 Tower/Return/Run are supplied as closed proof-v4 manuscript packages and then
 re-exposed to the raw-field split-N.24 route. -/
@@ -18587,6 +19844,12 @@ theorem globalAppendixNLayerCakeChernoffClassicalCodeFibreCNLClosedTRTPackagesRa
       [4, 4, 4, 4, 4, 4, 7] := by
   rfl
 
+/-- Total named open leaf items at the layer-cake/classical closed-TRT raw-N.2 frontier. -/
+theorem globalAppendixNLayerCakeChernoffClassicalCodeFibreCNLClosedTRTPackagesRawN2ActualPhaseTerminalPreferredProviderOpenItemCount_sum :
+    (globalAppendixNLayerCakeChernoffClassicalCodeFibreCNLClosedTRTPackagesRawN2ActualPhaseTerminalPreferredProviderFieldAudits.map
+        (fun row => row.openItems.length)).sum = 31 := by
+  rfl
+
 /-- Field audit for the layer-cake Chernoff/classical CNL target where
 Tower/Return/Run are closed proof-v4 manuscript packages and N.2 is supplied
 at the closed variation boundary before being re-exposed as raw fields. -/
@@ -18660,6 +19923,12 @@ theorem globalAppendixNLayerCakeChernoffClassicalCodeFibreCNLClosedTRTPackagesCl
     globalAppendixNLayerCakeChernoffClassicalCodeFibreCNLClosedTRTPackagesClosedN2ActualPhaseTerminalPreferredProviderFieldAudits.map
         (fun row => row.openItems.length) =
       [4, 4, 4, 4, 4, 4, 7] := by
+  rfl
+
+/-- Total named open leaf items at the layer-cake/classical closed-TRT closed-N.2 frontier. -/
+theorem globalAppendixNLayerCakeChernoffClassicalCodeFibreCNLClosedTRTPackagesClosedN2ActualPhaseTerminalPreferredProviderOpenItemCount_sum :
+    (globalAppendixNLayerCakeChernoffClassicalCodeFibreCNLClosedTRTPackagesClosedN2ActualPhaseTerminalPreferredProviderFieldAudits.map
+        (fun row => row.openItems.length)).sum = 31 := by
   rfl
 
 /-- Bundle separated Tower/Return/Run proof-v4 packages into the existing raw
@@ -23789,6 +25058,24 @@ theorem globalAssemblyActualInputs_nonempty_of_finalActualRawManuscriptTerminalL
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
 
+/-- Audit-name alias for the actual-shell raw manuscript terminal-leaf
+component gate. -/
+theorem globalAssemblyActualInputs_nonempty_of_finalActualRawManuscriptTerminalLeafComponents_provider
+    (hprovider :
+      Nonempty GlobalAppendixNFinalActualRawManuscriptTerminalLeafComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualRawManuscriptTerminalLeafComponents
+    hprovider
+
+/-- Audit-name alias for the explicit-phase raw manuscript terminal-leaf
+component gate. -/
+theorem globalAssemblyActualInputs_nonempty_of_finalActualRawManuscriptTerminalLeafComponents_explicitPhase_provider
+    (hprovider :
+      Nonempty GlobalAppendixNFinalActualRawManuscriptTerminalLeafComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualRawManuscriptTerminalLeafComponents
+    hprovider
+
 /-- A nonempty component-level raw manuscript terminal-leaf gate proves the
 final statement through the actual-shell bridge. -/
 theorem erdos260_unconditional_from_finalActualRawManuscriptTerminalLeafComponents_provider
@@ -23963,6 +25250,26 @@ theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeRawMan
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
 
+/-- Audit-name alias for the actual-shell carry-stopped-tree raw manuscript
+terminal-leaf component gate. -/
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeRawManuscriptTerminalLeafComponents_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeRawManuscriptTerminalLeafComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeRawManuscriptTerminalLeafComponents
+    hprovider
+
+/-- Audit-name alias for the explicit-phase carry-stopped-tree raw manuscript
+terminal-leaf component gate. -/
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeRawManuscriptTerminalLeafComponents_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeRawManuscriptTerminalLeafComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeRawManuscriptTerminalLeafComponents
+    hprovider
+
 /-- A nonempty carry-stopped-tree raw manuscript terminal-leaf component gate
 proves the final statement through the actual-shell bridge. -/
 theorem erdos260_unconditional_from_finalActualCarryStoppedTreeRawManuscriptTerminalLeafComponents_provider
@@ -24127,6 +25434,24 @@ theorem globalAssemblyActualInputs_nonempty_of_finalActualRawWeightedKraftTermin
       Nonempty GlobalAppendixNFinalActualRawWeightedKraftTerminalLeafComponents) :
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
+
+/-- Audit-name alias for the actual-shell raw weighted-Kraft terminal-leaf
+component gate. -/
+theorem globalAssemblyActualInputs_nonempty_of_finalActualRawWeightedKraftTerminalLeafComponents_provider
+    (hprovider :
+      Nonempty GlobalAppendixNFinalActualRawWeightedKraftTerminalLeafComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualRawWeightedKraftTerminalLeafComponents
+    hprovider
+
+/-- Audit-name alias for the explicit-phase raw weighted-Kraft terminal-leaf
+component gate. -/
+theorem globalAssemblyActualInputs_nonempty_of_finalActualRawWeightedKraftTerminalLeafComponents_explicitPhase_provider
+    (hprovider :
+      Nonempty GlobalAppendixNFinalActualRawWeightedKraftTerminalLeafComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualRawWeightedKraftTerminalLeafComponents
+    hprovider
 
 /-- A nonempty weighted-Kraft component gate proves the final statement through
 the actual-shell bridge. -/
@@ -24299,6 +25624,26 @@ theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeWeight
         GlobalAppendixNFinalActualCarryStoppedTreeWeightedKraftTerminalLeafComponents) :
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
+
+/-- Audit-name alias for the actual-shell carry-stopped-tree weighted-Kraft
+terminal-leaf component gate. -/
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeWeightedKraftTerminalLeafComponents_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeWeightedKraftTerminalLeafComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeWeightedKraftTerminalLeafComponents
+    hprovider
+
+/-- Audit-name alias for the explicit-phase carry-stopped-tree weighted-Kraft
+terminal-leaf component gate. -/
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeWeightedKraftTerminalLeafComponents_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeWeightedKraftTerminalLeafComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeWeightedKraftTerminalLeafComponents
+    hprovider
 
 /-- A nonempty carry-stopped-tree weighted-Kraft terminal-leaf component gate
 proves the final statement through the actual-shell bridge. -/
@@ -24475,6 +25820,16 @@ theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeManusc
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
 
+/-- Audit-name alias for the explicit-phase manuscript-budget weighted-Kraft
+terminal-leaf component gate. -/
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeManuscriptBudgetCNLWeightedKraftTerminalLeafComponents_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeManuscriptBudgetCNLWeightedKraftTerminalLeafComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeManuscriptBudgetCNLWeightedKraftTerminalLeafComponents
+    hprovider
+
 /-- A nonempty carry-stopped-tree manuscript-budget CNL weighted-Kraft
 terminal-leaf component gate proves the final statement. -/
 theorem erdos260_unconditional_from_finalActualCarryStoppedTreeManuscriptBudgetCNLWeightedKraftTerminalLeafComponents_explicitPhase_provider
@@ -24628,6 +25983,16 @@ theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeManusc
         GlobalAppendixNFinalActualCarryStoppedTreeManuscriptBudgetCNLClosedK25WeightedKraftTerminalLeafComponents) :
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
+
+/-- Audit-name alias for the explicit-phase closed-K.2.5 weighted-Kraft
+terminal-leaf component gate. -/
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeManuscriptBudgetCNLClosedK25WeightedKraftTerminalLeafComponents_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeManuscriptBudgetCNLClosedK25WeightedKraftTerminalLeafComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeManuscriptBudgetCNLClosedK25WeightedKraftTerminalLeafComponents
+    hprovider
 
 /-- A nonempty carry-stopped-tree manuscript-budget CNL closed-K.2.5
 weighted-Kraft terminal-leaf component gate proves the final statement. -/
@@ -24826,6 +26191,26 @@ theorem globalAssemblyActualInputs_nonempty_of_finalActualRawWeightedKraftStruct
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
 
+/-- Audit-name alias for the actual-shell raw weighted-Kraft structured-terminal
+component gate. -/
+theorem globalAssemblyActualInputs_nonempty_of_finalActualRawWeightedKraftStructuredTerminalComponents_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualRawWeightedKraftStructuredTerminalComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualRawWeightedKraftStructuredTerminalComponents
+    hprovider
+
+/-- Audit-name alias for the explicit-phase raw weighted-Kraft
+structured-terminal component gate. -/
+theorem globalAssemblyActualInputs_nonempty_of_finalActualRawWeightedKraftStructuredTerminalComponents_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualRawWeightedKraftStructuredTerminalComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualRawWeightedKraftStructuredTerminalComponents
+    hprovider
+
 /-- A nonempty weighted-Kraft structured-terminal component gate proves the
 final statement through the actual-shell bridge. -/
 theorem erdos260_unconditional_from_finalActualRawWeightedKraftStructuredTerminalComponents_provider
@@ -24967,6 +26352,26 @@ theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeWeight
         GlobalAppendixNFinalActualCarryStoppedTreeWeightedKraftStructuredTerminalComponents) :
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
+
+/-- Audit-name alias for the actual-shell carry-stopped-tree weighted-Kraft
+structured-terminal component gate. -/
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeWeightedKraftStructuredTerminalComponents_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeWeightedKraftStructuredTerminalComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeWeightedKraftStructuredTerminalComponents
+    hprovider
+
+/-- Audit-name alias for the explicit-phase carry-stopped-tree weighted-Kraft
+structured-terminal component gate. -/
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeWeightedKraftStructuredTerminalComponents_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeWeightedKraftStructuredTerminalComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeWeightedKraftStructuredTerminalComponents
+    hprovider
 
 /-- A nonempty carry-stopped-tree weighted-Kraft structured-terminal component
 gate proves the final statement through the actual-shell bridge. -/
@@ -25112,6 +26517,16 @@ theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeManusc
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
 
+/-- Audit-name alias for the explicit-phase manuscript-budget weighted-Kraft
+structured-terminal component gate. -/
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeManuscriptBudgetCNLWeightedKraftStructuredTerminalComponents_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeManuscriptBudgetCNLWeightedKraftStructuredTerminalComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeManuscriptBudgetCNLWeightedKraftStructuredTerminalComponents
+    hprovider
+
 /-- A nonempty carry-stopped-tree manuscript-budget CNL weighted-Kraft
 structured-terminal component gate proves the final statement. -/
 theorem erdos260_unconditional_from_finalActualCarryStoppedTreeManuscriptBudgetCNLWeightedKraftStructuredTerminalComponents_explicitPhase_provider
@@ -25228,6 +26643,16 @@ theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeManusc
         GlobalAppendixNFinalActualCarryStoppedTreeManuscriptBudgetCNLClosedK25WeightedKraftStructuredTerminalComponents) :
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
+
+/-- Audit-name alias for the explicit-phase closed-K.2.5 weighted-Kraft
+structured-terminal component gate. -/
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeManuscriptBudgetCNLClosedK25WeightedKraftStructuredTerminalComponents_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeManuscriptBudgetCNLClosedK25WeightedKraftStructuredTerminalComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeManuscriptBudgetCNLClosedK25WeightedKraftStructuredTerminalComponents
+    hprovider
 
 /-- A nonempty carry-stopped-tree manuscript-budget CNL closed-K.2.5
 weighted-Kraft structured-terminal component gate proves the final statement. -/
@@ -25392,6 +26817,16 @@ theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeManusc
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
 
+/-- Audit-name alias for the explicit-phase manuscript-TRT terminal-leaf
+component gate. -/
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeManuscriptBudgetCNLClosedK25ManuscriptTRTWeightedKraftTerminalLeafComponents_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeManuscriptBudgetCNLClosedK25ManuscriptTRTWeightedKraftTerminalLeafComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeManuscriptBudgetCNLClosedK25ManuscriptTRTWeightedKraftTerminalLeafComponents
+    hprovider
+
 /-- A nonempty closed-K.2.5 manuscript-TRT terminal-leaf component gate proves
 the final statement. -/
 theorem erdos260_unconditional_from_finalActualCarryStoppedTreeManuscriptBudgetCNLClosedK25ManuscriptTRTWeightedKraftTerminalLeafComponents_explicitPhase_provider
@@ -25510,6 +26945,16 @@ theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeManusc
         GlobalAppendixNFinalActualCarryStoppedTreeManuscriptBudgetCNLClosedK25ManuscriptTRTWeightedKraftStructuredTerminalComponents) :
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
+
+/-- Audit-name alias for the explicit-phase manuscript-TRT structured-terminal
+component gate. -/
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeManuscriptBudgetCNLClosedK25ManuscriptTRTWeightedKraftStructuredTerminalComponents_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeManuscriptBudgetCNLClosedK25ManuscriptTRTWeightedKraftStructuredTerminalComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeManuscriptBudgetCNLClosedK25ManuscriptTRTWeightedKraftStructuredTerminalComponents
+    hprovider
 
 /-- A nonempty closed-K.2.5 manuscript-TRT structured-terminal component gate
 proves the final statement. -/
@@ -25662,6 +27107,14 @@ theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerC
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
 
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25ManuscriptTRTWeightedKraftTerminalLeafComponents_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25ManuscriptTRTWeightedKraftTerminalLeafComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25ManuscriptTRTWeightedKraftTerminalLeafComponents
+    hprovider
+
 /-- A nonempty layer-cake Chernoff manuscript-TRT terminal-leaf component gate
 proves the final statement. -/
 theorem erdos260_unconditional_from_finalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25ManuscriptTRTWeightedKraftTerminalLeafComponents_explicitPhase_provider
@@ -25774,6 +27227,14 @@ theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerC
         GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25ManuscriptTRTWeightedKraftStructuredTerminalComponents) :
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
+
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25ManuscriptTRTWeightedKraftStructuredTerminalComponents_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25ManuscriptTRTWeightedKraftStructuredTerminalComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25ManuscriptTRTWeightedKraftStructuredTerminalComponents
+    hprovider
 
 /-- A nonempty layer-cake Chernoff manuscript-TRT structured-terminal component
 gate proves the final statement. -/
@@ -26002,6 +27463,22 @@ theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerC
         GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftTerminalLeafComponents) :
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
+
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftTerminalLeafComponents_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftTerminalLeafComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftTerminalLeafComponents
+    hprovider
+
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftTerminalLeafComponents_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftTerminalLeafComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftTerminalLeafComponents
+    hprovider
 
 /-- The terminal-leaf component gate also proves the manuscript-aligned raw
 N.2/raw-terminal endpoint exposed above. -/
@@ -26232,6 +27709,22 @@ theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerC
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
 
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftStructuredTerminalComponents_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftStructuredTerminalComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftStructuredTerminalComponents
+    hprovider
+
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftStructuredTerminalComponents_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftStructuredTerminalComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftStructuredTerminalComponents
+    hprovider
+
 /-- The structured-terminal component gate also proves the manuscript-aligned
 raw N.2/raw-terminal endpoint exposed above. -/
 theorem erdos260_final_actual_explicitPhase_from_globalAppendixNFinalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftStructuredTerminalComponents_via_provider_leaf
@@ -26424,6 +27917,22 @@ theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerC
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
 
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents
+    hprovider
+
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents
+    hprovider
+
 /-- A nonempty layer-cake raw-TRT finite-overlap terminal component gate proves
 the final statement through the actual-shell proof-v4 leaf bridge. -/
 theorem erdos260_unconditional_from_finalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents_provider
@@ -26561,6 +28070,14 @@ theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerC
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
 
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftClosedN2FiniteOverlapTerminalComponents_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftClosedN2FiniteOverlapTerminalComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftClosedN2FiniteOverlapTerminalComponents
+    hprovider
+
 /-- A nonempty closed-N.2 finite-overlap component gate proves the final
 statement through the explicit-phase/L.6 bridge. -/
 theorem erdos260_unconditional_from_finalActualCarryStoppedTreeLayerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsWeightedKraftClosedN2FiniteOverlapTerminalComponents_explicitPhase_provider
@@ -26667,6 +28184,14 @@ theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerC
         GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeRawClusterCNLClosedK25RawTRTFieldsWeightedKraftClosedN2FiniteOverlapTerminalComponents) :
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
+
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeRawClusterCNLClosedK25RawTRTFieldsWeightedKraftClosedN2FiniteOverlapTerminalComponents_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeRawClusterCNLClosedK25RawTRTFieldsWeightedKraftClosedN2FiniteOverlapTerminalComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeRawClusterCNLClosedK25RawTRTFieldsWeightedKraftClosedN2FiniteOverlapTerminalComponents
+    hprovider
 
 /-- A nonempty raw-cluster closed-N.2 finite-overlap component gate proves the
 final statement through the explicit-phase/L.6 bridge. -/
@@ -26778,6 +28303,14 @@ theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerC
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
 
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeRawClusterCNLRawK25BoundRawTRTFieldsWeightedKraftClosedN2FiniteOverlapTerminalComponents_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeRawClusterCNLRawK25BoundRawTRTFieldsWeightedKraftClosedN2FiniteOverlapTerminalComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeRawClusterCNLRawK25BoundRawTRTFieldsWeightedKraftClosedN2FiniteOverlapTerminalComponents
+    hprovider
+
 /-- A nonempty raw-K.2.5 closed-N.2 finite-overlap component gate proves the
 final statement through the explicit-phase/L.6 bridge. -/
 theorem erdos260_unconditional_from_finalActualCarryStoppedTreeLayerCakeRawClusterCNLRawK25BoundRawTRTFieldsWeightedKraftClosedN2FiniteOverlapTerminalComponents_explicitPhase_provider
@@ -26886,6 +28419,14 @@ theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerC
         GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeRawClusterCNLRawK25BoundSeparatedTRTFieldsWeightedKraftClosedN2FiniteOverlapTerminalComponents) :
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
+
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeRawClusterCNLRawK25BoundSeparatedTRTFieldsWeightedKraftClosedN2FiniteOverlapTerminalComponents_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeRawClusterCNLRawK25BoundSeparatedTRTFieldsWeightedKraftClosedN2FiniteOverlapTerminalComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeRawClusterCNLRawK25BoundSeparatedTRTFieldsWeightedKraftClosedN2FiniteOverlapTerminalComponents
+    hprovider
 
 /-- A nonempty separated-TRT closed-N.2 finite-overlap component gate proves
 the final statement through the explicit-phase/L.6 bridge. -/
@@ -27026,6 +28567,22 @@ theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerC
         GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeProofObjectCNLClosedK25RawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents) :
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
+
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeProofObjectCNLClosedK25RawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeProofObjectCNLClosedK25RawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeProofObjectCNLClosedK25RawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents
+    hprovider
+
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeProofObjectCNLClosedK25RawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeProofObjectCNLClosedK25RawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeProofObjectCNLClosedK25RawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents
+    hprovider
 
 /-- A nonempty proof-object CNL finite-overlap component gate proves the final
 statement through the actual-shell proof-v4 leaf bridge. -/
@@ -27189,6 +28746,22 @@ theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerC
         GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeRawClusterCNLClosedK25RawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents) :
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
+
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeRawClusterCNLClosedK25RawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeRawClusterCNLClosedK25RawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeRawClusterCNLClosedK25RawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents
+    hprovider
+
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeRawClusterCNLClosedK25RawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeRawClusterCNLClosedK25RawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeRawClusterCNLClosedK25RawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents
+    hprovider
 
 /-- A nonempty raw-cluster CNL finite-overlap component gate proves the final
 statement through the actual-shell proof-v4 leaf bridge. -/
@@ -27359,6 +28932,22 @@ theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerC
         GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeRawClusterCNLRawK25BoundRawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents) :
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
+
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeRawClusterCNLRawK25BoundRawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeRawClusterCNLRawK25BoundRawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeRawClusterCNLRawK25BoundRawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents
+    hprovider
+
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeRawClusterCNLRawK25BoundRawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeRawClusterCNLRawK25BoundRawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeRawClusterCNLRawK25BoundRawTRTFieldsWeightedKraftFiniteOverlapTerminalComponents
+    hprovider
 
 /-- A nonempty raw-cluster CNL/raw-K.2.5 finite-overlap component gate proves
 the final statement through the actual-shell proof-v4 leaf bridge. -/
@@ -27531,6 +29120,22 @@ theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerC
     Nonempty GlobalAssemblyActualInputs := by
   exact hprovider.elim fun data => Nonempty.intro data.toActualInputs
 
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeRawClusterCNLRawK25BoundSeparatedTRTFieldsWeightedKraftFiniteOverlapTerminalComponents_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeRawClusterCNLRawK25BoundSeparatedTRTFieldsWeightedKraftFiniteOverlapTerminalComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeRawClusterCNLRawK25BoundSeparatedTRTFieldsWeightedKraftFiniteOverlapTerminalComponents
+    hprovider
+
+theorem globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeRawClusterCNLRawK25BoundSeparatedTRTFieldsWeightedKraftFiniteOverlapTerminalComponents_explicitPhase_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNFinalActualCarryStoppedTreeLayerCakeRawClusterCNLRawK25BoundSeparatedTRTFieldsWeightedKraftFiniteOverlapTerminalComponents) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_finalActualCarryStoppedTreeLayerCakeRawClusterCNLRawK25BoundSeparatedTRTFieldsWeightedKraftFiniteOverlapTerminalComponents
+    hprovider
+
 /-- A nonempty separated-TRT finite-overlap component gate proves the final
 statement through the actual-shell proof-v4 leaf bridge. -/
 theorem erdos260_unconditional_from_finalActualCarryStoppedTreeLayerCakeRawClusterCNLRawK25BoundSeparatedTRTFieldsWeightedKraftFiniteOverlapTerminalComponents_provider
@@ -27584,7 +29189,7 @@ separated proof-v4 Appendix N leaf surface gives that leaf surface as soon as
 the provider itself is inhabited.  This is the generic nonempty bridge used by
 the many audit surfaces whose projection is named `toProofV4LeafInputs`. -/
 theorem globalAppendixNProofV4LeafInputs_nonempty_of_projection
-    {α : Type}
+    {α : Type u}
     (toLeaf : α -> GlobalAppendixNChainCompressionProofV4LeafInputs)
     (hprovider : Nonempty α) :
     Nonempty GlobalAppendixNChainCompressionProofV4LeafInputs := by
@@ -27593,7 +29198,7 @@ theorem globalAppendixNProofV4LeafInputs_nonempty_of_projection
 /-- Generic conditional endpoint for any inhabited provider surface that
 projects to the fully separated proof-v4 Appendix N leaf surface. -/
 theorem erdos260_unconditional_from_projectedProofV4Leaf_provider
-    {α : Type}
+    {α : Type u}
     (toLeaf : α -> GlobalAppendixNChainCompressionProofV4LeafInputs)
     (hprovider : Nonempty α) :
     Erdos260Statement :=
@@ -28473,6 +30078,39 @@ def globalAppendixNChainCompressionCertificateOpenLeaves : List String :=
     "Appendix N.2 provider missing: construct globalAppendixNProofV4DirectN24FromCanonicalYVariationTerminalLeafLowPaid, globalAppendixNProofV4DirectN24FromCanonicalYVariationTerminalLowPaid, globalAppendixNProofV4DirectN24FromRawLowPaid / AppendixNClosedN2N3RawLowPaidInputData / AppendixNClosedN2N3RawLowPaidInputData.ofCanonicalYVariationClassRawTerminalLowPaid / AppendixNClosedN2N3RawLowPaidInputData.toBddL6InputData from closed N.2 variation data plus raw N.3.3 inequalities and the L.6 low/paid split, construct globalAppendixNProofV4N24FromCanonicalYAndBddLowPaidSplit from ordinary canonical-Y N.24 data plus the L.6 low/paid split, or construct AppendixNClosedN2N3BddL6InputData.fromInput, AppendixNClosedN2N3BddL6InputData.ofCanonicalYVariationTerminalLeafLowPaid, AppendixNClosedN2N3BddL6InputData.ofCanonicalYVariationTerminalAbsorptionLowPaid, AppendixNClosedN2N3BddL6InputData.ofN24CanonicalYInputDataAndBddL6, AppendixNClosedN2N3BddL6InputData.ofClosedN2N3LowPaid, AppendixNClosedN2N3BddL6InputData.ofRawLowPaidInput, AppendixNClosedN2N3BddL6InputData.ofCanonicalYVariationClassRawTerminalLowPaid, AppendixNClosedN2N3BddL6InputData.ofRawClosedN2N3LowPaid, AppendixNClosedN2N3BddL6InputData.ofClosedN2N3BddL6, AppendixNClosedN2N3InputData.ofN24CanonicalYInputData, AppendixNClosedN2N3InputData, appendixNN24CanonicalYFromClosedN2N3, GlobalAppendixNProofV4DirectCanonicalYVariationLeafProvider, globalAppendixNProofV4DirectCanonicalYVariationFromVariationLeaf, globalAppendixNProofV4DirectClosedN2FromCanonicalYVariationLeaf, globalAppendixNProofV4DirectRawN2FirstCrossingFieldsFromCanonicalYVariationLeaf, AppendixNRawN2FirstCrossingFields.ofRawShellQFirstCrossingRecordDensityFields, AppendixNRawN2FirstCrossingFields.ofShellQFirstCrossingRecordDensity, AppendixNVariationClosedN21N22InputData.ofRawShellQFirstCrossingRecordDensityFields, AppendixNVariationClosedN21N22InputData.ofShellQFirstCrossingRecordDensity, AppendixNVariationClosedN21N22InputData.ofShellQVariationInput, AppendixNVariationClosedN21N22InputData.ofFirstCrossingData, AppendixNVariationClosedN21N22InputData.ofCanonicalYVariationClassData, AppendixNVariationClosedN21N22InputData.ofCanonicalYVariationLeafData, appendixNVariationLeafFromClosedN21N22, appendixNVariationClassFromClosedN21N22, and appendixNVariationLeafOpenItems using real first-crossing branch data, shell-Q ordered records, raw injectivity, canonical drop-density measurability/integrability and first inequality, and rolling-window bound or an already-canonical N.24 variation leaf/class.",
     "Appendix N.3.3 provider missing: construct globalAppendixNProofV4DirectN24FromCanonicalYVariationTerminalLeafLowPaid, globalAppendixNProofV4DirectN24FromCanonicalYVariationTerminalLowPaid, globalAppendixNProofV4DirectN24FromRawLowPaid, AppendixNClosedN2N3RawLowPaidInputData, AppendixNClosedN2N3RawLowPaidInputData.ofCanonicalYVariationClassRawTerminalLowPaid, AppendixNClosedN2N3RawLowPaidInputData.toBddL6InputData, globalAppendixNProofV4N24FromCanonicalYAndBddLowPaidSplit, AppendixNClosedN2N3BddL6InputData, AppendixNClosedN2N3BddL6InputData.fromInput, AppendixNClosedN2N3BddL6InputData.ofCanonicalYVariationTerminalLeafLowPaid, AppendixNClosedN2N3BddL6InputData.ofCanonicalYVariationTerminalAbsorptionLowPaid, AppendixNClosedN2N3BddL6InputData.ofN24CanonicalYInputDataAndBddL6, AppendixNClosedN2N3BddL6InputData.ofClosedN2N3LowPaid, AppendixNClosedN2N3BddL6InputData.ofRawLowPaidInput, AppendixNClosedN2N3BddL6InputData.ofCanonicalYVariationClassRawTerminalLowPaid, AppendixNClosedN2N3BddL6InputData.ofRawClosedN2N3LowPaid, AppendixNClosedN2N3BddL6InputData.ofClosedN2N3BddL6, AppendixNClosedN2N3BddL6InputData.toN24CanonicalYInputData, appendixNN24CanonicalYFromClosedN2N3BddL6, ClassicalTableRoutedDirectFiveClassTerminalAbsorptionWithBddL6Data.ofClassicalTableRoutedDirectAndBddL6, ShellPaidBddClassBoundData.fromLowPaidSplit, AppendixNClosedN2N3InputData.ofN24CanonicalYInputData, AppendixNClosedN2N3InputData, appendixNN24CanonicalYFromClosedN2N3, AppendixNRawTerminalLowPaidInputData.ofRawClosedN33LowPaid, AppendixNStructuredTerminalLowPaidInputData, AppendixNStructuredTerminalLowPaidInputData.toRawTerminalLowPaidInputData, globalAppendixNProofV4DirectRawTerminalLowPaidFromStructuredTerminalLowPaid, classicalTableRoutedDirectFiveClassTerminalAbsorptionFromRawClosedN33LowPaid, classicalTableRoutedDirectFiveClassTerminalAbsorptionFromClosedN33BddL6, classicalTableRoutedDirectFiveClassTerminalAbsorptionFromClosedN33LowPaid, classicalTableRoutedDirectFiveClassTerminalAbsorptionFromCompressedMassClosedN33, classicalTableRoutedDirectFiveClassTerminalAbsorptionFromCompressedMassCNLKraftClosedN33, classicalTableRoutedDirectFiveClassTerminalAbsorptionFromCompressedMassCNLKraftClosedN33LowPaid, classicalTableRoutedDirectFiveClassTerminalAbsorptionFromCompressedMassDensePackSupportCNLKraftClosedN33LowPaid, classicalTableRoutedDirectFiveClassTerminalAbsorptionFromCompressedMassDensePackSupportProgressChernoffCNLKraftClosedN33LowPaid, classicalTableRoutedDirectFiveClassTerminalAbsorptionFromCompressedMassDensePackSupportProgressChernoffEndpointReturnCNLKraftClosedN33LowPaid, classicalTableRoutedDirectFiveClassTerminalAbsorptionFromClosedN33Bundled, classicalTableRoutedDirectFiveClassTerminalAbsorptionFromClosedN33, classicalTerminalN33SeparatedLeafFromTableRoutedDirectBddL6, classicalTerminalN33SeparatedLeafFromTableRoutedDirect, classicalTerminalN33SeparatedLeafFromRawClosedN33LowPaid, classicalTerminalN33SeparatedLeafFromClosedN33LowPaid, classicalTerminalN33SeparatedLeafFromCompressedMassClosedN33, classicalTerminalN33SeparatedLeafFromCompressedMassCNLKraftClosedN33, classicalTerminalN33SeparatedLeafFromCompressedMassCNLKraftClosedN33LowPaid, classicalTerminalN33SeparatedLeafFromCompressedMassDensePackSupportCNLKraftClosedN33LowPaid, classicalTerminalN33SeparatedLeafFromCompressedMassDensePackSupportProgressChernoffCNLKraftClosedN33LowPaid, classicalTerminalN33SeparatedLeafFromCompressedMassDensePackSupportProgressChernoffEndpointReturnCNLKraftClosedN33LowPaid, classicalTerminalN33SeparatedLeafFromClosedN33Bundled, classicalTerminalN33SeparatedLeafFromClosedN33, and classicalTerminalN33SeparatedLeafOpenItems using the concrete N.1.0 same-threshold containment and residual-multiplier comparison carried by AppendixN.EventFibre.TerminalRoutingWithMultiplier.ofTable, grouped N.3.1 terminal compression through TableRoutedTerminalMassCompressionInputData.toTableRoutedTerminalMassInputData, DensePack support-to-output alignment through TableRoutedDensePackClassSupportInputData.toTableRoutedDensePackClassInputData, Chernoff progress support-to-output alignment through TableRoutedProgressClassChernoffInputData.toTableRoutedProgressClassInputData, Return/OLC endpoint leakage alignment through TableRoutedEndpointClassReturnInputData.toTableRoutedEndpointClassInputData, CNL Kraft-to-output alignment through TableRoutedCNLClassKraftInputData.toTableRoutedCNLClassInputData, and L.6 low/paid bounded class." ]
 
+theorem globalAppendixNChainCompressionCertificateOpenLeaves_length :
+    globalAppendixNChainCompressionCertificateOpenLeaves.length = 8 := by
+  rfl
+
+/-- Short TeX-facing labels for the eight open proof-v4 leaf provider columns.
+These refine the long executable audit messages above into the manuscript
+provider classes that must be supplied by real data. -/
+def globalAppendixNChainCompressionCertificateOpenLeafLabels : List String :=
+  [ "Chernoff",
+    "CNL",
+    "Dirty",
+    "Tower",
+    "Return",
+    "Run",
+    "Appendix N.2",
+    "Appendix N.3.3" ]
+
+theorem globalAppendixNChainCompressionCertificateOpenLeafLabels_length :
+    globalAppendixNChainCompressionCertificateOpenLeafLabels.length = 8 := by
+  rfl
+
+theorem globalAppendixNChainCompressionCertificateOpenLeafLabels_length_eq_openLeaves :
+    globalAppendixNChainCompressionCertificateOpenLeafLabels.length =
+      globalAppendixNChainCompressionCertificateOpenLeaves.length := by
+  rw [globalAppendixNChainCompressionCertificateOpenLeafLabels_length,
+    globalAppendixNChainCompressionCertificateOpenLeaves_length]
+
+theorem globalAppendixNChainCompressionCertificateOpenLeafLabels_nonempty :
+    globalAppendixNChainCompressionCertificateOpenLeafLabels = [] -> False := by
+  intro h
+  have hlen := congrArg List.length h
+  simp [globalAppendixNChainCompressionCertificateOpenLeafLabels_length] at hlen
+
 /-- The five direct provider routes for the preferred strict endpoint.
 
 Once these five proof-v4 provider functions are inhabited by real manuscript
@@ -28561,6 +30199,30 @@ theorem globalAppendixNFinalStrictProviderDataOpenItems_length :
     globalAppendixNFinalStrictProviderDataOpenItems.length = 5 := by
   rfl
 
+/-- Provider columns that remain on the preferred strict endpoint. -/
+def globalAppendixNFinalStrictProviderDataOpenItemProviders : List String :=
+  globalAppendixNFinalStrictProviderDataOpenItems.map
+    (fun row => row.provider)
+
+theorem globalAppendixNFinalStrictProviderDataOpenItemProviders_eq :
+    globalAppendixNFinalStrictProviderDataOpenItemProviders =
+      ["Chernoff", "CNL", "Dirty", "TRT", "Appendix N.24"] := by
+  rfl
+
+theorem globalAppendixNFinalStrictProviderDataOpenItems_nonempty :
+    globalAppendixNFinalStrictProviderDataOpenItems = [] -> False := by
+  intro h
+  simp [globalAppendixNFinalStrictProviderDataOpenItems] at h
+
+/-- Readiness predicate for the preferred strict provider-data endpoint. -/
+def globalAppendixNFinalStrictProviderDataReady : Prop :=
+  globalAppendixNFinalStrictProviderDataOpenItems = []
+
+theorem globalAppendixNFinalStrictProviderData_not_ready :
+    Not globalAppendixNFinalStrictProviderDataReady := by
+  intro h
+  exact globalAppendixNFinalStrictProviderDataOpenItems_nonempty h
+
 /-- The remaining manuscript data on the direct final route.  Compared with the
 preferred strict route, the Dirty row asks only for K.2.5 range/fibre bounds,
 not a coding refinement, and CNL asks for the direct weighted-Kraft leaf. -/
@@ -28594,6 +30256,37 @@ def globalAppendixNFinalManuscriptDirectProviderDataOpenItems :
 
 theorem globalAppendixNFinalManuscriptDirectProviderDataOpenItems_length :
     globalAppendixNFinalManuscriptDirectProviderDataOpenItems.length = 5 := by
+  rfl
+
+/-- Provider columns that remain on the direct manuscript endpoint. -/
+def globalAppendixNFinalManuscriptDirectProviderDataOpenItemProviders : List String :=
+  globalAppendixNFinalManuscriptDirectProviderDataOpenItems.map
+    (fun row => row.provider)
+
+theorem globalAppendixNFinalManuscriptDirectProviderDataOpenItemProviders_eq :
+    globalAppendixNFinalManuscriptDirectProviderDataOpenItemProviders =
+      ["Chernoff", "CNL", "Dirty", "TRT", "Appendix N.24"] := by
+  rfl
+
+theorem globalAppendixNFinalManuscriptDirectProviderDataOpenItems_nonempty :
+    globalAppendixNFinalManuscriptDirectProviderDataOpenItems = [] -> False := by
+  intro h
+  simp [globalAppendixNFinalManuscriptDirectProviderDataOpenItems] at h
+
+/-- Readiness predicate for the direct manuscript provider-data endpoint. -/
+def globalAppendixNFinalManuscriptDirectProviderDataReady : Prop :=
+  globalAppendixNFinalManuscriptDirectProviderDataOpenItems = []
+
+theorem globalAppendixNFinalManuscriptDirectProviderData_not_ready :
+    Not globalAppendixNFinalManuscriptDirectProviderDataReady := by
+  intro h
+  exact globalAppendixNFinalManuscriptDirectProviderDataOpenItems_nonempty h
+
+/-- The preferred strict and direct manuscript endpoints expose the same five
+remaining provider columns, although some rows ask for different data strength. -/
+theorem globalAppendixNFinalProviderDataOpenItemProviders_agree :
+    globalAppendixNFinalStrictProviderDataOpenItemProviders =
+      globalAppendixNFinalManuscriptDirectProviderDataOpenItemProviders := by
   rfl
 
 /-- Preferred actual-route projections that are already connected to the raw
@@ -28814,6 +30507,187 @@ theorem globalAppendixNPreferredActualProjectionRoutes_length :
     globalAppendixNPreferredActualProjectionRoutes.length = 210 := by
   rfl
 
+/-- Audit-name aliases for provider routes whose actual-input projection is
+already exposed by the corresponding base route. -/
+alias globalAssemblyActualInputs_nonempty_of_layerCakeChernoffCNLDirtyBoundRawTRTFieldsRawN2RawTerminalLowPaidStrictProviderLeaf_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_layerCakeChernoffCNLDirtyBoundRawTRTFieldsRawN2RawTerminalLowPaidStrictProviderLeaf
+
+alias globalAssemblyActualInputs_nonempty_of_layerCakeChernoffCNLDirtyRawTRTFieldsRawN2RawTerminalLowPaidStrictProviderLeaf_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_layerCakeChernoffCNLDirtyRawTRTFieldsRawN2RawTerminalLowPaidStrictProviderLeaf
+
+alias globalAssemblyActualInputs_nonempty_of_layerCakeChernoffProofObjectCNLDirtyBoundRawTRTFieldsRecordDensityN2FiniteOverlapTerminalLowPaidStrictProviderLeaf_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_layerCakeChernoffProofObjectCNLDirtyBoundRawTRTFieldsRecordDensityN2FiniteOverlapTerminalLowPaidStrictProviderLeaf
+
+alias globalAssemblyActualInputs_nonempty_of_layerCakeChernoffProofObjectCNLDirtyRawTRTFieldsRecordDensityN2FiniteOverlapTerminalLowPaidStrictProviderLeaf_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_layerCakeChernoffProofObjectCNLDirtyRawTRTFieldsRecordDensityN2FiniteOverlapTerminalLowPaidStrictProviderLeaf
+
+alias globalAssemblyActualInputs_nonempty_of_layerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsRawN2RawTerminalLowPaidProviderLeaf_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_layerCakeManuscriptBudgetCNLClosedK25RawTRTFieldsRawN2RawTerminalLowPaidProviderLeaf
+
+alias globalAssemblyActualInputs_nonempty_of_rawChernoffCNLClosedGroundedTRTN24BddL6StrictProviderLeaf_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawChernoffCNLClosedGroundedTRTN24BddL6StrictProviderLeaf
+
+alias globalAssemblyActualInputs_nonempty_of_rawChernoffCNLDirtyBoundSeparatedTRTClosedN24BddL6StrictProviderLeaf_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawChernoffCNLDirtyBoundSeparatedTRTClosedN24BddL6StrictProviderLeaf
+
+alias globalAssemblyActualInputs_nonempty_of_rawChernoffCNLDirtyBoundSeparatedTRTRawN2RawTerminalLowPaidStrictProviderLeaf_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawChernoffCNLDirtyBoundSeparatedTRTRawN2RawTerminalLowPaidStrictProviderLeaf
+
+alias globalAssemblyActualInputs_nonempty_of_rawChernoffCNLDirtyRawTRTFieldsClosedN2FiniteOverlapTerminalLowPaidStrictProviderLeaf_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawChernoffCNLDirtyRawTRTFieldsClosedN2FiniteOverlapTerminalLowPaidStrictProviderLeaf
+
+alias globalAssemblyActualInputs_nonempty_of_rawChernoffCNLDirtyRawTRTFieldsRawN2RawTerminalLowPaidStrictProviderLeaf_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawChernoffCNLDirtyRawTRTFieldsRawN2RawTerminalLowPaidStrictProviderLeaf
+
+alias globalAssemblyActualInputs_nonempty_of_rawChernoffCNLDirtyRawTRTFieldsRawN2StructuredTerminalLowPaidStrictProviderLeaf_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawChernoffCNLDirtyRawTRTFieldsRawN2StructuredTerminalLowPaidStrictProviderLeaf
+
+alias globalAssemblyActualInputs_nonempty_of_rawChernoffCNLDirtyRawTRTFieldsRecordDensityN2FiniteOverlapTerminalLowPaidStrictProviderLeaf_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawChernoffCNLDirtyRawTRTFieldsRecordDensityN2FiniteOverlapTerminalLowPaidStrictProviderLeaf
+
+alias globalAssemblyActualInputs_nonempty_of_rawChernoffCNLDirtyRawTRTFieldsRecordDensityN2StructuredTerminalLowPaidStrictProviderLeaf_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawChernoffCNLDirtyRawTRTFieldsRecordDensityN2StructuredTerminalLowPaidStrictProviderLeaf
+
+alias globalAssemblyActualInputs_nonempty_of_rawChernoffCNLDirtySeparatedTRTClosedN24BddL6StrictProviderLeaf_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawChernoffCNLDirtySeparatedTRTClosedN24BddL6StrictProviderLeaf
+
+alias globalAssemblyActualInputs_nonempty_of_rawChernoffCNLDirtySeparatedTRTRawN2RawTerminalLowPaidStrictProviderLeaf_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawChernoffCNLDirtySeparatedTRTRawN2RawTerminalLowPaidStrictProviderLeaf
+
+alias globalAssemblyActualInputs_nonempty_of_rawChernoffProofObjectCNLDirtyBoundRawTRTFieldsRecordDensityN2FiniteOverlapTerminalLowPaidStrictProviderLeaf_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawChernoffProofObjectCNLDirtyBoundRawTRTFieldsRecordDensityN2FiniteOverlapTerminalLowPaidStrictProviderLeaf
+
+alias globalAssemblyActualInputs_nonempty_of_rawChernoffProofObjectCNLDirtyRawTRTFieldsRecordDensityN2FiniteOverlapTerminalLowPaidStrictProviderLeaf_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawChernoffProofObjectCNLDirtyRawTRTFieldsRecordDensityN2FiniteOverlapTerminalLowPaidStrictProviderLeaf
+
+alias globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectCanonicalYN24LowPaidLeaf_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectCanonicalYN24LowPaidLeaf
+
+alias globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectCanonicalYN24LowPaidLeaf_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectCanonicalYN24LowPaidLeaf
+
+alias globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectCanonicalYVariationTerminalLeafLowPaidLeaf_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectCanonicalYVariationTerminalLeafLowPaidLeaf
+
+alias globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectCanonicalYVariationTerminalLeafLowPaidLeaf_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectCanonicalYVariationTerminalLeafLowPaidLeaf
+
+alias globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectCanonicalYVariationTerminalLowPaidLeaf_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectCanonicalYVariationTerminalLowPaidLeaf
+
+alias globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectCanonicalYVariationTerminalLowPaidLeaf_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectCanonicalYVariationTerminalLowPaidLeaf
+
+alias globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectClosedN2RawTerminalLowPaidRawCNLDirtySeparatedTRT_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectClosedN2RawTerminalLowPaidRawCNLDirtySeparatedTRT
+
+alias globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectClosedN2RawTerminalLowPaidRawCNLDirtySeparatedTRT_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectClosedN2RawTerminalLowPaidRawCNLDirtySeparatedTRT
+
+alias globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectClosedN2TerminalAbsorptionLowPaidRawCNLDirtySeparatedTRT_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectClosedN2TerminalAbsorptionLowPaidRawCNLDirtySeparatedTRT
+
+alias globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectClosedN2TerminalAbsorptionLowPaidRawCNLDirtySeparatedTRT_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectClosedN2TerminalAbsorptionLowPaidRawCNLDirtySeparatedTRT
+
+alias globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectClosedN2TerminalLeafLowPaidRawCNLDirtySeparatedTRT_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectClosedN2TerminalLeafLowPaidRawCNLDirtySeparatedTRT
+
+alias globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectClosedN2TerminalLeafLowPaidRawCNLDirtySeparatedTRT_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectClosedN2TerminalLeafLowPaidRawCNLDirtySeparatedTRT
+
+alias globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectRawN24LowPaidLeaf_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectRawN24LowPaidLeaf
+
+alias globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectRawN24LowPaidLeaf_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectRawN24LowPaidLeaf
+
+alias globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectRawN24LowPaidRawCNLDirtySeparatedTRT_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectRawN24LowPaidRawCNLDirtySeparatedTRT
+
+alias globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectRawN24LowPaidRawCNLDirtySeparatedTRT_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectRawN24LowPaidRawCNLDirtySeparatedTRT
+
+alias globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectRawN2RawTerminalLowPaidRawCNLDirtySeparatedTRT_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectRawN2RawTerminalLowPaidRawCNLDirtySeparatedTRT
+
+alias globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectRawN2RawTerminalLowPaidRawCNLDirtySeparatedTRT_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectRawN2RawTerminalLowPaidRawCNLDirtySeparatedTRT
+
+alias globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectRawN2RawTerminalLowPaidRawWeightedKraftCNLDirtySeparatedTRT_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectRawN2RawTerminalLowPaidRawWeightedKraftCNLDirtySeparatedTRT
+
+alias globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectRawN2RawTerminalLowPaidRawWeightedKraftCNLDirtySeparatedTRT_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectRawN2RawTerminalLowPaidRawWeightedKraftCNLDirtySeparatedTRT
+
+alias globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectRawN2TerminalAbsorptionLowPaidRawCNLDirtySeparatedTRT_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectRawN2TerminalAbsorptionLowPaidRawCNLDirtySeparatedTRT
+
+alias globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectRawN2TerminalAbsorptionLowPaidRawCNLDirtySeparatedTRT_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectRawN2TerminalAbsorptionLowPaidRawCNLDirtySeparatedTRT
+
+alias globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectRawN2TerminalLeafLowPaidRawCNLDirtySeparatedTRT_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectRawN2TerminalLeafLowPaidRawCNLDirtySeparatedTRT
+
+alias globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectRawN2TerminalLeafLowPaidRawCNLDirtySeparatedTRT_explicitPhase_provider :=
+  globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectRawN2TerminalLeafLowPaidRawCNLDirtySeparatedTRT
+
+/-- The fully separated proof-v4 leaf provider is definitionally the strongest
+Appendix N actual leaf surface used by `UnconditionalTheorem`. -/
+theorem globalAssemblyActualInputs_nonempty_of_globalAppendixNChainCompressionProofV4LeafInputs_provider
+    (hprovider : Nonempty GlobalAppendixNChainCompressionProofV4LeafInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_appendixN_leaf_provider hprovider
+
+/-- Generic actual-input bridge for any audit surface exposing a projection to
+the fully separated proof-v4 leaf provider. -/
+theorem globalAssemblyActualInputs_nonempty_of_projectedProofV4Leaf_provider
+    {α : Type u}
+    (toLeaf : α -> GlobalAppendixNChainCompressionProofV4LeafInputs)
+    (hprovider : Nonempty α) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_globalAppendixNChainCompressionProofV4LeafInputs_provider
+    (globalAppendixNProofV4LeafInputs_nonempty_of_projection toLeaf hprovider)
+
+/-- Closed-N.2 terminal-leaf raw manuscript route, projected through the
+proof-v4 leaf actual-input bridge. -/
+theorem globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectClosedN2TerminalLeafLowPaidLeaf_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNChainCompressionProofV4RawManuscriptDirectClosedN2TerminalLeafLowPaidLeafInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_projectedProofV4Leaf_provider
+    GlobalAppendixNChainCompressionProofV4RawManuscriptDirectClosedN2TerminalLeafLowPaidLeafInputs.toProofV4LeafInputs
+    hprovider
+
+/-- Closed-N.2 terminal-leaf raw-CNL-fields route, projected through the
+proof-v4 leaf actual-input bridge. -/
+theorem globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectClosedN2TerminalLeafLowPaidRawCNLFields_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNChainCompressionProofV4RawManuscriptDirectClosedN2TerminalLeafLowPaidRawCNLFieldsInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_projectedProofV4Leaf_provider
+    GlobalAppendixNChainCompressionProofV4RawManuscriptDirectClosedN2TerminalLeafLowPaidRawCNLFieldsInputs.toProofV4LeafInputs
+    hprovider
+
+/-- Closed-N.2 terminal-leaf raw-CNL/Dirty-fields route, projected through the
+proof-v4 leaf actual-input bridge. -/
+theorem globalAssemblyActualInputs_nonempty_of_rawManuscriptDirectClosedN2TerminalLeafLowPaidRawCNLDirtyFields_provider
+    (hprovider :
+      Nonempty
+        GlobalAppendixNChainCompressionProofV4RawManuscriptDirectClosedN2TerminalLeafLowPaidRawCNLDirtyFieldsInputs) :
+    Nonempty GlobalAssemblyActualInputs :=
+  globalAssemblyActualInputs_nonempty_of_projectedProofV4Leaf_provider
+    GlobalAppendixNChainCompressionProofV4RawManuscriptDirectClosedN2TerminalLeafLowPaidRawCNLDirtyFieldsInputs.toProofV4LeafInputs
+    hprovider
+
+alias globalAssemblyActualInputs_nonempty_of_shellPaidChernoff_classicalCodeFibreCNL_rawTRTFields_rawN24_via_rawCodeFibre_provider :=
+  globalAssemblyActualInputs_nonempty_of_shellPaidChernoff_classicalCodeFibreCNL_rawTRTFields_rawN24_provider
+
+alias globalAssemblyActualInputs_nonempty_of_shellPaidChernoff_classicalCodeFibreCNL_rawTRTFields_recordDensityN2ActualPhaseTerminal_via_rawN24_provider :=
+  globalAssemblyActualInputs_nonempty_of_shellPaidChernoff_classicalCodeFibreCNL_rawTRTFields_recordDensityN2ActualPhaseTerminal_provider
+
 /-- The no-input theorem can be installed only after this provider surface has
 a non-synthetic inhabitant. -/
 def globalAppendixNChainCompressionNoInputOpenItems : List String :=
@@ -28842,12 +30716,60 @@ def globalAppendixNChainCompressionNoInputOpenItems : List String :=
     "remaining actual-shell data: real full carry stopped-tree layer-cake Chernoff data, real proof-object selected-transition CNL package, real canonical-Y variation leaf data on the actual phase, and fully opened N.3.3/L.6 terminal fields pinned to that actual phase with the CNL leaf filled from the same selected-transition data by construction (equivalently all-fields terminal data plus dense/progress/endpoint phase-alignment equalities, proof-v4 structured finite-overlap terminal input, the actual-shell finite-overlap terminal package, or its field-exposed version after forgetting the pin)",
     "optional stronger audit route: construct AppendixNActualProofV4LeafInputs, or one of the manuscript-aligned terminal-leaf/structured component targets, without using any legacy empty, zero, PEmpty, or singleton routing constructors",
     "define erdos260_unconditional only after the preferred actual provider, or the stronger proof-v4 leaf provider, is inhabited by real manuscript data",
-    "import this certificate module in Erdos260.lean only after the open-leaf audit is empty" ]
+    "keep this certificate as an executable audit module until the open-leaf audit is empty; do not install a no-input theorem from it before the preferred/current actual provider is inhabited by real manuscript data" ]
+
+/-- Number of final no-input audit tasks still open at the global Appendix N
+certificate boundary. -/
+theorem globalAppendixNChainCompressionNoInputOpenItems_length :
+    globalAppendixNChainCompressionNoInputOpenItems.length = 26 := by
+  rfl
 
 theorem globalAppendixNChainCompressionNoInputOpenItems_nonempty :
     globalAppendixNChainCompressionNoInputOpenItems = [] -> False := by
   intro h
   simp [globalAppendixNChainCompressionNoInputOpenItems] at h
+
+/-- The no-input Appendix N certificate can be promoted only when the final
+no-input task list is empty.  This is separate from the lower proof-v4 leaf
+audit below, because several currently connected routes are stronger than the
+manuscript's regular endpoint. -/
+def globalAppendixNChainCompressionNoInputReady : Prop :=
+  globalAppendixNChainCompressionNoInputOpenItems = []
+
+theorem globalAppendixNChainCompressionNoInput_not_ready :
+    Not globalAppendixNChainCompressionNoInputReady := by
+  intro h
+  exact globalAppendixNChainCompressionNoInputOpenItems_nonempty h
+
+/-- Combined executable audit for the Appendix N certificate boundary.
+This is a checklist, not a new mathematical hypothesis: it concatenates the
+proof-v4 leaf data still missing from the certificate with the final no-input
+installation tasks. -/
+def globalAppendixNChainCompressionOverallOpenItems : List String :=
+  globalAppendixNChainCompressionCertificateOpenLeaves ++
+    globalAppendixNChainCompressionNoInputOpenItems
+
+theorem globalAppendixNChainCompressionOverallOpenItems_length :
+    globalAppendixNChainCompressionOverallOpenItems.length = 34 := by
+  simp [globalAppendixNChainCompressionOverallOpenItems,
+    globalAppendixNChainCompressionCertificateOpenLeaves_length,
+    globalAppendixNChainCompressionNoInputOpenItems_length]
+
+theorem globalAppendixNChainCompressionOverallOpenItems_nonempty :
+    globalAppendixNChainCompressionOverallOpenItems = [] -> False := by
+  intro h
+  have hlen := congrArg List.length h
+  simp [globalAppendixNChainCompressionOverallOpenItems_length] at hlen
+
+/-- The global Appendix N certificate boundary is fully cleared only once the
+combined executable audit is empty.  It is not empty in the current state. -/
+def globalAppendixNChainCompressionOverallReady : Prop :=
+  globalAppendixNChainCompressionOverallOpenItems = []
+
+theorem globalAppendixNChainCompressionOverall_not_ready :
+    Not globalAppendixNChainCompressionOverallReady := by
+  intro h
+  exact globalAppendixNChainCompressionOverallOpenItems_nonempty h
 
 theorem globalAppendixNChainCompressionCertificateOpenLeaves_nonempty :
     globalAppendixNChainCompressionCertificateOpenLeaves = [] -> False := by

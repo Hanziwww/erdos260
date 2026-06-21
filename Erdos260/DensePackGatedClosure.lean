@@ -237,12 +237,12 @@ theorem band3_datum_enum {q K₀ : ℕ} (hodd : Odd q) (hK1 : 1 ≤ K₀)
     rcases h with h|h|h|h|h|h|h|h|h|h <;> obtain ⟨rfl, rfl⟩ := h <;> first | (norm_num; done) | exact absurd hwin (by norm_num)
   · rcases Nat.lt_or_ge q 32 with h32 | h32
     · have h := datum_mid_window_pairs ⟨t, ht⟩ hK1 h2K hdvd (by omega) h32
-      rcases h with h|h|h|h|h|h|h|h|h|h|h|h|h <;> obtain ⟨rfl, rfl⟩ := h <;> first | (norm_num; done) | exact absurd hwin (by norm_num)
+      rcases h with h|h|h|h|h|h|h|h|h|h|h|h|h <;> obtain ⟨rfl, rfl⟩ := h <;> norm_num
     · rcases Nat.lt_or_ge q 48 with h48 | h48
       · have h := datum_upper_window_pairs ⟨t, ht⟩ hK1 h2K hdvd h32 h48
-        rcases h with h|h|h|h|h|h|h|h|h|h|h|h|h|h|h|h|h|h <;> obtain ⟨rfl, rfl⟩ := h <;> first | (norm_num; done) | exact absurd hwin (by norm_num)
+        rcases h with h|h|h|h|h|h|h|h|h|h|h|h|h|h|h|h|h|h <;> obtain ⟨rfl, rfl⟩ := h <;> norm_num
       · have h := datum_top_window_pairs ⟨t, ht⟩ hK1 h2K hdvd h48 hq64
-        rcases h with h|h|h|h|h|h|h|h|h|h|h|h|h|h|h|h|h|h|h <;> obtain ⟨rfl, rfl⟩ := h <;> first | (norm_num; done) | exact absurd hwin (by norm_num)
+        rcases h with h|h|h|h|h|h|h|h|h|h|h|h|h|h|h|h|h|h|h <;> obtain ⟨rfl, rfl⟩ := h <;> norm_num
 
 /-! ## Part 2.  Cycle certificates: `q = 15` closed, `(21, 1)` closed, and the band-3
 defeats at `(5, 2)`, `(13, 6)`, `(21, 10)`
@@ -564,6 +564,44 @@ def DensePackGatedClosureResidual.toDatumSplit (R : DensePackGatedClosureResidua
     · exact absurd (class3CycleBand3Free_of_datumClosed ctx hcl) hfree
     · exact R.ungatedCoverNat ctx hg hfree hwin hcl
 
+/-- Direct gated-shell emptiness projection from the gated-closure surface. -/
+theorem DensePackGatedClosureResidual.densePackStarts_empty_of_gate
+    (R : DensePackGatedClosureResidual)
+    (ctx : ActualFailureContext) (hg : class3Gate ctx) :
+    genuineDensePackStarts ctx = ∅ := by
+  by_cases hfree : Class3TopBandCycleFree ctx
+  · exact densePackStarts_empty_of_gate_topBandCycleFree ctx hg hfree
+  · by_cases hwin : (class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q
+    · by_cases hcl : DensePackDatumClosed ctx
+      · exact densePackStarts_empty_of_datumClosed ctx hcl
+      · exact R.gatedEmpty ctx hg hfree hwin hcl
+    · exact absurd (class3TopBandCycleFree_of_cycleBand3Free ctx
+        (class3CycleBand3Free_of_modulus_complement ctx hwin)) hfree
+
+/-- Direct `r = 0` emptiness projection from the gated-closure surface. -/
+theorem DensePackGatedClosureResidual.densePackStarts_empty_of_r_eq_zero
+    (R : DensePackGatedClosureResidual)
+    (ctx : ActualFailureContext) (hr : ctx.n24CarryData.r = 0) :
+    genuineDensePackStarts ctx = ∅ :=
+  R.densePackStarts_empty_of_gate ctx (class3Gate_of_r_eq_zero ctx hr)
+
+/-- Direct shallow-depth emptiness projection from the gated-closure surface. -/
+theorem DensePackGatedClosureResidual.densePackStarts_empty_of_L_le
+    (R : DensePackGatedClosureResidual)
+    (ctx : ActualFailureContext) (hL : shellLadderDepth ctx ≤ 15420) :
+    genuineDensePackStarts ctx = ∅ :=
+  R.densePackStarts_empty_of_gate ctx (class3Gate_of_L_le ctx hL)
+
+/-- Direct class-3 ledger bridge from the gated-closure surface, at any budget. -/
+theorem DensePackGatedClosureResidual.hDensePackField
+    (R : DensePackGatedClosureResidual)
+    (budget : ∀ ctx : ActualFailureContext, SeparatedPhaseRoutedBudget ctx)
+    (hroute : ∀ ctx : ActualFailureContext, (budget ctx).route = genuineChargeRoute ctx) :
+    ∀ ctx : ActualFailureContext,
+      routedClassMassOf ctx.n24CarryData (budget ctx).route 3
+        ≤ termDensePack (faithfulCapacityPhases budget ctx).toClosurePhaseData :=
+  (((R.toDatumSplit).toCycleSplit).toRegimeSplit budget).toCorrected.hDensePackField hroute
+
 /-- **The converse weakening**: any wave-4 datum-split provider restricts to the wave-5
 surface — the new presentation hides no strength. -/
 def DensePackDatumSplitResidual.toGatedClosure (R : DensePackDatumSplitResidual) :
@@ -696,6 +734,10 @@ theorem densePackGatedClosureStatus_nonempty :
 #print axioms class3CycleBand3Free_of_datumClosed
 #print axioms densePackStarts_empty_of_datumClosed
 #print axioms DensePackGatedClosureResidual.toDatumSplit
+#print axioms DensePackGatedClosureResidual.densePackStarts_empty_of_gate
+#print axioms DensePackGatedClosureResidual.densePackStarts_empty_of_r_eq_zero
+#print axioms DensePackGatedClosureResidual.densePackStarts_empty_of_L_le
+#print axioms DensePackGatedClosureResidual.hDensePackField
 #print axioms DensePackDatumSplitResidual.toGatedClosure
 #print axioms nonempty_gatedClosure_iff_datumSplit
 #print axioms erdos260_of_gatedClosure

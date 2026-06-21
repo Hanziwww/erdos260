@@ -411,6 +411,12 @@ theorem keystoneClass1Deep_rebuilt (R : Erdos260KeystoneResidual) :
         ≤ erdos260Constants.cStar * erdos260Constants.ξ / 6 * (ctx.shell.X : ℝ) :=
   dccClass1Deep_field_of_boost R.class1Aligned R.class1DeepBoosted
 
+/-- The keystone residual exposes the same named class-1 deep field as the v30
+and v32 endpoint projections. -/
+theorem Erdos260KeystoneResidual.class1DeepField (R : Erdos260KeystoneResidual) :
+    Class1DeepField :=
+  keystoneClass1Deep_rebuilt R
+
 /-- **The deep core from the spaced-share regime + the kept axis** (the
 documented supplier route for `deepOrbitPin`'s unified core): the event-counting
 regime `EmcOffPinSpacedShareRegime` together with the keystone's own
@@ -638,6 +644,7 @@ or fewer. -/
 #print axioms keystoneResidual_of_convergenceResidual_and_atoms
 #print axioms erdos260_of_convergenceResidual_via_keystone
 #print axioms keystoneClass1Deep_rebuilt
+#print axioms Erdos260KeystoneResidual.class1DeepField
 #print axioms keystoneExitMassCore_of_regime
 #print axioms keystoneClass0SurvivorRow_of_atom
 #print axioms keystoneReturnInterior_of_topBandOnsets

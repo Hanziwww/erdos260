@@ -42,6 +42,8 @@ import Erdos260.K1AtomsClosure
 import Erdos260.Erdos260SummitCapstone
 import Erdos260.Erdos260V30Endpoint
 import Erdos260.Erdos260V32Endpoint
+import Erdos260.GlobalAppendixNChainCompressionCertificate
+import Erdos260.CurrentStrictCNLProviderBridge
 -- P1/P2 audit + trust-boundary formalization layer (this session)
 import Erdos260.P1HotspotAudit
 import Erdos260.P2TrustBoundary
@@ -69,3 +71,4 @@ import Erdos260.O3SupplyStateSpace
 import Erdos260.O4SupplyCarrierMap
 import Erdos260.Tier2SupplyGeometry
 import Erdos260.RunClass5Section26
+import Erdos260.Erdos260GenuineChargedLedgerTight

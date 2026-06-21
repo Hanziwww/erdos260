@@ -212,6 +212,19 @@ theorem densePack_hScale_universal_forces_L_le
     ∀ ctx : ActualFailureContext, shellLadderDepth ctx ≤ 15420 :=
   fun ctx => (densePack_hScale_iff_L_le ctx).mp (h ctx)
 
+/-- **Refutation interface.**  A single failing context with `L > 15420` rules out the universal
+published V3 scale field.  This is just the contrapositive form of
+`densePack_hScale_universal_forces_L_le`, packaged for audit consumers that need to reject the old
+surface rather than derive shallowness from it. -/
+theorem not_densePack_hScale_universal_of_deep_ctx
+    (ctx : ActualFailureContext) (hdeep : 15420 < shellLadderDepth ctx) :
+    ¬ (∀ ctx : ActualFailureContext,
+      ((ctx.n24CarryData.r : ℝ) + 1) * (densePackDyadicG0 ctx : ℝ)
+        - ctx.n24CarryData.T ≤ 1) := by
+  intro h
+  have hle := densePack_hScale_universal_forces_L_le h ctx
+  omega
+
 /-- **OBSTRUCTION — any `P9V3RunResidual` forces every failing shell to be shallow.**  Its
 `hScale` field is the universal scalar, so it certifies `r = 0` everywhere. -/
 theorem p9V3RunResidual_forces_shallow (R : P9V3RunResidual) :
@@ -222,6 +235,15 @@ theorem p9V3RunResidual_forces_shallow (R : P9V3RunResidual) :
 theorem p9V3RunResidual_forces_L_le (R : P9V3RunResidual) :
     ∀ ctx : ActualFailureContext, shellLadderDepth ctx ≤ 15420 :=
   fun ctx => (n24_r_eq_zero_iff_L_le ctx).mp (p9V3RunResidual_forces_shallow R ctx)
+
+/-- **Refutation interface for the old P9/V3 surface.**  If one actual failure context lies above
+the shallow range, then the old `P9V3RunResidual` surface cannot be inhabited. -/
+theorem not_nonempty_p9V3RunResidual_of_deep_ctx
+    (ctx : ActualFailureContext) (hdeep : 15420 < shellLadderDepth ctx) :
+    ¬ Nonempty P9V3RunResidual := by
+  rintro ⟨R⟩
+  have hle := p9V3RunResidual_forces_L_le R ctx
+  omega
 
 /-- **OBSTRUCTION — any `DensePackV3Residue` forces every failing shell to be shallow** (its
 `floor` field yields the universal scalar through `densePackScaleField_of_floorLe`). -/
@@ -238,12 +260,42 @@ theorem densePackV3WindowFloorResidue_forces_shallow
     ∀ ctx : ActualFailureContext, ctx.n24CarryData.r = 0 :=
   fun ctx => (densePack_hScale_iff_r_eq_zero ctx).mp (R.hScale ctx)
 
+/-- A deep context rules out the older density/window/floor DensePack V3 residue. -/
+theorem not_nonempty_densePackV3Residue_of_deep_ctx
+    {budget : ∀ ctx : ActualFailureContext, SeparatedPhaseRoutedBudget ctx}
+    (ctx : ActualFailureContext) (hdeep : 15420 < shellLadderDepth ctx) :
+    ¬ Nonempty (DensePackV3Residue budget) := by
+  rintro ⟨R⟩
+  have hr := densePackV3Residue_forces_shallow R ctx
+  have hle := (n24_r_eq_zero_iff_L_le ctx).mp hr
+  omega
+
+/-- A deep context rules out the older window/floor DensePack V3 residue. -/
+theorem not_nonempty_densePackV3WindowFloorResidue_of_deep_ctx
+    {budget : ∀ ctx : ActualFailureContext, SeparatedPhaseRoutedBudget ctx}
+    (ctx : ActualFailureContext) (hdeep : 15420 < shellLadderDepth ctx) :
+    ¬ Nonempty (DensePackV3WindowFloorResidue budget) := by
+  rintro ⟨R⟩
+  have hr := densePackV3WindowFloorResidue_forces_shallow R ctx
+  have hle := (n24_r_eq_zero_iff_L_le ctx).mp hr
+  omega
+
 /-- **OBSTRUCTION — any `DensePackV3WindowScaleResidue` forces every failing shell shallow.** -/
 theorem densePackV3WindowScaleResidue_forces_shallow
     {budget : ∀ ctx : ActualFailureContext, SeparatedPhaseRoutedBudget ctx}
     (R : DensePackV3WindowScaleResidue budget) :
     ∀ ctx : ActualFailureContext, ctx.n24CarryData.r = 0 :=
   fun ctx => (densePack_hScale_iff_r_eq_zero ctx).mp (R.hScale ctx)
+
+/-- A deep context rules out the older window/scale DensePack V3 residue. -/
+theorem not_nonempty_densePackV3WindowScaleResidue_of_deep_ctx
+    {budget : ∀ ctx : ActualFailureContext, SeparatedPhaseRoutedBudget ctx}
+    (ctx : ActualFailureContext) (hdeep : 15420 < shellLadderDepth ctx) :
+    ¬ Nonempty (DensePackV3WindowScaleResidue budget) := by
+  rintro ⟨R⟩
+  have hr := densePackV3WindowScaleResidue_forces_shallow R ctx
+  have hle := (n24_r_eq_zero_iff_L_le ctx).mp hr
+  omega
 
 /-- **OBSTRUCTION — any `DensePackClass3GenuineResidue` forces every failing shell shallow**
 (its K.1.2 `floor` field is the scalar in floor form, `densePackScale_iff_floorLe`). -/
@@ -252,6 +304,16 @@ theorem densePackClass3GenuineResidue_forces_shallow
     ∀ ctx : ActualFailureContext, ctx.n24CarryData.r = 0 :=
   fun ctx => (densePack_hScale_iff_r_eq_zero ctx).mp
     ((densePackScale_iff_floorLe ctx).mpr (R.floor ctx))
+
+/-- A deep context rules out the older class-3 genuine residue because its `floor` field is exactly
+the published V3 scale surface in floor form. -/
+theorem not_nonempty_densePackClass3GenuineResidue_of_deep_ctx
+    (ctx : ActualFailureContext) (hdeep : 15420 < shellLadderDepth ctx) :
+    ¬ Nonempty DensePackClass3GenuineResidue := by
+  rintro ⟨R⟩
+  have hr := densePackClass3GenuineResidue_forces_shallow R ctx
+  have hle := (n24_r_eq_zero_iff_L_le ctx).mp hr
+  omega
 
 /-! ## 2.  The corrected scale relation `T + Y ≤ (r+1) · densePackDyadicG0`
 
@@ -810,7 +872,10 @@ def densePackScaleObstructionStatus : List String :=
       "shell shallow: p9V3RunResidual_forces_shallow / _forces_L_le, " ++
       "densePackV3Residue_forces_shallow, densePackV3WindowFloorResidue_forces_shallow, " ++
       "densePackV3WindowScaleResidue_forces_shallow, densePackClass3GenuineResidue_forces_shallow. " ++
-      "The scalar is a mis-calibrated residual surface to be REPAIRED, not supplied.",
+      "The scalar is a mis-calibrated residual surface to be REPAIRED, not supplied. The " ++
+      "contrapositive audit interfaces not_densePack_hScale_universal_of_deep_ctx, " ++
+      "not_nonempty_p9V3RunResidual_of_deep_ctx, and the analogous not_nonempty_* residue theorems " ++
+      "reject the old surface as soon as one actual failure context has L > 15420.",
     "CORRECTED SCALE RELATION (proved) - densePack_correctedScale_of_window / _of_interior: " ++
       "for any high-excess start with an interior descent window, T + Y <= gapWindow <= " ++
       "(r+1)*densePackDyadicG0 ctx (highExcess_gapWindow_ge + the PROVED dyadic ceiling " ++
@@ -881,12 +946,18 @@ theorem densePackScaleObstructionStatus_nonempty :
 #print axioms densePack_hScale_iff_L_le
 #print axioms densePack_hScale_universal_iff_all_shallow
 #print axioms densePack_hScale_universal_forces_L_le
+#print axioms not_densePack_hScale_universal_of_deep_ctx
 #print axioms p9V3RunResidual_forces_shallow
 #print axioms p9V3RunResidual_forces_L_le
+#print axioms not_nonempty_p9V3RunResidual_of_deep_ctx
 #print axioms densePackV3Residue_forces_shallow
 #print axioms densePackV3WindowFloorResidue_forces_shallow
 #print axioms densePackV3WindowScaleResidue_forces_shallow
 #print axioms densePackClass3GenuineResidue_forces_shallow
+#print axioms not_nonempty_densePackV3Residue_of_deep_ctx
+#print axioms not_nonempty_densePackV3WindowFloorResidue_of_deep_ctx
+#print axioms not_nonempty_densePackV3WindowScaleResidue_of_deep_ctx
+#print axioms not_nonempty_densePackClass3GenuineResidue_of_deep_ctx
 #print axioms highExcess_gapWindow_ge
 #print axioms densePack_correctedScale_of_window
 #print axioms densePack_correctedScale_of_interior

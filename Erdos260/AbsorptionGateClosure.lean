@@ -720,11 +720,20 @@ def densePackCorrected (R : Erdos260AbsorptionResidual) :
     DensePackCorrectedResidue R.budget :=
   (R.densePackUngated.toGatedClosure.toDatumSplit.toCycleSplit.toRegimeSplit R.budget).toCorrected
 
+/-- Direct faithful class-3 ledger field from the absorption DensePack surface.  This is
+the TeX L.1/L.3 support-count row before the final frozen-term comparison to
+`correctedAllPhases`. -/
+theorem densePackLedgerField (R : Erdos260AbsorptionResidual) :
+    ∀ ctx : ActualFailureContext,
+      routedClassMassOf ctx.n24CarryData (R.budget ctx).route 3
+        ≤ termDensePack (faithfulCapacityPhases R.budget ctx).toClosurePhaseData :=
+  R.densePackCorrected.hDensePackField (fun _ => rfl)
+
 /-- The corrected class-3 ledger row at EVERY context (verbatim walk). -/
 theorem hDensePackAll (R : Erdos260AbsorptionResidual) (ctx : ActualFailureContext) :
     routedClassMassOf ctx.n24CarryData (R.budget ctx).route 3
       ≤ termDensePack (correctedAllPhases ctx).toClosurePhaseData :=
-  le_trans (R.densePackCorrected.hDensePackField (fun _ => rfl) ctx)
+  le_trans (R.densePackLedgerField ctx)
     (tfaDensePack_frozen_le_correctedAll R.budget ctx)
 
 /-- **The fully-corrected ctx-pinned P9 ledger from the wave-18 surface**: the
@@ -1174,6 +1183,7 @@ or fewer. -/
 #print axioms Erdos260AbsorptionResidual.hcap0Mass
 #print axioms Erdos260AbsorptionResidual.hcap1
 #print axioms Erdos260AbsorptionResidual.densePackCorrected
+#print axioms Erdos260AbsorptionResidual.densePackLedgerField
 #print axioms Erdos260AbsorptionResidual.hDensePackAll
 #print axioms Erdos260AbsorptionResidual.toFullyCorrectedLedger
 #print axioms Erdos260AbsorptionResidual.toStatement

@@ -999,6 +999,18 @@ theorem dirtyMultiplicityProofV4ShellFibreOpenItems_nonempty :
   intro h
   simp [dirtyMultiplicityProofV4ShellFibreOpenItems] at h
 
+theorem dirtyMultiplicityProofV4ShellFibreOpenItems_length :
+    dirtyMultiplicityProofV4ShellFibreOpenItems.length = 4 := by
+  rfl
+
+theorem dirtyMultiplicityProofV4ShellFibreOpenItems_eq :
+    dirtyMultiplicityProofV4ShellFibreOpenItems =
+      [ "K.2.1 anchored first-dirty convention and cleaned dirty-boundary family",
+        "K.2.3 fixed arm-period scale crossing-chain bound",
+        "K.2.5 Fin-labelled arm/period scale map into (log L)^4 dyadic pairs",
+        "per-scale fibre coding into Fin ((logStar L)^CM) and the active-shell logStar envelope" ] := by
+  rfl
+
 end
 
 end Erdos260

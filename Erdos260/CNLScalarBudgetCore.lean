@@ -574,8 +574,28 @@ def cnlStrictProvider_matches_field_type
     (data : AppendixNActualProofV4LeafInputs) : Prop :=
   data.cnl = cnlStrictWeightedKraftShellProvider
 
+/-- Project the strict shell CNL provider to the current actual weighted-Kraft
+CNL column.  This is downstream of `UnconditionalTheorem`, avoiding an import
+cycle while still proving that the current CNL field itself is inhabited by
+real shell data. -/
+def actualCNLWeightedKraftFromStrictProvider
+    (ctx : ActualFailureContext) :
+    ActualCNLWeightedKraftData ctx :=
+  ActualCNLWeightedKraftData.ofWeightedKraftShellInputData
+    (cnlStrictWeightedKraftShellProvider
+      ctx.shell ctx.hc0Small ctx.shell_startThreshold_le)
+
+/-- The current actual CNL column is nonempty after installing the strict shell
+CNL provider.  The full no-input theorem still needs the sibling Chernoff,
+Return, Run, N.2, and N.3.3 provider columns and the final installation. -/
+theorem actualCNLWeightedKraftData_nonempty_of_strictShellProvider :
+    Nonempty (forall ctx : ActualFailureContext,
+      ActualCNLWeightedKraftData ctx) := by
+  exact Nonempty.intro actualCNLWeightedKraftFromStrictProvider
+
 #print axioms cnlStrictWeightedKraftShellProvider
 #print axioms cnlStrictWeightedKraftShellProvider_family_nonempty
+#print axioms actualCNLWeightedKraftData_nonempty_of_strictShellProvider
 
 end
 

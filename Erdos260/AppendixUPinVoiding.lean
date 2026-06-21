@@ -380,7 +380,6 @@ theorem constGap_carry_divides {Q : ℕ} {P : ℤ} {d a : ℕ → ℕ} {k₀ g :
   -- integrality of the exact solution at k = 0 is the divisibility
   simp only [hwdef] at hw0
   simp only [Nat.zero_mul, Nat.add_zero] at hw0
-  push_cast at hw0
   have hdvdZ : M ∣ ((Q * (g' + 1) : ℕ) : ℤ) := by
     refine ⟨M * integerCarry Q P d (a k₀) - (Q : ℤ) * ((a k₀ : ℕ) : ℤ)
       - (Q : ℤ) * ((g' : ℤ) + 1), ?_⟩
@@ -658,6 +657,13 @@ theorem fixedPinCleanContinuation_iff_deepOrbitPinVoiding :
     · exact absurd hp (hv ctx hX).2.1
     · exact absurd hp (hv ctx hX).2.2
 
+/-- The Appendix-U confinement atom is exactly the wave-8 deep fixed-family axis.
+This is the direct version of the two-step equivalence through `DeepOrbitPinVoiding`. -/
+theorem fixedPinCleanContinuation_iff_deepFixedFamilyVoid :
+    FixedPinCleanContinuation ↔ DeepFixedFamilyVoid :=
+  fixedPinCleanContinuation_iff_deepOrbitPinVoiding.trans
+    deepOrbitPinVoiding_iff_deepFixedFamilyVoid
+
 /-- The atom rebuilds the three v17 capstone voiding fields. -/
 theorem threeVoidings_of_confinement (h : FixedPinCleanContinuation) :
     (∀ ctx : ActualFailureContext, ¬ OrbitBandPinned ctx 2)
@@ -878,6 +884,7 @@ or fewer. -/
 #print axioms confinement_exitMass_floor
 #print axioms deepOrbitPinVoiding_of_confinement
 #print axioms fixedPinCleanContinuation_iff_deepOrbitPinVoiding
+#print axioms fixedPinCleanContinuation_iff_deepFixedFamilyVoid
 #print axioms threeVoidings_of_confinement
 #print axioms deepFixedFamilyVoid_of_confinement
 #print axioms erdos260_of_confinement_and_rest

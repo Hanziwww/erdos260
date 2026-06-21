@@ -1,6 +1,7 @@
 import Erdos260.K1AtomsClosure
 import Erdos260.DeepCountingClosure
 import Erdos260.MissDistanceClosure
+import Erdos260.Tier2SupplyGeometry
 
 /-!
 # V30 Lane G — Top-band exit control (R5) and tower/run read-tail tails (R6)
@@ -241,6 +242,66 @@ band-free pairs); its `towerTail` / `runTail` fields are the q-tail shapes.  All
 four are discharged by Lane C's (C1) `cor:ac-offpin-cap-closed` through the read-tail
 push-forward identity (P.3). -/
 
+/-! ### R6 event-fibre push-forward kernel
+
+The four numeric fields of `V30ReadTailExitCount` are still the v30 band-reading
+dispatcher interface. The accounting identity behind them is already a finite
+event-fibre fact in `Tier2TopBandReadTail` / `Tier2SupplyGeometry`; the wrappers
+below expose that kernel in this V30 module without claiming the later numeric
+tower/run closures. -/
+
+/-- K.1/P.1 top-band routing in the explicit J.1.1 tag model: after the branch is
+classified by the first-obstruction tag, no unrouted top-band fibre remains. -/
+theorem v30_topBand_unrouted_empty_explicit {Branch : Type*}
+    (B : Finset Branch) (route : Branch -> Tier2SupplyGeometry.J11Tag) :
+    B.filter (fun b => route b ∉ Tier2SupplyGeometry.routedTags) =
+      (Finset.empty : Finset Branch) :=
+  Tier2SupplyGeometry.topband_unrouted_empty_explicit B route
+
+/-- K.2/P.2 read-tail push-forward identity in fully refined event-fibre form:
+regrouping branch mass over the single-valued output map loses no mass. -/
+theorem v30_readTail_pushforward_mass_preserving {Branch Output : Type*}
+    [DecidableEq Output] (B : Finset Branch) (theta : Branch -> Output)
+    (wt : Branch -> Real) :
+    B.sum wt =
+      (B.image theta).sum
+        (fun O => (B.filter (fun b => theta b = O)).sum wt) :=
+  Tier2TopBandReadTail.readtail_pushforward_mass_preserving B theta wt
+
+/-- A V30-facing package for the finite-coordinate read-tail fibre bound of K.3/P.3.
+The data say that a branch in the fibre over `output` is reconstructible from the
+output cell plus one finite forgotten coordinate. -/
+structure V30ReadTailEventFibreProvider
+    (Branch Output Coord : Type*) [DecidableEq Output] where
+  B : Finset Branch
+  theta : Branch -> Output
+  wt : Branch -> Real
+  output : Output
+  cap : Real
+  coord : Branch -> Coord
+  forgotten : Finset Coord
+  recon : Output -> Coord -> Branch
+  cap_nonneg : 0 <= cap
+  branch_le_cap : ∀ b ∈ B, theta b = output -> wt b <= cap
+  coord_mem : ∀ b ∈ B.filter (fun b => theta b = output), coord b ∈ forgotten
+  recon_spec : ∀ b ∈ B.filter (fun b => theta b = output),
+    recon (theta b) (coord b) = b
+
+namespace V30ReadTailEventFibreProvider
+
+/-- K.3/P.3 with the `O_Q(1)` multiplicity supplied by an explicit reconstruction:
+the fibre over one read-tail output has total weight at most
+`forgotten.card * cap`. -/
+theorem fibreWeight_le {Branch Output Coord : Type*} [DecidableEq Output]
+    (P : V30ReadTailEventFibreProvider Branch Output Coord) :
+    (P.B.filter (fun b => P.theta b = P.output)).sum P.wt <=
+      (P.forgotten.card : Real) * P.cap :=
+  Tier2SupplyGeometry.readtail_fibre_weight_le_of_recon
+    P.B P.theta P.wt P.output P.cap P.coord P.forgotten P.recon
+    P.cap_nonneg P.branch_le_cap P.coord_mem P.recon_spec
+
+end V30ReadTailEventFibreProvider
+
 /-- **The (C1) read-tail exit-count bridge** (the named honest conditional for
 Lane C / Lane H). -/
 structure V30ReadTailExitCount where
@@ -363,9 +424,12 @@ def v30TopBandReadTailStatus : List String :=
       "subdomains at one threshold are disjoint, the measure of an output cell is " ++
       "the sum of residual masses mapped to it - the identity " ++
       "sum_{Theta_tail(b)=O} wt(b) <= C_Q*wt_tail(O) + o(X|I_j|) with C_Q = 1 on " ++
-      "the fully refined quotient (P.3).  So (R6) is a theorem of event-fibre " ++
-      "normalization; forgetting finite carry/margin coords merges only O_Q(1) " ++
-      "cells and the dyadic collars are O_Q(L^2) = o(X).",
+      "the fully refined quotient (P.3).  The V30-facing kernels are exposed as " ++
+      "v30_readTail_pushforward_mass_preserving and " ++
+      "V30ReadTailEventFibreProvider.fibreWeight_le: finite-coordinate " ++
+      "reconstruction supplies the O_Q(1) multiplicity.  So (R6) is a theorem of " ++
+      "event-fibre normalization; the four v30 numeric band-reading fields remain " ++
+      "the honest exit-count bridge.",
     "R5 VERDICT (interior fields, CLOSED modulo (C1)): the interior fields need " ++
       "only the deviation-light cap agcTopBandDev ctx < Y (NOT full exit-freeness); " ++
       "v30 P.1 supplies it by routing every top-band L.3.1 exit to the (R3) " ++
@@ -408,8 +472,9 @@ def v30TopBandReadTailStatus : List String :=
       "dispatcher hypotheses) in the I.3/L.3 first-entry/first-exit count form.  " ++
       "Both follow from (C1) cor:ac-offpin-cap-closed via the P.3 push-forward; " ++
       "this module does NOT import Lane C's in-flight AB/AC/AD module.",
-    "HYGIENE: additive only - ONE new module, no existing file edited, not " ++
-      "root-wired (built standalone as Erdos260.V30TopBandReadTail); no sorry / " ++
+    "HYGIENE: additive only - V30TopBandReadTail now imports the already-built " ++
+      "Tier2SupplyGeometry kernels; no statement is weakened and no downstream " ++
+      "surface is rewritten.  No sorry / " ++
       "admit / new axiom / native_decide; every key declaration passes " ++
       "#print axioms within [propext, Classical.choice, Quot.sound]." ]
 
@@ -425,6 +490,9 @@ or fewer. -/
 #print axioms v30Pushforward_of_topBandExitFree
 #print axioms v30TopBandDevLight_of_exitFree
 #print axioms v30TopBandExitFree_of_onset
+#print axioms v30_topBand_unrouted_empty_explicit
+#print axioms v30_readTail_pushforward_mass_preserving
+#print axioms V30ReadTailEventFibreProvider.fibreWeight_le
 #print axioms v30ReturnInterior_of_exitCap
 #print axioms v30ReturnInterior_of_pushforward
 #print axioms v30ReturnInteriorOffTable_of_pushforward

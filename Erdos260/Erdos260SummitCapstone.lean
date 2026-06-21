@@ -317,6 +317,80 @@ def toKeystoneResidual (R : Erdos260SummitResidual) :
   class1Aligned := R.class1Aligned
   class1DeepBoosted := R.class1DeepBoosted
 
+/-- Summit's K.1 cluster-floor replacement, exposed as a direct field
+projection for the TeX K.1 reduction ledger. -/
+theorem densePackInteriorClusterFloorField (R : Erdos260SummitResidual) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Band3PinnedWide ctx → ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx → 1 ≤ ctx.n24CarryData.r →
+      K1InteriorClusterFloor ctx :=
+  R.densePackInteriorClusterFloor
+
+/-- Summit's K.1 start-spacing replacement, exposed as a direct field
+projection for the TeX K.1 reduction ledger. -/
+theorem densePackSpanRarityField (R : Erdos260SummitResidual) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Band3PinnedWide ctx → ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx → 1 ≤ ctx.n24CarryData.r →
+      K1SpanRarity ctx :=
+  R.densePackSpanRarity
+
+/-- Summit's K.1 density replacement, exposed as a direct field projection for
+the TeX K.1 reduction ledger. -/
+theorem densePackAnchorSurplusField (R : Erdos260SummitResidual) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      ∃ d : ℕ, K1AnchorSurplus ctx d :=
+  R.densePackAnchorSurplus
+
+/-- The summit refinement rebuilds the Keystone DensePack cluster-floor
+interface by the exact interior-cluster-floor equivalence. -/
+theorem densePackClusterFloorField (R : Erdos260SummitResidual) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Band3PinnedWide ctx → ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx → 1 ≤ ctx.n24CarryData.r →
+      K1ClusterFloor ctx :=
+  R.toKeystoneResidual.densePackClusterFloor
+
+/-- The summit refinement rebuilds the Keystone DensePack start-spacing
+interface by the exact span-rarity equivalence. -/
+theorem densePackStartSpacingField (R : Erdos260SummitResidual) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Band3PinnedWide ctx → ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx → 1 ≤ ctx.n24CarryData.r →
+      K1StartSpacing ctx :=
+  R.toKeystoneResidual.densePackStartSpacing
+
+/-- The summit refinement rebuilds the Keystone DensePack endpoint-density
+interface by the exact anchor-surplus equivalence. -/
+theorem densePackDensityOffTableField (R : Erdos260SummitResidual) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      densePackEndpointDensity ctx :=
+  R.toKeystoneResidual.densePackDensityOffTable
+
+/-- The summit surface keeps the Keystone DensePack interior field verbatim;
+this projection keeps the rebuilt interface named alongside the three
+refined K.1 atoms. -/
+theorem densePackInteriorOffTableField (R : Erdos260SummitResidual) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Class3TopBandCycleFree ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      ∀ k ∈ genuineDensePackStarts ctx,
+        k + ctx.n24CarryData.r + 1
+          < ctx.n24CarryData.carry.hits.firstIndexAbove ctx.shell.X
+              + (supportShell ctx.shell.d ctx.shell.X).card :=
+  R.toKeystoneResidual.densePackInteriorOffTable
+
 /-- The final statement from the wave-21 summit surface, through the proved
 v20 keystone route (→ v19 convergence → frontier + absorption + the
 fully-corrected six-phase ledger). -/
@@ -708,6 +782,13 @@ Every key declaration; expected axioms `[propext, Classical.choice, Quot.sound]`
 or fewer. -/
 
 #print axioms Erdos260SummitResidual.toKeystoneResidual
+#print axioms Erdos260SummitResidual.densePackInteriorClusterFloorField
+#print axioms Erdos260SummitResidual.densePackSpanRarityField
+#print axioms Erdos260SummitResidual.densePackAnchorSurplusField
+#print axioms Erdos260SummitResidual.densePackClusterFloorField
+#print axioms Erdos260SummitResidual.densePackStartSpacingField
+#print axioms Erdos260SummitResidual.densePackDensityOffTableField
+#print axioms Erdos260SummitResidual.densePackInteriorOffTableField
 #print axioms Erdos260SummitResidual.toStatement
 #print axioms erdos260_of_summitResidual
 #print axioms summitResidual_of_keystoneResidual

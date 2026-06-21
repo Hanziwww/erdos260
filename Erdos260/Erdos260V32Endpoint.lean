@@ -271,6 +271,43 @@ def Erdos260V32Residual.toV30 (R : Erdos260V32Residual) : Erdos260V30Residual wh
   returnGates := R.lc5
   class0Gates := R.lc6
 
+/-- The Appendix-AE class-1 fields are exactly the Lane-J packaged carry
+realization surface. -/
+def Erdos260V32Residual.class1CarryInputs (R : Erdos260V32Residual) :
+    V30Class1CarryRealizationInputs where
+  C := R.class1C
+  clean := R.class1Clean
+  hreal := R.lc4
+
+/-- The v32 residual supplies the same level-`0` deep class-1 cap as its v30
+projection; v32 does not add any new class-1 mathematics here. -/
+theorem v32_class1DeepBoosted (R : Erdos260V32Residual) :
+    DccClass1DeepResidual 0 :=
+  V30Class1CarryRealizationInputs.deepResidual R.class1CarryInputs
+
+/-- The v32 residual inherits the full v19 class-1 deep field from its v30
+projection; v32 adds no new class-1 mathematics here. -/
+theorem Erdos260V32Residual.class1DeepField (R : Erdos260V32Residual) :
+    Class1DeepField :=
+  R.toV30.class1DeepField
+
+/-- The v32 residual inherits the full M.5/L.3 exit-mass core through its v30
+projection. -/
+theorem Erdos260V32Residual.exitMassCore (R : Erdos260V32Residual) :
+    ExitMassControlCore :=
+  R.toV30.exitMassCore
+
+/-- The v32 residual inherits the off-pin deliverables through its v30
+projection. -/
+theorem Erdos260V32Residual.offPinDeliverables (R : Erdos260V32Residual) :
+    ExitMassControlOffPin ∧ MdcClass0ExitMassControl :=
+  R.toV30.offPinDeliverables
+
+/-- The v32 residual inherits deep orbit-pin voiding through its v30 projection. -/
+theorem Erdos260V32Residual.deepOrbitPinVoiding (R : Erdos260V32Residual) :
+    DeepOrbitPinVoiding :=
+  R.toV30.deepOrbitPinVoiding
+
 /-- **THE v32 ENDPOINT**: `Erdos260Statement` from the v32 hardened residual, routed
 through the v32 → v30 projection and the proved `erdos260_of_v30Residual`.  Manuscript
 home: Appendix Z `prop:z-v30-unconditional-closure` (v32 line 12055), with Appendix AE as
@@ -278,6 +315,705 @@ the authoritative Lean interface.  HONEST: this endpoint is exactly as condition
 v30 endpoint — it depends on the SAME ten residual atoms. -/
 theorem erdos260_of_v32Residual (R : Erdos260V32Residual) : Erdos260Statement :=
   erdos260_of_v30Residual R.toV30
+
+/-- V32 residual surface with LC9/LC10 lowered to the localized R4/R5 exit-cap
+supplier used by the v30 endpoint.  LC10's read-tail component remains explicit;
+its span-rarity component and LC9 are rebuilt from `V30LocalizedExitCapSuppliers`. -/
+structure Erdos260V32LocalizedExitCapResidual where
+  /-- LC1 (AE.1): mass-normalized off-pin phase balance, classes `{3,4,5}`. -/
+  lc1 : LC1
+  /-- LC2 (AE.2): routed class-0 summand. -/
+  lc2 : LC2
+  /-- LC3: Appendix-U fixed-pin confinement. -/
+  lc3 : LC3
+  /-- Class-1 boundary-carry data. -/
+  class1C : Nat -> ZMod 6
+  /-- Class-1 cleanliness data. -/
+  class1Clean : Nat -> Bool
+  /-- LC4: faithful class-1 realization over the carried data. -/
+  lc4 : LC4 class1C class1Clean
+  /-- LC5: return split-gate, non-pinned half. -/
+  lc5 : LC5
+  /-- LC6: class-0 per-lane Y-cap surface gates. -/
+  lc6 : LC6
+  /-- LC7: cluster-floor / owned endpoint blocks. -/
+  lc7 : LC7
+  /-- LC8: Q-correct frontier density. -/
+  lc8 : LC8
+  /-- Localized R4/R5 exit caps rebuilding LC9 and the span component of LC10. -/
+  localizedCaps : V30LocalizedExitCapSuppliers
+  /-- The read-tail component of LC10. -/
+  readTail : V30ReadTailExitCount
+
+namespace Erdos260V32LocalizedExitCapResidual
+
+/-- LC9 rebuilt from the localized top-band cap. -/
+def lc9 (R : Erdos260V32LocalizedExitCapResidual) : LC9 :=
+  R.localizedCaps.topBand
+
+/-- LC10 rebuilt from the explicit read-tail bridge and the localized per-span caps. -/
+def lc10 (R : Erdos260V32LocalizedExitCapResidual) : LC10 where
+  readTail := R.readTail
+  spanRarity := R.localizedCaps.spanRarity
+
+/-- Project the localized R4/R5 surface back to Appendix-AE's ten-contract API. -/
+def toV32Residual (R : Erdos260V32LocalizedExitCapResidual) :
+    Erdos260V32Residual where
+  lc1 := R.lc1
+  lc2 := R.lc2
+  lc3 := R.lc3
+  class1C := R.class1C
+  class1Clean := R.class1Clean
+  lc4 := R.lc4
+  lc5 := R.lc5
+  lc6 := R.lc6
+  lc7 := R.lc7
+  lc8 := R.lc8
+  lc9 := R.lc9
+  lc10 := R.lc10
+
+/-- Direct projection to the v30 residual, via the hardened v32 surface. -/
+def toV30Residual (R : Erdos260V32LocalizedExitCapResidual) :
+    Erdos260V30Residual :=
+  R.toV32Residual.toV30
+
+/-- LC1/LC2 still supply the same four-class off-pin C1 deliverables. -/
+theorem offPinDeliverables (R : Erdos260V32LocalizedExitCapResidual) :
+    ExitMassControlOffPin ∧ MdcClass0ExitMassControl :=
+  v30_offPin_allClasses ⟨R.lc1, R.lc2⟩
+
+/-- The localized v32 surface exposes the same V30 Lane-G `R5 + R6` package:
+LC9 is the top-band component and the read-tail half of LC10 is the R6 component. -/
+def laneGResidual (R : Erdos260V32LocalizedExitCapResidual) :
+    V30TopBandReadTailResidual :=
+  R.localizedCaps.laneGResidual R.readTail
+
+/-- Projection check for the top-band component of the localized v32 Lane-G package. -/
+theorem laneGResidual_topBand (R : Erdos260V32LocalizedExitCapResidual) :
+    R.laneGResidual.topBand = R.localizedCaps.topBand := rfl
+
+/-- Projection check for the read-tail component of the localized v32 Lane-G package. -/
+theorem laneGResidual_readTail (R : Erdos260V32LocalizedExitCapResidual) :
+    R.laneGResidual.readTail = R.readTail := rfl
+
+/-- The localized v32 surface carries the same M.5/L.3 exit-mass core through
+its projection to the v32 residual API. -/
+theorem exitMassCore (R : Erdos260V32LocalizedExitCapResidual) :
+    ExitMassControlCore :=
+  R.toV32Residual.exitMassCore
+
+/-- The localized v32 surface carries the same deep orbit-pin voiding through
+its projection to the v32 residual API. -/
+theorem deepOrbitPinVoiding (R : Erdos260V32LocalizedExitCapResidual) :
+    DeepOrbitPinVoiding :=
+  R.toV32Residual.deepOrbitPinVoiding
+
+end Erdos260V32LocalizedExitCapResidual
+
+/-- V32 endpoint with LC9/LC10 supplied by localized R4/R5 exit caps. -/
+theorem erdos260_of_v32LocalizedExitCapResidual
+    (R : Erdos260V32LocalizedExitCapResidual) : Erdos260Statement :=
+  erdos260_of_v32Residual R.toV32Residual
+
+/-- V32 residual surface with the two off-pin contracts LC1/LC2 refined to the
+coordinate-split zero-collar O2 provider.  The other Appendix-AE contracts are
+unchanged; this records that the sharpened v32 interface can consume the same
+lower-level off-pin provider as the v30 refined endpoint. -/
+structure Erdos260V32O2CollarCoordinateResidual {β A : Type*}
+    [DecidableEq (Nat -> Int)] (P₀ Q : Int) where
+  /-- Concrete zero-collar O2/AB/R provider for LC1 and LC2 together. -/
+  offPinO2 : V30OffPinFullO2CollarSupplyCoordinateSafeConeInputs
+    (β := β) (A := A) P₀ Q
+  /-- LC3: Appendix-U fixed-pin confinement. -/
+  lc3 : LC3
+  /-- Class-1 boundary-carry data. -/
+  class1C : Nat -> ZMod 6
+  /-- Class-1 cleanliness data. -/
+  class1Clean : Nat -> Bool
+  /-- LC4: faithful class-1 realization over the carried data. -/
+  lc4 : LC4 class1C class1Clean
+  /-- LC5: return split-gate, non-pinned half. -/
+  lc5 : LC5
+  /-- LC6: class-0 per-lane Y-cap surface gates. -/
+  lc6 : LC6
+  /-- LC7: cluster-floor / owned endpoint blocks. -/
+  lc7 : LC7
+  /-- LC8: Q-correct frontier density. -/
+  lc8 : LC8
+  /-- LC9: top-band localized routing push-forward. -/
+  lc9 : LC9
+  /-- LC10: read-tail push-forward plus span rarity. -/
+  lc10 : LC10
+
+namespace Erdos260V32O2CollarCoordinateResidual
+
+/-- Project the concrete O2 off-pin provider back to the Appendix-AE ten-contract
+surface.  LC1 and LC2 are obtained from the full coordinate zero-collar provider;
+the other contracts are copied verbatim. -/
+def toV32Residual {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateResidual (β := β) (A := A) P₀ Q) :
+    Erdos260V32Residual where
+  lc1 := (v30OffPinFullRegime_of_o2_collar_supply_coordinate_full_provider
+    P₀ Q R.offPinO2).1
+  lc2 := (v30OffPinFullRegime_of_o2_collar_supply_coordinate_full_provider
+    P₀ Q R.offPinO2).2
+  lc3 := R.lc3
+  class1C := R.class1C
+  class1Clean := R.class1Clean
+  lc4 := R.lc4
+  lc5 := R.lc5
+  lc6 := R.lc6
+  lc7 := R.lc7
+  lc8 := R.lc8
+  lc9 := R.lc9
+  lc10 := R.lc10
+
+/-- Direct projection to the v30 residual, via the hardened v32 surface. -/
+def toV30Residual {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateResidual (β := β) (A := A) P₀ Q) :
+    Erdos260V30Residual :=
+  R.toV32Residual.toV30
+
+/-- The concrete O2 provider supplies the v32 off-pin deliverables represented by
+LC1/LC2, hence the same four-class off-pin C1 cap as in v30. -/
+theorem offPinDeliverables {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateResidual (β := β) (A := A) P₀ Q) :
+    ExitMassControlOffPin ∧ MdcClass0ExitMassControl :=
+  v30_offPin_allClasses_of_o2_collar_supply_coordinate_full_provider P₀ Q R.offPinO2
+
+/-- The coordinate O2 v32 surface carries the same M.5/L.3 exit-mass core
+through its projection to the v32 residual API. -/
+theorem exitMassCore {beta A : Type*} [hdec : DecidableEq (Nat -> Int)] {P Q : Int}
+    (R : @Erdos260V32O2CollarCoordinateResidual beta A hdec P Q) :
+    ExitMassControlCore :=
+  R.toV32Residual.exitMassCore
+
+/-- The coordinate O2 v32 surface carries the same deep orbit-pin voiding through
+its projection to the v32 residual API. -/
+theorem deepOrbitPinVoiding {beta A : Type*} [hdec : DecidableEq (Nat -> Int)] {P Q : Int}
+    (R : @Erdos260V32O2CollarCoordinateResidual beta A hdec P Q) :
+    DeepOrbitPinVoiding :=
+  R.toV32Residual.deepOrbitPinVoiding
+
+end Erdos260V32O2CollarCoordinateResidual
+
+/-- V32 residual surface with LC1/LC2 refined to the coordinate-split O2 collar
+provider retaining finite errors, plus explicit proofs that every collar is
+actually zero.  This is the Appendix-AE endpoint-facing version of Lane C's
+`toZeroCollarProvider` bridge. -/
+structure Erdos260V32O2CollarCoordinateZeroErrorResidual {β A : Type*}
+    [DecidableEq (Nat -> Int)] (P₀ Q : Int) where
+  /-- Concrete coordinate O2/AB/R provider for LC1 and LC2 together, retaining
+  collars before the zero-error proofs are applied. -/
+  offPinO2 : V30OffPinFullO2CollarSupplyCoordinateSafeConeInputsWithError
+    (β := β) (A := A) P₀ Q
+  /-- The class-3 collar is genuinely zero on every pin-free deep context. -/
+  class3Zero : forall (ctx : ActualFailureContext) (hX : 2 ^ 986891 < ctx.X)
+    (hn2 : Not (OrbitBandPinned ctx 2)) (hn3 : Not (OrbitBandPinned ctx 3))
+    (hn4 : Not (OrbitBandPinned ctx 4)),
+      (offPinO2.class3 ctx hX hn2 hn3 hn4).collar.card = 0
+  /-- The class-4 collar is genuinely zero on every pin-free deep context. -/
+  class4Zero : forall (ctx : ActualFailureContext) (hX : 2 ^ 986891 < ctx.X)
+    (hn2 : Not (OrbitBandPinned ctx 2)) (hn3 : Not (OrbitBandPinned ctx 3))
+    (hn4 : Not (OrbitBandPinned ctx 4)),
+      (offPinO2.class4 ctx hX hn2 hn3 hn4).collar.card = 0
+  /-- The class-5 collar is genuinely zero on every pin-free deep context. -/
+  class5Zero : forall (ctx : ActualFailureContext) (hX : 2 ^ 986891 < ctx.X)
+    (hn2 : Not (OrbitBandPinned ctx 2)) (hn3 : Not (OrbitBandPinned ctx 3))
+    (hn4 : Not (OrbitBandPinned ctx 4)),
+      (offPinO2.class5 ctx hX hn2 hn3 hn4).collar.card = 0
+  /-- The class-0 collar is genuinely zero on every class-0 survivor context. -/
+  class0Zero : forall (ctx : ActualFailureContext) (hsurv : Class0DatumSurvivor ctx),
+    (offPinO2.class0 ctx hsurv).collar.card = 0
+  /-- LC3: Appendix-U fixed-pin confinement. -/
+  lc3 : LC3
+  /-- Class-1 boundary-carry data. -/
+  class1C : Nat -> ZMod 6
+  /-- Class-1 cleanliness data. -/
+  class1Clean : Nat -> Bool
+  /-- LC4: faithful class-1 realization over the carried data. -/
+  lc4 : LC4 class1C class1Clean
+  /-- LC5: return split-gate, non-pinned half. -/
+  lc5 : LC5
+  /-- LC6: class-0 per-lane Y-cap surface gates. -/
+  lc6 : LC6
+  /-- LC7: cluster-floor / owned endpoint blocks. -/
+  lc7 : LC7
+  /-- LC8: Q-correct frontier density. -/
+  lc8 : LC8
+  /-- LC9: top-band localized routing push-forward. -/
+  lc9 : LC9
+  /-- LC10: read-tail push-forward plus span rarity. -/
+  lc10 : LC10
+
+namespace Erdos260V32O2CollarCoordinateZeroErrorResidual
+
+/-- Convert the finite-error/zero-collar v32 endpoint surface to the existing
+coordinate zero-collar v32 endpoint surface. -/
+def toO2CollarCoordinateResidual {β A : Type*} [DecidableEq (Nat -> Int)]
+    {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    Erdos260V32O2CollarCoordinateResidual (β := β) (A := A) P₀ Q where
+  offPinO2 :=
+    V30OffPinFullO2CollarSupplyCoordinateSafeConeInputsWithError.toZeroCollarProvider
+      R.offPinO2 R.class3Zero R.class4Zero R.class5Zero R.class0Zero
+  lc3 := R.lc3
+  class1C := R.class1C
+  class1Clean := R.class1Clean
+  lc4 := R.lc4
+  lc5 := R.lc5
+  lc6 := R.lc6
+  lc7 := R.lc7
+  lc8 := R.lc8
+  lc9 := R.lc9
+  lc10 := R.lc10
+
+/-- Project the finite-error/zero-collar endpoint surface back to Appendix-AE's
+ten-contract v32 API. -/
+def toV32Residual {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    Erdos260V32Residual :=
+  R.toO2CollarCoordinateResidual.toV32Residual
+
+/-- Direct projection to the v30 residual, via the hardened v32 surface. -/
+def toV30Residual {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    Erdos260V30Residual :=
+  R.toV32Residual.toV30
+
+/-- The finite-error/zero-collar O2 provider supplies the same v32 off-pin
+deliverables represented by LC1/LC2. -/
+theorem offPinDeliverables {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    ExitMassControlOffPin ∧ MdcClass0ExitMassControl :=
+  V30OffPinFullO2CollarSupplyCoordinateSafeConeInputsWithError.allClasses_of_zeroCollars
+    R.offPinO2 R.class3Zero R.class4Zero R.class5Zero R.class0Zero
+
+/-- The finite-error/zero-collar v32 surface carries the same M.5/L.3
+exit-mass core through its projection to the v32 residual API. -/
+theorem exitMassCore {beta A : Type*} [hdec : DecidableEq (Nat -> Int)] {P Q : Int}
+    (R : @Erdos260V32O2CollarCoordinateZeroErrorResidual beta A hdec P Q) :
+    ExitMassControlCore :=
+  R.toV32Residual.exitMassCore
+
+/-- The finite-error/zero-collar v32 surface carries the same deep orbit-pin
+voiding through its projection to the v32 residual API. -/
+theorem deepOrbitPinVoiding {beta A : Type*} [hdec : DecidableEq (Nat -> Int)] {P Q : Int}
+    (R : @Erdos260V32O2CollarCoordinateZeroErrorResidual beta A hdec P Q) :
+    DeepOrbitPinVoiding :=
+  R.toV32Residual.deepOrbitPinVoiding
+
+end Erdos260V32O2CollarCoordinateZeroErrorResidual
+
+/-- V32 residual surface with LC1/LC2 refined to the coordinate-split O2 collar
+provider whose four collars are literally empty.  This is the Appendix-AE
+endpoint-facing form closest to the TeX collar-deletion statement. -/
+structure Erdos260V32O2CollarCoordinateEmptyCollarResidual {β A : Type*}
+    [DecidableEq (Nat -> Int)] (P₀ Q : Int) where
+  /-- Concrete coordinate O2/AB/R provider for LC1 and LC2 together, with literal
+  empty-collar facts for the four off-pin classes. -/
+  offPinO2 : V30OffPinFullO2CollarSupplyCoordinateEmptyCollarSafeConeInputs
+    (β := β) (A := A) P₀ Q
+  /-- LC3: Appendix-U fixed-pin confinement. -/
+  lc3 : LC3
+  /-- Class-1 boundary-carry data. -/
+  class1C : Nat -> ZMod 6
+  /-- Class-1 cleanliness data. -/
+  class1Clean : Nat -> Bool
+  /-- LC4: faithful class-1 realization over the carried data. -/
+  lc4 : LC4 class1C class1Clean
+  /-- LC5: return split-gate, non-pinned half. -/
+  lc5 : LC5
+  /-- LC6: class-0 per-lane Y-cap surface gates. -/
+  lc6 : LC6
+  /-- LC7: cluster-floor / owned endpoint blocks. -/
+  lc7 : LC7
+  /-- LC8: Q-correct frontier density. -/
+  lc8 : LC8
+  /-- LC9: top-band localized routing push-forward. -/
+  lc9 : LC9
+  /-- LC10: read-tail push-forward plus span rarity. -/
+  lc10 : LC10
+
+namespace Erdos260V32O2CollarCoordinateEmptyCollarResidual
+
+/-- Convert the empty-collar v32 endpoint surface to the existing coordinate
+zero-collar v32 endpoint surface. -/
+def toO2CollarCoordinateResidual {β A : Type*} [DecidableEq (Nat -> Int)]
+    {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    Erdos260V32O2CollarCoordinateResidual (β := β) (A := A) P₀ Q where
+  offPinO2 :=
+    V30OffPinFullO2CollarSupplyCoordinateEmptyCollarSafeConeInputs.toZeroCollarProvider
+      R.offPinO2
+  lc3 := R.lc3
+  class1C := R.class1C
+  class1Clean := R.class1Clean
+  lc4 := R.lc4
+  lc5 := R.lc5
+  lc6 := R.lc6
+  lc7 := R.lc7
+  lc8 := R.lc8
+  lc9 := R.lc9
+  lc10 := R.lc10
+
+/-- Project the empty-collar endpoint surface back to Appendix-AE's ten-contract
+v32 API. -/
+def toV32Residual {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    Erdos260V32Residual :=
+  R.toO2CollarCoordinateResidual.toV32Residual
+
+/-- Direct projection to the v30 residual, via the hardened v32 surface. -/
+def toV30Residual {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    Erdos260V30Residual :=
+  R.toV32Residual.toV30
+
+/-- The empty-collar O2 provider supplies the same v32 off-pin deliverables
+represented by LC1/LC2. -/
+theorem offPinDeliverables {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    ExitMassControlOffPin ∧ MdcClass0ExitMassControl :=
+  V30OffPinFullO2CollarSupplyCoordinateEmptyCollarSafeConeInputs.allClasses
+    R.offPinO2
+
+/-- The empty-collar coordinate v32 surface carries the same M.5/L.3
+exit-mass core through its projection to the v32 residual API. -/
+theorem exitMassCore {beta A : Type*} [hdec : DecidableEq (Nat -> Int)] {P Q : Int}
+    (R : @Erdos260V32O2CollarCoordinateEmptyCollarResidual beta A hdec P Q) :
+    ExitMassControlCore :=
+  R.toV32Residual.exitMassCore
+
+/-- The empty-collar coordinate v32 surface carries the same deep orbit-pin
+voiding through its projection to the v32 residual API. -/
+theorem deepOrbitPinVoiding {beta A : Type*} [hdec : DecidableEq (Nat -> Int)] {P Q : Int}
+    (R : @Erdos260V32O2CollarCoordinateEmptyCollarResidual beta A hdec P Q) :
+    DeepOrbitPinVoiding :=
+  R.toV32Residual.deepOrbitPinVoiding
+
+end Erdos260V32O2CollarCoordinateEmptyCollarResidual
+
+/-- V32 residual surface with both endpoint refinements active at once: LC1/LC2 are
+lowered to the finite-error coordinate O2 collar provider plus zero-collar proofs,
+and LC9/LC10's span-rarity component are lowered to localized R4/R5 exit-cap
+suppliers. -/
+structure Erdos260V32O2LocalizedExitCapZeroErrorResidual {β A : Type*}
+    [DecidableEq (Nat -> Int)] (P₀ Q : Int) where
+  /-- Concrete coordinate O2/AB/R provider for LC1 and LC2 together, retaining
+  collars before the zero-error proofs are applied. -/
+  offPinO2 : V30OffPinFullO2CollarSupplyCoordinateSafeConeInputsWithError
+    (β := β) (A := A) P₀ Q
+  /-- The class-3 collar is genuinely zero on every pin-free deep context. -/
+  class3Zero : forall (ctx : ActualFailureContext) (hX : 2 ^ 986891 < ctx.X)
+    (hn2 : Not (OrbitBandPinned ctx 2)) (hn3 : Not (OrbitBandPinned ctx 3))
+    (hn4 : Not (OrbitBandPinned ctx 4)),
+      (offPinO2.class3 ctx hX hn2 hn3 hn4).collar.card = 0
+  /-- The class-4 collar is genuinely zero on every pin-free deep context. -/
+  class4Zero : forall (ctx : ActualFailureContext) (hX : 2 ^ 986891 < ctx.X)
+    (hn2 : Not (OrbitBandPinned ctx 2)) (hn3 : Not (OrbitBandPinned ctx 3))
+    (hn4 : Not (OrbitBandPinned ctx 4)),
+      (offPinO2.class4 ctx hX hn2 hn3 hn4).collar.card = 0
+  /-- The class-5 collar is genuinely zero on every pin-free deep context. -/
+  class5Zero : forall (ctx : ActualFailureContext) (hX : 2 ^ 986891 < ctx.X)
+    (hn2 : Not (OrbitBandPinned ctx 2)) (hn3 : Not (OrbitBandPinned ctx 3))
+    (hn4 : Not (OrbitBandPinned ctx 4)),
+      (offPinO2.class5 ctx hX hn2 hn3 hn4).collar.card = 0
+  /-- The class-0 collar is genuinely zero on every class-0 survivor context. -/
+  class0Zero : forall (ctx : ActualFailureContext) (hsurv : Class0DatumSurvivor ctx),
+    (offPinO2.class0 ctx hsurv).collar.card = 0
+  /-- LC3: Appendix-U fixed-pin confinement. -/
+  lc3 : LC3
+  /-- Class-1 boundary-carry data. -/
+  class1C : Nat -> ZMod 6
+  /-- Class-1 cleanliness data. -/
+  class1Clean : Nat -> Bool
+  /-- LC4: faithful class-1 realization over the carried data. -/
+  lc4 : LC4 class1C class1Clean
+  /-- LC5: return split-gate, non-pinned half. -/
+  lc5 : LC5
+  /-- LC6: class-0 per-lane Y-cap surface gates. -/
+  lc6 : LC6
+  /-- LC7: cluster-floor / owned endpoint blocks. -/
+  lc7 : LC7
+  /-- LC8: Q-correct frontier density. -/
+  lc8 : LC8
+  /-- Localized R4/R5 exit caps rebuilding LC9 and the span component of LC10. -/
+  localizedCaps : V30LocalizedExitCapSuppliers
+  /-- The read-tail component of LC10. -/
+  readTail : V30ReadTailExitCount
+
+namespace Erdos260V32O2LocalizedExitCapZeroErrorResidual
+
+/-- Convert the combined lower-level surface to the localized-cap v32 endpoint
+surface. -/
+def toLocalizedExitCapResidual {β A : Type*} [DecidableEq (Nat -> Int)]
+    {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    Erdos260V32LocalizedExitCapResidual where
+  lc1 :=
+    (V30OffPinFullO2CollarSupplyCoordinateSafeConeInputsWithError.fullRegime_of_zeroCollarProvider
+      R.offPinO2 R.class3Zero R.class4Zero R.class5Zero R.class0Zero).1
+  lc2 :=
+    (V30OffPinFullO2CollarSupplyCoordinateSafeConeInputsWithError.fullRegime_of_zeroCollarProvider
+      R.offPinO2 R.class3Zero R.class4Zero R.class5Zero R.class0Zero).2
+  lc3 := R.lc3
+  class1C := R.class1C
+  class1Clean := R.class1Clean
+  lc4 := R.lc4
+  lc5 := R.lc5
+  lc6 := R.lc6
+  lc7 := R.lc7
+  lc8 := R.lc8
+  localizedCaps := R.localizedCaps
+  readTail := R.readTail
+
+/-- Project the combined lower-level surface back to Appendix-AE's ten-contract API. -/
+def toV32Residual {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    Erdos260V32Residual :=
+  R.toLocalizedExitCapResidual.toV32Residual
+
+/-- Direct projection to the v30 residual, via the hardened v32 surface. -/
+def toV30Residual {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    Erdos260V30Residual :=
+  R.toV32Residual.toV30
+
+/-- The combined lower-level surface supplies the same four-class off-pin C1
+deliverables once the finite-error collars are zero. -/
+theorem offPinDeliverables {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    ExitMassControlOffPin ∧ MdcClass0ExitMassControl :=
+  V30OffPinFullO2CollarSupplyCoordinateSafeConeInputsWithError.allClasses_of_zeroCollars
+    R.offPinO2 R.class3Zero R.class4Zero R.class5Zero R.class0Zero
+
+/-- The combined v32 O2/localized surface exposes the same V30 Lane-G `R5 + R6`
+package; the off-pin O2 refinement is independent of this bookkeeping channel. -/
+def laneGResidual {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    V30TopBandReadTailResidual :=
+  R.localizedCaps.laneGResidual R.readTail
+
+/-- Projection check for the top-band component of the combined v32 Lane-G package. -/
+theorem laneGResidual_topBand {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    R.laneGResidual.topBand = R.localizedCaps.topBand := rfl
+
+/-- Projection check for the read-tail component of the combined v32 Lane-G package. -/
+theorem laneGResidual_readTail {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    R.laneGResidual.readTail = R.readTail := rfl
+
+/-- The combined O2/localized zero-error v32 surface carries the same M.5/L.3
+exit-mass core through its projection to the v32 residual API. -/
+theorem exitMassCore {beta A : Type*} [hdec : DecidableEq (Nat -> Int)] {P Q : Int}
+    (R : @Erdos260V32O2LocalizedExitCapZeroErrorResidual beta A hdec P Q) :
+    ExitMassControlCore :=
+  R.toV32Residual.exitMassCore
+
+/-- The combined O2/localized zero-error v32 surface carries the same deep
+orbit-pin voiding through its projection to the v32 residual API. -/
+theorem deepOrbitPinVoiding {beta A : Type*} [hdec : DecidableEq (Nat -> Int)] {P Q : Int}
+    (R : @Erdos260V32O2LocalizedExitCapZeroErrorResidual beta A hdec P Q) :
+    DeepOrbitPinVoiding :=
+  R.toV32Residual.deepOrbitPinVoiding
+
+end Erdos260V32O2LocalizedExitCapZeroErrorResidual
+
+/-- V32 residual surface with both endpoint refinements active at once, but with
+LC1/LC2 supplied by the TeX-style literal empty-collar package instead of four
+cardinality-zero proofs.  LC9 and the span-rarity part of LC10 are still supplied
+by localized R4/R5 exit caps. -/
+structure Erdos260V32O2LocalizedExitCapEmptyCollarResidual {β A : Type*}
+    [DecidableEq (Nat -> Int)] (P₀ Q : Int) where
+  /-- Concrete coordinate O2/AB/R provider for LC1 and LC2 together, with literal
+  empty-collar facts for the four off-pin classes. -/
+  offPinO2 : V30OffPinFullO2CollarSupplyCoordinateEmptyCollarSafeConeInputs
+    (β := β) (A := A) P₀ Q
+  /-- LC3: Appendix-U fixed-pin confinement. -/
+  lc3 : LC3
+  /-- Class-1 boundary-carry data. -/
+  class1C : Nat -> ZMod 6
+  /-- Class-1 cleanliness data. -/
+  class1Clean : Nat -> Bool
+  /-- LC4: faithful class-1 realization over the carried data. -/
+  lc4 : LC4 class1C class1Clean
+  /-- LC5: return split-gate, non-pinned half. -/
+  lc5 : LC5
+  /-- LC6: class-0 per-lane Y-cap surface gates. -/
+  lc6 : LC6
+  /-- LC7: cluster-floor / owned endpoint blocks. -/
+  lc7 : LC7
+  /-- LC8: Q-correct frontier density. -/
+  lc8 : LC8
+  /-- Localized R4/R5 exit caps rebuilding LC9 and the span component of LC10. -/
+  localizedCaps : V30LocalizedExitCapSuppliers
+  /-- The read-tail component of LC10. -/
+  readTail : V30ReadTailExitCount
+
+namespace Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+
+/-- Convert the combined empty-collar surface to the existing finite-error plus
+zero-cardinality combined surface. -/
+def toZeroErrorResidual {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    Erdos260V32O2LocalizedExitCapZeroErrorResidual (β := β) (A := A) P₀ Q where
+  offPinO2 := R.offPinO2.provider
+  class3Zero :=
+    V30OffPinFullO2CollarSupplyCoordinateEmptyCollarSafeConeInputs.class3Zero
+      R.offPinO2
+  class4Zero :=
+    V30OffPinFullO2CollarSupplyCoordinateEmptyCollarSafeConeInputs.class4Zero
+      R.offPinO2
+  class5Zero :=
+    V30OffPinFullO2CollarSupplyCoordinateEmptyCollarSafeConeInputs.class5Zero
+      R.offPinO2
+  class0Zero :=
+    V30OffPinFullO2CollarSupplyCoordinateEmptyCollarSafeConeInputs.class0Zero
+      R.offPinO2
+  lc3 := R.lc3
+  class1C := R.class1C
+  class1Clean := R.class1Clean
+  lc4 := R.lc4
+  lc5 := R.lc5
+  lc6 := R.lc6
+  lc7 := R.lc7
+  lc8 := R.lc8
+  localizedCaps := R.localizedCaps
+  readTail := R.readTail
+
+/-- Convert the combined empty-collar surface to the localized-cap v32 endpoint
+surface. -/
+def toLocalizedExitCapResidual {β A : Type*} [DecidableEq (Nat -> Int)]
+    {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    Erdos260V32LocalizedExitCapResidual :=
+  R.toZeroErrorResidual.toLocalizedExitCapResidual
+
+/-- Project the combined empty-collar surface back to Appendix-AE's ten-contract
+API. -/
+def toV32Residual {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    Erdos260V32Residual :=
+  R.toLocalizedExitCapResidual.toV32Residual
+
+/-- Direct projection to the v30 residual, via the hardened v32 surface. -/
+def toV30Residual {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    Erdos260V30Residual :=
+  R.toV32Residual.toV30
+
+/-- The combined empty-collar surface supplies the same four-class off-pin C1
+deliverables represented by LC1/LC2. -/
+theorem offPinDeliverables {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    ExitMassControlOffPin ∧ MdcClass0ExitMassControl :=
+  V30OffPinFullO2CollarSupplyCoordinateEmptyCollarSafeConeInputs.allClasses
+    R.offPinO2
+
+/-- The empty-collar v32 endpoint surface exposes the same V30 Lane-G `R5 + R6`
+package as the zero-error and localized surfaces. -/
+def laneGResidual {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    V30TopBandReadTailResidual :=
+  R.localizedCaps.laneGResidual R.readTail
+
+/-- Projection check for the top-band component of the empty-collar v32 package. -/
+theorem laneGResidual_topBand {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    R.laneGResidual.topBand = R.localizedCaps.topBand := rfl
+
+/-- Projection check for the read-tail component of the empty-collar v32 package. -/
+theorem laneGResidual_readTail {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    R.laneGResidual.readTail = R.readTail := rfl
+
+/-- The combined O2/localized empty-collar v32 surface carries the same M.5/L.3
+exit-mass core through its projection to the v32 residual API. -/
+theorem exitMassCore {beta A : Type*} [hdec : DecidableEq (Nat -> Int)] {P Q : Int}
+    (R : @Erdos260V32O2LocalizedExitCapEmptyCollarResidual beta A hdec P Q) :
+    ExitMassControlCore :=
+  R.toV32Residual.exitMassCore
+
+/-- The combined O2/localized empty-collar v32 surface carries the same deep
+orbit-pin voiding through its projection to the v32 residual API. -/
+theorem deepOrbitPinVoiding {beta A : Type*} [hdec : DecidableEq (Nat -> Int)] {P Q : Int}
+    (R : @Erdos260V32O2LocalizedExitCapEmptyCollarResidual beta A hdec P Q) :
+    DeepOrbitPinVoiding :=
+  R.toV32Residual.deepOrbitPinVoiding
+
+end Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+
+/-- V32 endpoint with LC1/LC2 supplied by finite-error O2 collars plus zero-collar
+proofs, and LC9/LC10 supplied by localized R4/R5 exit caps. -/
+theorem erdos260_of_v32O2LocalizedExitCapZeroErrorResidual {β A : Type*}
+    [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    Erdos260Statement :=
+  erdos260_of_v32LocalizedExitCapResidual R.toLocalizedExitCapResidual
+
+/-- V32 endpoint with LC1/LC2 supplied by the finite-error O2 provider with
+literal empty collars, and LC9/LC10 supplied by localized R4/R5 exit caps. -/
+theorem erdos260_of_v32O2LocalizedExitCapEmptyCollarResidual {β A : Type*}
+    [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    Erdos260Statement :=
+  erdos260_of_v32O2LocalizedExitCapZeroErrorResidual R.toZeroErrorResidual
+
+/-- V32 endpoint with LC1/LC2 supplied by the concrete coordinate zero-collar O2
+provider.  It is conditional on the remaining Appendix-AE contracts, and on the
+provider mathematics needed to build `offPinO2`; it does not weaken the original
+ten-contract endpoint. -/
+theorem erdos260_of_v32O2CollarCoordinateResidual {β A : Type*}
+    [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateResidual (β := β) (A := A) P₀ Q) :
+    Erdos260Statement :=
+  erdos260_of_v32Residual R.toV32Residual
+
+/-- V32 endpoint with LC1/LC2 supplied by the concrete coordinate O2 collar
+surface with explicit finite-error collars, plus proofs that those collars
+vanish. -/
+theorem erdos260_of_v32O2CollarCoordinateZeroErrorResidual {β A : Type*}
+    [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    Erdos260Statement :=
+  erdos260_of_v32O2CollarCoordinateResidual R.toO2CollarCoordinateResidual
+
+/-- V32 endpoint with LC1/LC2 supplied by the coordinate O2 collar surface with
+literal empty-collar facts. -/
+theorem erdos260_of_v32O2CollarCoordinateEmptyCollarResidual {β A : Type*}
+    [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    Erdos260Statement :=
+  erdos260_of_v32O2CollarCoordinateResidual R.toO2CollarCoordinateResidual
 
 /-! ## Part 3.  The AE.5 non-circularity firewall
 
@@ -530,7 +1266,20 @@ def erdos260V32EndpointStatus : List String :=
       "(proof_v4_repaired_core_v32.tex, Appendices AE + Z) on top of the proved v30 " ++
       "endpoint.  ENDPOINT (PROVED): erdos260_of_v32Residual : Erdos260V32Residual -> " ++
       "Erdos260Statement, via Erdos260V32Residual.toV30 + erdos260_of_v30Residual.  " ++
-      "Additive: ONE new module, no existing .lean file edited.",
+      "LOCALIZED ENDPOINT (PROVED): erdos260_of_v32LocalizedExitCapResidual replaces " ++
+      "LC9 and the span-rarity half of LC10 by V30LocalizedExitCapSuppliers, then " ++
+      "rebuilds the strict AE contracts before projection.  COMBINED ENDPOINT " ++
+      "(PROVED): erdos260_of_v32O2LocalizedExitCapZeroErrorResidual uses the O2 " ++
+      "finite-error/zero-collar bridge for LC1/LC2 and localized cap suppliers for " ++
+      "LC9/LC10 simultaneously.  The parallel empty-collar combined endpoint " ++
+      "erdos260_of_v32O2LocalizedExitCapEmptyCollarResidual uses the same localized " ++
+      "suppliers but packages LC1/LC2's four collars as literal empty-set facts.  " ++
+      "REFINED ENDPOINT (PROVED): erdos260_of_v32O2CollarCoordinateResidual replaces " ++
+      "LC1/LC2 by the coordinate-split zero-collar O2 provider before projecting back " ++
+      "to Erdos260V32Residual.  ZERO-ERROR REFINED ENDPOINT (PROVED): " ++
+      "erdos260_of_v32O2CollarCoordinateZeroErrorResidual accepts the finite-error O2 " ++
+      "collar provider plus four collar=0 proofs and converts it to the same " ++
+      "zero-collar surface.  Additive endpoint layer; no theorem is weakened.",
     "HONEST HEADLINE (non-triumphal): the residual is UNCHANGED at 10 atoms.  v32 adds " ++
       "ZERO new mathematics (its body, Appendices E-AD, is byte-identical to v30) and " ++
       "closes NONE of the ten atoms.  erdos260_of_v32Residual is EXACTLY as conditional " ++
@@ -554,6 +1303,33 @@ def erdos260V32EndpointStatus : List String :=
       "LC10.readTail; spanRarity := LC10.spanRarity; clusterFloor := LC7; density := " ++
       "LC8; returnGates := LC5; class0Gates := LC6.  Each is a sound projection " ++
       "(v32 adds zero new mathematics, so LC -> v30 is definitional / a restatement).",
+    "OFF-PIN REFINEMENT: Erdos260V32O2CollarCoordinateResidual keeps LC3-LC10 " ++
+      "unchanged but replaces the paired off-pin contracts LC1/LC2 by " ++
+      "V30OffPinFullO2CollarSupplyCoordinateSafeConeInputs.  Its projection " ++
+      "toV32Residual rebuilds LC1/LC2 using " ++
+      "v30OffPinFullRegime_of_o2_collar_supply_coordinate_full_provider, and its " ++
+      "offPinDeliverables theorem returns the same ExitMassControlOffPin and " ++
+      "MdcClass0ExitMassControl deliverables.  This lowers the interface to the " ++
+      "TeX O2/AB/R provider surface but still requires the provider mathematics. " ++
+      "Erdos260V32O2CollarCoordinateZeroErrorResidual is the explicit finite-error " ++
+      "variant: it uses the Lane-C toZeroCollarProvider bridge once the four collar " ++
+      "cardinalities are proved zero. " ++
+      "Erdos260V32O2CollarCoordinateEmptyCollarResidual packages the empty-collar " ++
+      "version of the same finite-error surface and projects through the proved " ++
+      "Lane-C empty-collar bridge before using the existing v32 zero-collar endpoint.",
+    "LOCALIZED R4/R5 REFINEMENT: Erdos260V32LocalizedExitCapResidual keeps LC1-LC8 " ++
+      "and the readTail half of LC10 unchanged, but lowers LC9/topBand and the " ++
+      "spanRarity half of LC10 to V30LocalizedExitCapSuppliers.  This mirrors the " ++
+      "v30 localized endpoint and uses only the already-proved bridges " ++
+      "v30_topBandPushforward_of_cap and v30_spanRarity_of_cap.",
+    "COMBINED LOWER-LEVEL ENDPOINT: Erdos260V32O2LocalizedExitCapZeroErrorResidual " ++
+      "simultaneously lowers LC1/LC2 to the finite-error coordinate O2 collar " ++
+      "provider with four zero-collar proofs and lowers LC9/LC10 to " ++
+      "V30LocalizedExitCapSuppliers.  It projects through " ++
+      "Erdos260V32LocalizedExitCapResidual and adds no new mathematical shortcut.  " ++
+      "Erdos260V32O2LocalizedExitCapEmptyCollarResidual is the corresponding " ++
+      "Appendix-AE-facing literal empty-collar version, using the packaged Lane-C " ++
+      "empty-collar bridge instead of four separate collar-cardinality fields.",
     "THE FIREWALL (v32_dependency_firewall, prop:ae-dependency-graph AE.5 v32 11943): the " ++
       "closure dependency DAG over LC1..LC10 + the in-tree-proved nodes (boundedPeriod, " ++
       "unsafeCoreEmpty, safeConeCap, offPinCap, R2, fixedPinVoiding, R3, surface, V-W, " ++
@@ -593,12 +1369,1536 @@ theorem erdos260V32EndpointStatus_nonempty : erdos260V32EndpointStatus ≠ [] :=
   unfold erdos260V32EndpointStatus
   simp
 
+/-! ## Part 5a.  Return-gates full-field projection -/
+
+/-- The v32 residual rebuilds the full corrected Return-gates field by projecting
+to the v30 residual.  This is the Appendix-AE LC5 split-gate: LC5 supplies the
+non-pinned half, while the pinned half and `b₂ = 0` return table are discharged
+by the v30 bridge. -/
+theorem Erdos260V32Residual.returnGatesField (R : Erdos260V32Residual) :
+    ReturnGatesField :=
+  R.toV30.returnGatesField
+
+/-- The v32 residual inherits the full corrected Return-interior field through
+its v30 projection. -/
+theorem Erdos260V32Residual.returnInteriorField (R : Erdos260V32Residual) :
+    ∀ ctx : ActualFailureContext, ¬ ReturnB2FreeDatum ctx → ReturnInteriorBody ctx :=
+  R.toV30.returnInteriorField
+
+/-- The v32 residual inherits the exact off-table Return-gates branch through
+its v30 projection. -/
+theorem Erdos260V32Residual.returnGatesOffTableField (R : Erdos260V32Residual) :
+    ∀ ctx : ActualFailureContext, ¬ DscReturnB2ZeroDatum ctx →
+      ¬ OrbitBandPinned ctx 2 →
+      ¬ ReturnB2FreeDatum ctx → ¬ ReturnB2OneSpacedDatum ctx →
+      2 * (129 * shellLadderDepth ctx + 64)
+        ≤ 64 * (((supportShell ctx.shell.d ctx.shell.X).card
+              + ctx.n24CarryData.r)
+            * (shellLadderDepth ctx + carryB ctx.shell.Q + 1)) →
+      ReturnGatesBodyUngated ctx :=
+  R.toV30.returnGatesOffTableField
+
+/-- The v32 residual inherits the exact off-table Return-interior branch through
+its v30 projection. -/
+theorem Erdos260V32Residual.returnInteriorOffTableField (R : Erdos260V32Residual) :
+    ∀ ctx : ActualFailureContext, ¬ DscReturnB2ZeroDatum ctx →
+      ¬ ReturnB2FreeDatum ctx → ReturnInteriorBody ctx :=
+  R.toV30.returnInteriorOffTableField
+
+/-- The localized v32 endpoint surface inherits the full corrected Return-gates
+field through its v30 projection. -/
+theorem Erdos260V32LocalizedExitCapResidual.returnGatesField
+    (R : Erdos260V32LocalizedExitCapResidual) :
+    ReturnGatesField :=
+  R.toV30Residual.returnGatesField
+
+/-- The combined zero-error O2/localized v32 endpoint surface inherits the full
+corrected Return-gates field. -/
+theorem Erdos260V32O2LocalizedExitCapZeroErrorResidual.returnGatesField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    ReturnGatesField :=
+  R.toV30Residual.returnGatesField
+
+/-- The combined empty-collar O2/localized v32 endpoint surface inherits the full
+corrected Return-gates field. -/
+theorem Erdos260V32O2LocalizedExitCapEmptyCollarResidual.returnGatesField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    ReturnGatesField :=
+  R.toV30Residual.returnGatesField
+
+/-- The coordinate O2 v32 endpoint surface inherits the full corrected
+Return-gates field through its v30 projection. -/
+theorem Erdos260V32O2CollarCoordinateResidual.returnGatesField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateResidual (β := β) (A := A) P₀ Q) :
+    ReturnGatesField :=
+  R.toV30Residual.returnGatesField
+
+/-- The finite-error/zero-collar coordinate O2 v32 endpoint surface inherits the
+full corrected Return-gates field. -/
+theorem Erdos260V32O2CollarCoordinateZeroErrorResidual.returnGatesField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    ReturnGatesField :=
+  R.toV30Residual.returnGatesField
+
+/-- The empty-collar coordinate O2 v32 endpoint surface inherits the full
+corrected Return-gates field. -/
+theorem Erdos260V32O2CollarCoordinateEmptyCollarResidual.returnGatesField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    ReturnGatesField :=
+  R.toV30Residual.returnGatesField
+
+/-- The localized v32 endpoint surface inherits the full corrected
+Return-interior field through its v30 projection. -/
+theorem Erdos260V32LocalizedExitCapResidual.returnInteriorField
+    (R : Erdos260V32LocalizedExitCapResidual) :
+    ∀ ctx : ActualFailureContext, ¬ ReturnB2FreeDatum ctx → ReturnInteriorBody ctx :=
+  R.toV30Residual.returnInteriorField
+
+/-- The combined zero-error O2/localized v32 endpoint surface inherits the full
+corrected Return-interior field. -/
+theorem Erdos260V32O2LocalizedExitCapZeroErrorResidual.returnInteriorField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ ReturnB2FreeDatum ctx → ReturnInteriorBody ctx :=
+  R.toV30Residual.returnInteriorField
+
+/-- The combined empty-collar O2/localized v32 endpoint surface inherits the full
+corrected Return-interior field. -/
+theorem Erdos260V32O2LocalizedExitCapEmptyCollarResidual.returnInteriorField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ ReturnB2FreeDatum ctx → ReturnInteriorBody ctx :=
+  R.toV30Residual.returnInteriorField
+
+/-- The coordinate O2 v32 endpoint surface inherits the full corrected
+Return-interior field through its v30 projection. -/
+theorem Erdos260V32O2CollarCoordinateResidual.returnInteriorField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateResidual (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ ReturnB2FreeDatum ctx → ReturnInteriorBody ctx :=
+  R.toV30Residual.returnInteriorField
+
+/-- The finite-error/zero-collar coordinate O2 v32 endpoint surface inherits the
+full corrected Return-interior field. -/
+theorem Erdos260V32O2CollarCoordinateZeroErrorResidual.returnInteriorField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ ReturnB2FreeDatum ctx → ReturnInteriorBody ctx :=
+  R.toV30Residual.returnInteriorField
+
+/-- The empty-collar coordinate O2 v32 endpoint surface inherits the full
+corrected Return-interior field. -/
+theorem Erdos260V32O2CollarCoordinateEmptyCollarResidual.returnInteriorField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ ReturnB2FreeDatum ctx → ReturnInteriorBody ctx :=
+  R.toV30Residual.returnInteriorField
+
+/-- The localized v32 endpoint surface inherits the off-table Return-gates branch
+through its v30 projection. -/
+theorem Erdos260V32LocalizedExitCapResidual.returnGatesOffTableField
+    (R : Erdos260V32LocalizedExitCapResidual) :
+    ∀ ctx : ActualFailureContext, ¬ DscReturnB2ZeroDatum ctx →
+      ¬ OrbitBandPinned ctx 2 →
+      ¬ ReturnB2FreeDatum ctx → ¬ ReturnB2OneSpacedDatum ctx →
+      2 * (129 * shellLadderDepth ctx + 64)
+        ≤ 64 * (((supportShell ctx.shell.d ctx.shell.X).card
+              + ctx.n24CarryData.r)
+            * (shellLadderDepth ctx + carryB ctx.shell.Q + 1)) →
+      ReturnGatesBodyUngated ctx :=
+  R.toV30Residual.returnGatesOffTableField
+
+/-- The combined zero-error O2/localized v32 endpoint surface inherits the
+off-table Return-gates branch. -/
+theorem Erdos260V32O2LocalizedExitCapZeroErrorResidual.returnGatesOffTableField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscReturnB2ZeroDatum ctx →
+      ¬ OrbitBandPinned ctx 2 →
+      ¬ ReturnB2FreeDatum ctx → ¬ ReturnB2OneSpacedDatum ctx →
+      2 * (129 * shellLadderDepth ctx + 64)
+        ≤ 64 * (((supportShell ctx.shell.d ctx.shell.X).card
+              + ctx.n24CarryData.r)
+            * (shellLadderDepth ctx + carryB ctx.shell.Q + 1)) →
+      ReturnGatesBodyUngated ctx :=
+  R.toV30Residual.returnGatesOffTableField
+
+/-- The combined empty-collar O2/localized v32 endpoint surface inherits the
+off-table Return-gates branch. -/
+theorem Erdos260V32O2LocalizedExitCapEmptyCollarResidual.returnGatesOffTableField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscReturnB2ZeroDatum ctx →
+      ¬ OrbitBandPinned ctx 2 →
+      ¬ ReturnB2FreeDatum ctx → ¬ ReturnB2OneSpacedDatum ctx →
+      2 * (129 * shellLadderDepth ctx + 64)
+        ≤ 64 * (((supportShell ctx.shell.d ctx.shell.X).card
+              + ctx.n24CarryData.r)
+            * (shellLadderDepth ctx + carryB ctx.shell.Q + 1)) →
+      ReturnGatesBodyUngated ctx :=
+  R.toV30Residual.returnGatesOffTableField
+
+/-- The coordinate O2 v32 endpoint surface inherits the off-table Return-gates
+branch through its v30 projection. -/
+theorem Erdos260V32O2CollarCoordinateResidual.returnGatesOffTableField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateResidual (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscReturnB2ZeroDatum ctx →
+      ¬ OrbitBandPinned ctx 2 →
+      ¬ ReturnB2FreeDatum ctx → ¬ ReturnB2OneSpacedDatum ctx →
+      2 * (129 * shellLadderDepth ctx + 64)
+        ≤ 64 * (((supportShell ctx.shell.d ctx.shell.X).card
+              + ctx.n24CarryData.r)
+            * (shellLadderDepth ctx + carryB ctx.shell.Q + 1)) →
+      ReturnGatesBodyUngated ctx :=
+  R.toV30Residual.returnGatesOffTableField
+
+/-- The finite-error/zero-collar coordinate O2 v32 endpoint surface inherits the
+off-table Return-gates branch. -/
+theorem Erdos260V32O2CollarCoordinateZeroErrorResidual.returnGatesOffTableField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscReturnB2ZeroDatum ctx →
+      ¬ OrbitBandPinned ctx 2 →
+      ¬ ReturnB2FreeDatum ctx → ¬ ReturnB2OneSpacedDatum ctx →
+      2 * (129 * shellLadderDepth ctx + 64)
+        ≤ 64 * (((supportShell ctx.shell.d ctx.shell.X).card
+              + ctx.n24CarryData.r)
+            * (shellLadderDepth ctx + carryB ctx.shell.Q + 1)) →
+      ReturnGatesBodyUngated ctx :=
+  R.toV30Residual.returnGatesOffTableField
+
+/-- The empty-collar coordinate O2 v32 endpoint surface inherits the off-table
+Return-gates branch. -/
+theorem Erdos260V32O2CollarCoordinateEmptyCollarResidual.returnGatesOffTableField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscReturnB2ZeroDatum ctx →
+      ¬ OrbitBandPinned ctx 2 →
+      ¬ ReturnB2FreeDatum ctx → ¬ ReturnB2OneSpacedDatum ctx →
+      2 * (129 * shellLadderDepth ctx + 64)
+        ≤ 64 * (((supportShell ctx.shell.d ctx.shell.X).card
+              + ctx.n24CarryData.r)
+            * (shellLadderDepth ctx + carryB ctx.shell.Q + 1)) →
+      ReturnGatesBodyUngated ctx :=
+  R.toV30Residual.returnGatesOffTableField
+
+/-- The localized v32 endpoint surface inherits the off-table Return-interior
+branch through its v30 projection. -/
+theorem Erdos260V32LocalizedExitCapResidual.returnInteriorOffTableField
+    (R : Erdos260V32LocalizedExitCapResidual) :
+    ∀ ctx : ActualFailureContext, ¬ DscReturnB2ZeroDatum ctx →
+      ¬ ReturnB2FreeDatum ctx → ReturnInteriorBody ctx :=
+  R.toV30Residual.returnInteriorOffTableField
+
+/-- The combined zero-error O2/localized v32 endpoint surface inherits the
+off-table Return-interior branch. -/
+theorem Erdos260V32O2LocalizedExitCapZeroErrorResidual.returnInteriorOffTableField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscReturnB2ZeroDatum ctx →
+      ¬ ReturnB2FreeDatum ctx → ReturnInteriorBody ctx :=
+  R.toV30Residual.returnInteriorOffTableField
+
+/-- The combined empty-collar O2/localized v32 endpoint surface inherits the
+off-table Return-interior branch. -/
+theorem Erdos260V32O2LocalizedExitCapEmptyCollarResidual.returnInteriorOffTableField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscReturnB2ZeroDatum ctx →
+      ¬ ReturnB2FreeDatum ctx → ReturnInteriorBody ctx :=
+  R.toV30Residual.returnInteriorOffTableField
+
+/-- The coordinate O2 v32 endpoint surface inherits the off-table Return-interior
+branch through its v30 projection. -/
+theorem Erdos260V32O2CollarCoordinateResidual.returnInteriorOffTableField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateResidual (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscReturnB2ZeroDatum ctx →
+      ¬ ReturnB2FreeDatum ctx → ReturnInteriorBody ctx :=
+  R.toV30Residual.returnInteriorOffTableField
+
+/-- The finite-error/zero-collar coordinate O2 v32 endpoint surface inherits the
+off-table Return-interior branch. -/
+theorem Erdos260V32O2CollarCoordinateZeroErrorResidual.returnInteriorOffTableField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscReturnB2ZeroDatum ctx →
+      ¬ ReturnB2FreeDatum ctx → ReturnInteriorBody ctx :=
+  R.toV30Residual.returnInteriorOffTableField
+
+/-- The empty-collar coordinate O2 v32 endpoint surface inherits the off-table
+Return-interior branch. -/
+theorem Erdos260V32O2CollarCoordinateEmptyCollarResidual.returnInteriorOffTableField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscReturnB2ZeroDatum ctx →
+      ¬ ReturnB2FreeDatum ctx → ReturnInteriorBody ctx :=
+  R.toV30Residual.returnInteriorOffTableField
+
+/-- The v32 residual rebuilds the full corrected densepack Nat-cover field by
+projecting to the v30 residual.  LC7, LC8, and LC10's span-rarity component
+provide the K.1 landing branch; LC3 supplies the band-3 pinned voiding branch. -/
+theorem Erdos260V32Residual.densePackCoverField (R : Erdos260V32Residual) :
+    DensePackCoverField :=
+  R.toV30.densePackCoverField
+
+/-- The v32 residual inherits the corrected densepack density field through its
+v30 projection.  LC8 is exactly the off-table K.1 density supply, and the
+v30 bridge fills the `b3 = 0` table rows. -/
+theorem Erdos260V32Residual.densePackDensityField (R : Erdos260V32Residual) :
+    ∀ ctx : ActualFailureContext,
+      ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      densePackEndpointDensity ctx :=
+  R.toV30.densePackDensityField
+
+/-- The v32 residual inherits the corrected densepack active-window interior
+field through its v30 projection. -/
+theorem Erdos260V32Residual.densePackInteriorField (R : Erdos260V32Residual) :
+    ∀ ctx : ActualFailureContext,
+      ¬ Class3TopBandCycleFree ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      ∀ k ∈ genuineDensePackStarts ctx,
+        k + ctx.n24CarryData.r + 1
+          < ctx.n24CarryData.carry.hits.firstIndexAbove ctx.shell.X
+              + (supportShell ctx.shell.d ctx.shell.X).card :=
+  R.toV30.densePackInteriorField
+
+/-- The v32 residual inherits the DensePack off-table endpoint-density branch
+through its v30 projection. -/
+theorem Erdos260V32Residual.densePackDensityOffTableField
+    (R : Erdos260V32Residual) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      densePackEndpointDensity ctx :=
+  R.toV30.densePackDensityOffTableField
+
+/-- The v32 residual inherits the DensePack off-table active-window interior
+branch through its v30 projection. -/
+theorem Erdos260V32Residual.densePackInteriorOffTableField
+    (R : Erdos260V32Residual) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Class3TopBandCycleFree ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      ∀ k ∈ genuineDensePackStarts ctx,
+        k + ctx.n24CarryData.r + 1
+          < ctx.n24CarryData.carry.hits.firstIndexAbove ctx.shell.X
+              + (supportShell ctx.shell.d ctx.shell.X).card :=
+  R.toV30.densePackInteriorOffTableField
+
+/-- The v32 residual inherits the exact class-0 mass field through its v30
+projection; LC6 is exactly the carried narrow-support gate surface. -/
+theorem Erdos260V32Residual.class0MassField (R : Erdos260V32Residual) :
+    Class0MassField :=
+  R.toV30.class0MassField
+
+/-- The v32 residual inherits the exact K.1 start-spacing field through its v30
+projection; LC10 supplies the same span-rarity atom used by the v30 DensePack
+cover branch. -/
+theorem Erdos260V32Residual.densePackStartSpacingField (R : Erdos260V32Residual) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Band3PinnedWide ctx → ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx → 1 ≤ ctx.n24CarryData.r →
+      K1StartSpacing ctx :=
+  R.toV30.densePackStartSpacingField
+
+/-- The v32 residual inherits the exact K.1 cluster-floor field through its v30
+projection. -/
+theorem Erdos260V32Residual.densePackClusterFloorField
+    (R : Erdos260V32Residual) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Band3PinnedWide ctx → ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx → 1 ≤ ctx.n24CarryData.r →
+      K1ClusterFloor ctx :=
+  R.toV30.densePackClusterFloorField
+
+/-- The localized v32 endpoint surface inherits the exact K.1 start-spacing field
+through its v30 projection. -/
+theorem Erdos260V32LocalizedExitCapResidual.densePackStartSpacingField
+    (R : Erdos260V32LocalizedExitCapResidual) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Band3PinnedWide ctx → ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx → 1 ≤ ctx.n24CarryData.r →
+      K1StartSpacing ctx :=
+  R.toV30Residual.densePackStartSpacingField
+
+/-- The combined zero-error O2/localized v32 endpoint surface inherits the exact
+K.1 start-spacing field. -/
+theorem Erdos260V32O2LocalizedExitCapZeroErrorResidual.densePackStartSpacingField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Band3PinnedWide ctx → ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx → 1 ≤ ctx.n24CarryData.r →
+      K1StartSpacing ctx :=
+  R.toV30Residual.densePackStartSpacingField
+
+/-- The combined empty-collar O2/localized v32 endpoint surface inherits the
+exact K.1 start-spacing field. -/
+theorem Erdos260V32O2LocalizedExitCapEmptyCollarResidual.densePackStartSpacingField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Band3PinnedWide ctx → ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx → 1 ≤ ctx.n24CarryData.r →
+      K1StartSpacing ctx :=
+  R.toV30Residual.densePackStartSpacingField
+
+/-- The coordinate O2 v32 endpoint surface inherits the exact K.1 start-spacing
+field through its v30 projection. -/
+theorem Erdos260V32O2CollarCoordinateResidual.densePackStartSpacingField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateResidual (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Band3PinnedWide ctx → ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx → 1 ≤ ctx.n24CarryData.r →
+      K1StartSpacing ctx :=
+  R.toV30Residual.densePackStartSpacingField
+
+/-- The finite-error/zero-collar coordinate O2 v32 endpoint surface inherits the
+exact K.1 start-spacing field. -/
+theorem Erdos260V32O2CollarCoordinateZeroErrorResidual.densePackStartSpacingField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Band3PinnedWide ctx → ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx → 1 ≤ ctx.n24CarryData.r →
+      K1StartSpacing ctx :=
+  R.toV30Residual.densePackStartSpacingField
+
+/-- The empty-collar coordinate O2 v32 endpoint surface inherits the exact K.1
+start-spacing field. -/
+theorem Erdos260V32O2CollarCoordinateEmptyCollarResidual.densePackStartSpacingField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Band3PinnedWide ctx → ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx → 1 ≤ ctx.n24CarryData.r →
+      K1StartSpacing ctx :=
+  R.toV30Residual.densePackStartSpacingField
+
+/-- The localized v32 endpoint surface inherits the exact K.1 cluster-floor field
+through its v30 projection. -/
+theorem Erdos260V32LocalizedExitCapResidual.densePackClusterFloorField
+    (R : Erdos260V32LocalizedExitCapResidual) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Band3PinnedWide ctx → ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx → 1 ≤ ctx.n24CarryData.r →
+      K1ClusterFloor ctx :=
+  R.toV30Residual.densePackClusterFloorField
+
+/-- The combined zero-error O2/localized v32 endpoint surface inherits the exact
+K.1 cluster-floor field. -/
+theorem Erdos260V32O2LocalizedExitCapZeroErrorResidual.densePackClusterFloorField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Band3PinnedWide ctx → ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx → 1 ≤ ctx.n24CarryData.r →
+      K1ClusterFloor ctx :=
+  R.toV30Residual.densePackClusterFloorField
+
+/-- The combined empty-collar O2/localized v32 endpoint surface inherits the
+exact K.1 cluster-floor field. -/
+theorem Erdos260V32O2LocalizedExitCapEmptyCollarResidual.densePackClusterFloorField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Band3PinnedWide ctx → ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx → 1 ≤ ctx.n24CarryData.r →
+      K1ClusterFloor ctx :=
+  R.toV30Residual.densePackClusterFloorField
+
+/-- The coordinate O2 v32 endpoint surface inherits the exact K.1 cluster-floor
+field through its v30 projection. -/
+theorem Erdos260V32O2CollarCoordinateResidual.densePackClusterFloorField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateResidual (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Band3PinnedWide ctx → ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx → 1 ≤ ctx.n24CarryData.r →
+      K1ClusterFloor ctx :=
+  R.toV30Residual.densePackClusterFloorField
+
+/-- The finite-error/zero-collar coordinate O2 v32 endpoint surface inherits the
+exact K.1 cluster-floor field. -/
+theorem Erdos260V32O2CollarCoordinateZeroErrorResidual.densePackClusterFloorField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Band3PinnedWide ctx → ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx → 1 ≤ ctx.n24CarryData.r →
+      K1ClusterFloor ctx :=
+  R.toV30Residual.densePackClusterFloorField
+
+/-- The empty-collar coordinate O2 v32 endpoint surface inherits the exact K.1
+cluster-floor field. -/
+theorem Erdos260V32O2CollarCoordinateEmptyCollarResidual.densePackClusterFloorField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Band3PinnedWide ctx → ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx → 1 ≤ ctx.n24CarryData.r →
+      K1ClusterFloor ctx :=
+  R.toV30Residual.densePackClusterFloorField
+
+/-- The v32 residual inherits the K.1 densepack off-table cover inequality
+through its v30 projection. -/
+theorem Erdos260V32Residual.densePackCoverOffTableField
+    (R : Erdos260V32Residual) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Band3PinnedWide ctx → ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      (genuineDensePackStarts ctx).card
+          * ((ctx.n24CarryData.r + 1) * densePackDyadicG0 ctx
+              - (2 * shellLadderDepth ctx + 1))
+        ≤ (proofV4DensePackActualPoints ctx.shell).card :=
+  R.toV30.densePackCoverOffTableField
+
+/-- The localized v32 endpoint surface inherits the K.1 densepack off-table
+cover inequality through its v30 projection. -/
+theorem Erdos260V32LocalizedExitCapResidual.densePackCoverOffTableField
+    (R : Erdos260V32LocalizedExitCapResidual) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Band3PinnedWide ctx → ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      (genuineDensePackStarts ctx).card
+          * ((ctx.n24CarryData.r + 1) * densePackDyadicG0 ctx
+              - (2 * shellLadderDepth ctx + 1))
+        ≤ (proofV4DensePackActualPoints ctx.shell).card :=
+  R.toV30Residual.densePackCoverOffTableField
+
+/-- The combined zero-error O2/localized v32 endpoint surface inherits the K.1
+densepack off-table cover inequality. -/
+theorem Erdos260V32O2LocalizedExitCapZeroErrorResidual.densePackCoverOffTableField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Band3PinnedWide ctx → ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      (genuineDensePackStarts ctx).card
+          * ((ctx.n24CarryData.r + 1) * densePackDyadicG0 ctx
+              - (2 * shellLadderDepth ctx + 1))
+        ≤ (proofV4DensePackActualPoints ctx.shell).card :=
+  R.toV30Residual.densePackCoverOffTableField
+
+/-- The combined empty-collar O2/localized v32 endpoint surface inherits the K.1
+densepack off-table cover inequality. -/
+theorem Erdos260V32O2LocalizedExitCapEmptyCollarResidual.densePackCoverOffTableField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Band3PinnedWide ctx → ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      (genuineDensePackStarts ctx).card
+          * ((ctx.n24CarryData.r + 1) * densePackDyadicG0 ctx
+              - (2 * shellLadderDepth ctx + 1))
+        ≤ (proofV4DensePackActualPoints ctx.shell).card :=
+  R.toV30Residual.densePackCoverOffTableField
+
+/-- The coordinate O2 v32 endpoint surface inherits the K.1 densepack off-table
+cover inequality through its v30 projection. -/
+theorem Erdos260V32O2CollarCoordinateResidual.densePackCoverOffTableField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateResidual (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Band3PinnedWide ctx → ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      (genuineDensePackStarts ctx).card
+          * ((ctx.n24CarryData.r + 1) * densePackDyadicG0 ctx
+              - (2 * shellLadderDepth ctx + 1))
+        ≤ (proofV4DensePackActualPoints ctx.shell).card :=
+  R.toV30Residual.densePackCoverOffTableField
+
+/-- The finite-error/zero-collar coordinate O2 v32 endpoint surface inherits the
+K.1 densepack off-table cover inequality. -/
+theorem Erdos260V32O2CollarCoordinateZeroErrorResidual.densePackCoverOffTableField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Band3PinnedWide ctx → ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      (genuineDensePackStarts ctx).card
+          * ((ctx.n24CarryData.r + 1) * densePackDyadicG0 ctx
+              - (2 * shellLadderDepth ctx + 1))
+        ≤ (proofV4DensePackActualPoints ctx.shell).card :=
+  R.toV30Residual.densePackCoverOffTableField
+
+/-- The empty-collar coordinate O2 v32 endpoint surface inherits the K.1
+densepack off-table cover inequality. -/
+theorem Erdos260V32O2CollarCoordinateEmptyCollarResidual.densePackCoverOffTableField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Band3PinnedWide ctx → ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      (genuineDensePackStarts ctx).card
+          * ((ctx.n24CarryData.r + 1) * densePackDyadicG0 ctx
+              - (2 * shellLadderDepth ctx + 1))
+        ≤ (proofV4DensePackActualPoints ctx.shell).card :=
+  R.toV30Residual.densePackCoverOffTableField
+
+/-- The localized v32 endpoint surface inherits the DensePack off-table
+endpoint-density branch through its v30 projection. -/
+theorem Erdos260V32LocalizedExitCapResidual.densePackDensityOffTableField
+    (R : Erdos260V32LocalizedExitCapResidual) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      densePackEndpointDensity ctx :=
+  R.toV30Residual.densePackDensityOffTableField
+
+/-- The combined zero-error O2/localized v32 endpoint surface inherits the
+DensePack off-table endpoint-density branch. -/
+theorem Erdos260V32O2LocalizedExitCapZeroErrorResidual.densePackDensityOffTableField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      densePackEndpointDensity ctx :=
+  R.toV30Residual.densePackDensityOffTableField
+
+/-- The combined empty-collar O2/localized v32 endpoint surface inherits the
+DensePack off-table endpoint-density branch. -/
+theorem Erdos260V32O2LocalizedExitCapEmptyCollarResidual.densePackDensityOffTableField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      densePackEndpointDensity ctx :=
+  R.toV30Residual.densePackDensityOffTableField
+
+/-- The coordinate O2 v32 endpoint surface inherits the DensePack off-table
+endpoint-density branch through its v30 projection. -/
+theorem Erdos260V32O2CollarCoordinateResidual.densePackDensityOffTableField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateResidual (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      densePackEndpointDensity ctx :=
+  R.toV30Residual.densePackDensityOffTableField
+
+/-- The finite-error/zero-collar coordinate O2 v32 endpoint surface inherits
+the DensePack off-table endpoint-density branch. -/
+theorem Erdos260V32O2CollarCoordinateZeroErrorResidual.densePackDensityOffTableField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      densePackEndpointDensity ctx :=
+  R.toV30Residual.densePackDensityOffTableField
+
+/-- The empty-collar coordinate O2 v32 endpoint surface inherits the DensePack
+off-table endpoint-density branch. -/
+theorem Erdos260V32O2CollarCoordinateEmptyCollarResidual.densePackDensityOffTableField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      densePackEndpointDensity ctx :=
+  R.toV30Residual.densePackDensityOffTableField
+
+/-- The localized v32 endpoint surface inherits the DensePack off-table
+active-window interior branch through its v30 projection. -/
+theorem Erdos260V32LocalizedExitCapResidual.densePackInteriorOffTableField
+    (R : Erdos260V32LocalizedExitCapResidual) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Class3TopBandCycleFree ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      ∀ k ∈ genuineDensePackStarts ctx,
+        k + ctx.n24CarryData.r + 1
+          < ctx.n24CarryData.carry.hits.firstIndexAbove ctx.shell.X
+              + (supportShell ctx.shell.d ctx.shell.X).card :=
+  R.toV30Residual.densePackInteriorOffTableField
+
+/-- The combined zero-error O2/localized v32 endpoint surface inherits the
+DensePack off-table active-window interior branch. -/
+theorem Erdos260V32O2LocalizedExitCapZeroErrorResidual.densePackInteriorOffTableField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Class3TopBandCycleFree ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      ∀ k ∈ genuineDensePackStarts ctx,
+        k + ctx.n24CarryData.r + 1
+          < ctx.n24CarryData.carry.hits.firstIndexAbove ctx.shell.X
+              + (supportShell ctx.shell.d ctx.shell.X).card :=
+  R.toV30Residual.densePackInteriorOffTableField
+
+/-- The combined empty-collar O2/localized v32 endpoint surface inherits the
+DensePack off-table active-window interior branch. -/
+theorem Erdos260V32O2LocalizedExitCapEmptyCollarResidual.densePackInteriorOffTableField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Class3TopBandCycleFree ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      ∀ k ∈ genuineDensePackStarts ctx,
+        k + ctx.n24CarryData.r + 1
+          < ctx.n24CarryData.carry.hits.firstIndexAbove ctx.shell.X
+              + (supportShell ctx.shell.d ctx.shell.X).card :=
+  R.toV30Residual.densePackInteriorOffTableField
+
+/-- The coordinate O2 v32 endpoint surface inherits the DensePack off-table
+active-window interior branch through its v30 projection. -/
+theorem Erdos260V32O2CollarCoordinateResidual.densePackInteriorOffTableField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateResidual (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Class3TopBandCycleFree ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      ∀ k ∈ genuineDensePackStarts ctx,
+        k + ctx.n24CarryData.r + 1
+          < ctx.n24CarryData.carry.hits.firstIndexAbove ctx.shell.X
+              + (supportShell ctx.shell.d ctx.shell.X).card :=
+  R.toV30Residual.densePackInteriorOffTableField
+
+/-- The finite-error/zero-collar coordinate O2 v32 endpoint surface inherits
+the DensePack off-table active-window interior branch. -/
+theorem Erdos260V32O2CollarCoordinateZeroErrorResidual.densePackInteriorOffTableField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Class3TopBandCycleFree ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      ∀ k ∈ genuineDensePackStarts ctx,
+        k + ctx.n24CarryData.r + 1
+          < ctx.n24CarryData.carry.hits.firstIndexAbove ctx.shell.X
+              + (supportShell ctx.shell.d ctx.shell.X).card :=
+  R.toV30Residual.densePackInteriorOffTableField
+
+/-- The empty-collar coordinate O2 v32 endpoint surface inherits the DensePack
+off-table active-window interior branch. -/
+theorem Erdos260V32O2CollarCoordinateEmptyCollarResidual.densePackInteriorOffTableField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext, ¬ DscBand3ZeroDatum ctx →
+      ¬ Class3TopBandCycleFree ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      ∀ k ∈ genuineDensePackStarts ctx,
+        k + ctx.n24CarryData.r + 1
+          < ctx.n24CarryData.carry.hits.firstIndexAbove ctx.shell.X
+              + (supportShell ctx.shell.d ctx.shell.X).card :=
+  R.toV30Residual.densePackInteriorOffTableField
+
+/-- The localized v32 endpoint surface inherits the full corrected densepack
+Nat-cover field through its v30 projection. -/
+theorem Erdos260V32LocalizedExitCapResidual.densePackCoverField
+    (R : Erdos260V32LocalizedExitCapResidual) :
+    DensePackCoverField :=
+  R.toV30Residual.densePackCoverField
+
+/-- The combined zero-error O2/localized v32 endpoint surface inherits the full
+corrected densepack Nat-cover field. -/
+theorem Erdos260V32O2LocalizedExitCapZeroErrorResidual.densePackCoverField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    DensePackCoverField :=
+  R.toV30Residual.densePackCoverField
+
+/-- The combined empty-collar O2/localized v32 endpoint surface inherits the full
+corrected densepack Nat-cover field. -/
+theorem Erdos260V32O2LocalizedExitCapEmptyCollarResidual.densePackCoverField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    DensePackCoverField :=
+  R.toV30Residual.densePackCoverField
+
+/-- The coordinate O2 v32 endpoint surface inherits the full corrected densepack
+Nat-cover field through its v30 projection. -/
+theorem Erdos260V32O2CollarCoordinateResidual.densePackCoverField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateResidual (β := β) (A := A) P₀ Q) :
+    DensePackCoverField :=
+  R.toV30Residual.densePackCoverField
+
+/-- The finite-error/zero-collar coordinate O2 v32 endpoint surface inherits the
+full corrected densepack Nat-cover field. -/
+theorem Erdos260V32O2CollarCoordinateZeroErrorResidual.densePackCoverField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    DensePackCoverField :=
+  R.toV30Residual.densePackCoverField
+
+/-- The empty-collar coordinate O2 v32 endpoint surface inherits the full
+corrected densepack Nat-cover field. -/
+theorem Erdos260V32O2CollarCoordinateEmptyCollarResidual.densePackCoverField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    DensePackCoverField :=
+  R.toV30Residual.densePackCoverField
+
+/-- The localized v32 endpoint surface inherits the corrected densepack density
+field through its v30 projection. -/
+theorem Erdos260V32LocalizedExitCapResidual.densePackDensityField
+    (R : Erdos260V32LocalizedExitCapResidual) :
+    ∀ ctx : ActualFailureContext,
+      ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      densePackEndpointDensity ctx :=
+  R.toV30Residual.densePackDensityField
+
+/-- The combined zero-error O2/localized v32 endpoint surface inherits the
+corrected densepack density field. -/
+theorem Erdos260V32O2LocalizedExitCapZeroErrorResidual.densePackDensityField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext,
+      ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      densePackEndpointDensity ctx :=
+  R.toV30Residual.densePackDensityField
+
+/-- The combined empty-collar O2/localized v32 endpoint surface inherits the
+corrected densepack density field. -/
+theorem Erdos260V32O2LocalizedExitCapEmptyCollarResidual.densePackDensityField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext,
+      ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      densePackEndpointDensity ctx :=
+  R.toV30Residual.densePackDensityField
+
+/-- The coordinate O2 v32 endpoint surface inherits the corrected densepack
+density field through its v30 projection. -/
+theorem Erdos260V32O2CollarCoordinateResidual.densePackDensityField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateResidual (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext,
+      ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      densePackEndpointDensity ctx :=
+  R.toV30Residual.densePackDensityField
+
+/-- The finite-error/zero-collar coordinate O2 v32 endpoint surface inherits the
+corrected densepack density field. -/
+theorem Erdos260V32O2CollarCoordinateZeroErrorResidual.densePackDensityField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext,
+      ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      densePackEndpointDensity ctx :=
+  R.toV30Residual.densePackDensityField
+
+/-- The empty-collar coordinate O2 v32 endpoint surface inherits the corrected
+densepack density field. -/
+theorem Erdos260V32O2CollarCoordinateEmptyCollarResidual.densePackDensityField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext,
+      ¬ Class3CycleBand3Free ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      densePackEndpointDensity ctx :=
+  R.toV30Residual.densePackDensityField
+
+/-- The localized v32 endpoint surface inherits the corrected densepack
+active-window interior field through its v30 projection. -/
+theorem Erdos260V32LocalizedExitCapResidual.densePackInteriorField
+    (R : Erdos260V32LocalizedExitCapResidual) :
+    ∀ ctx : ActualFailureContext,
+      ¬ Class3TopBandCycleFree ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      ∀ k ∈ genuineDensePackStarts ctx,
+        k + ctx.n24CarryData.r + 1
+          < ctx.n24CarryData.carry.hits.firstIndexAbove ctx.shell.X
+              + (supportShell ctx.shell.d ctx.shell.X).card :=
+  R.toV30Residual.densePackInteriorField
+
+/-- The combined zero-error O2/localized v32 endpoint surface inherits the
+corrected densepack active-window interior field. -/
+theorem Erdos260V32O2LocalizedExitCapZeroErrorResidual.densePackInteriorField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext,
+      ¬ Class3TopBandCycleFree ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      ∀ k ∈ genuineDensePackStarts ctx,
+        k + ctx.n24CarryData.r + 1
+          < ctx.n24CarryData.carry.hits.firstIndexAbove ctx.shell.X
+              + (supportShell ctx.shell.d ctx.shell.X).card :=
+  R.toV30Residual.densePackInteriorField
+
+/-- The combined empty-collar O2/localized v32 endpoint surface inherits the
+corrected densepack active-window interior field. -/
+theorem Erdos260V32O2LocalizedExitCapEmptyCollarResidual.densePackInteriorField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext,
+      ¬ Class3TopBandCycleFree ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      ∀ k ∈ genuineDensePackStarts ctx,
+        k + ctx.n24CarryData.r + 1
+          < ctx.n24CarryData.carry.hits.firstIndexAbove ctx.shell.X
+              + (supportShell ctx.shell.d ctx.shell.X).card :=
+  R.toV30Residual.densePackInteriorField
+
+/-- The coordinate O2 v32 endpoint surface inherits the corrected densepack
+active-window interior field through its v30 projection. -/
+theorem Erdos260V32O2CollarCoordinateResidual.densePackInteriorField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateResidual (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext,
+      ¬ Class3TopBandCycleFree ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      ∀ k ∈ genuineDensePackStarts ctx,
+        k + ctx.n24CarryData.r + 1
+          < ctx.n24CarryData.carry.hits.firstIndexAbove ctx.shell.X
+              + (supportShell ctx.shell.d ctx.shell.X).card :=
+  R.toV30Residual.densePackInteriorField
+
+/-- The finite-error/zero-collar coordinate O2 v32 endpoint surface inherits the
+corrected densepack active-window interior field. -/
+theorem Erdos260V32O2CollarCoordinateZeroErrorResidual.densePackInteriorField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext,
+      ¬ Class3TopBandCycleFree ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      ∀ k ∈ genuineDensePackStarts ctx,
+        k + ctx.n24CarryData.r + 1
+          < ctx.n24CarryData.carry.hits.firstIndexAbove ctx.shell.X
+              + (supportShell ctx.shell.d ctx.shell.X).card :=
+  R.toV30Residual.densePackInteriorField
+
+/-- The empty-collar coordinate O2 v32 endpoint surface inherits the corrected
+densepack active-window interior field. -/
+theorem Erdos260V32O2CollarCoordinateEmptyCollarResidual.densePackInteriorField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    ∀ ctx : ActualFailureContext,
+      ¬ Class3TopBandCycleFree ctx →
+      ((class1SlopeDatum ctx).q = 5 ∨ 13 ≤ (class1SlopeDatum ctx).q) →
+      ¬ DensePackDatumClosed ctx →
+      ∀ k ∈ genuineDensePackStarts ctx,
+        k + ctx.n24CarryData.r + 1
+          < ctx.n24CarryData.carry.hits.firstIndexAbove ctx.shell.X
+              + (supportShell ctx.shell.d ctx.shell.X).card :=
+  R.toV30Residual.densePackInteriorField
+
+/-- The localized v32 endpoint surface inherits the class-0 mass field rebuilt
+from its carried LC6 narrow-support gate data. -/
+theorem Erdos260V32LocalizedExitCapResidual.class0MassField
+    (R : Erdos260V32LocalizedExitCapResidual) :
+    Class0MassField :=
+  R.toV30Residual.class0MassField
+
+/-- The combined zero-error O2/localized v32 endpoint surface inherits the
+class-0 mass field rebuilt from its carried LC6 narrow-support gate data. -/
+theorem Erdos260V32O2LocalizedExitCapZeroErrorResidual.class0MassField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    Class0MassField :=
+  R.toV30Residual.class0MassField
+
+/-- The combined empty-collar O2/localized v32 endpoint surface inherits the
+class-0 mass field rebuilt from its carried LC6 narrow-support gate data. -/
+theorem Erdos260V32O2LocalizedExitCapEmptyCollarResidual.class0MassField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    Class0MassField :=
+  R.toV30Residual.class0MassField
+
+/-- The coordinate O2 v32 endpoint surface inherits the class-0 mass field
+rebuilt from its carried LC6 narrow-support gate data. -/
+theorem Erdos260V32O2CollarCoordinateResidual.class0MassField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateResidual (β := β) (A := A) P₀ Q) :
+    Class0MassField :=
+  R.toV30Residual.class0MassField
+
+/-- The finite-error/zero-collar coordinate O2 v32 endpoint surface inherits the
+class-0 mass field rebuilt from its carried LC6 narrow-support gate data. -/
+theorem Erdos260V32O2CollarCoordinateZeroErrorResidual.class0MassField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    Class0MassField :=
+  R.toV30Residual.class0MassField
+
+/-- The empty-collar coordinate O2 v32 endpoint surface inherits the class-0
+mass field rebuilt from its carried LC6 narrow-support gate data. -/
+theorem Erdos260V32O2CollarCoordinateEmptyCollarResidual.class0MassField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    Class0MassField :=
+  R.toV30Residual.class0MassField
+
+/-- The localized v32 endpoint surface keeps the same Appendix-AA/Lane-J
+class-1 carry realization package as its projection to `Erdos260V30Residual`. -/
+def Erdos260V32LocalizedExitCapResidual.class1CarryInputs
+    (R : Erdos260V32LocalizedExitCapResidual) :
+    V30Class1CarryRealizationInputs :=
+  R.toV30Residual.class1CarryInputs
+
+/-- The localized v32 endpoint surface supplies the same level-`0` boosted
+class-1 residual as its v30 projection. -/
+theorem Erdos260V32LocalizedExitCapResidual.class1DeepBoosted
+    (R : Erdos260V32LocalizedExitCapResidual) :
+    DccClass1DeepResidual 0 :=
+  V30Class1CarryRealizationInputs.deepResidual R.class1CarryInputs
+
+/-- The combined zero-error O2/localized v32 endpoint surface exposes the same
+Appendix-AA/Lane-J class-1 carry realization package. -/
+def Erdos260V32O2LocalizedExitCapZeroErrorResidual.class1CarryInputs
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    V30Class1CarryRealizationInputs :=
+  R.toV30Residual.class1CarryInputs
+
+/-- The combined zero-error O2/localized v32 endpoint surface supplies the
+level-`0` boosted class-1 residual. -/
+theorem Erdos260V32O2LocalizedExitCapZeroErrorResidual.class1DeepBoosted
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    DccClass1DeepResidual 0 :=
+  V30Class1CarryRealizationInputs.deepResidual R.class1CarryInputs
+
+/-- The combined empty-collar O2/localized v32 endpoint surface exposes the same
+Appendix-AA/Lane-J class-1 carry realization package. -/
+def Erdos260V32O2LocalizedExitCapEmptyCollarResidual.class1CarryInputs
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    V30Class1CarryRealizationInputs :=
+  R.toV30Residual.class1CarryInputs
+
+/-- The combined empty-collar O2/localized v32 endpoint surface supplies the
+level-`0` boosted class-1 residual. -/
+theorem Erdos260V32O2LocalizedExitCapEmptyCollarResidual.class1DeepBoosted
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    DccClass1DeepResidual 0 :=
+  V30Class1CarryRealizationInputs.deepResidual R.class1CarryInputs
+
+/-- The coordinate O2 v32 endpoint surface exposes the same Appendix-AA/Lane-J
+class-1 carry realization package. -/
+def Erdos260V32O2CollarCoordinateResidual.class1CarryInputs
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateResidual (β := β) (A := A) P₀ Q) :
+    V30Class1CarryRealizationInputs :=
+  R.toV30Residual.class1CarryInputs
+
+/-- The coordinate O2 v32 endpoint surface supplies the level-`0` boosted
+class-1 residual. -/
+theorem Erdos260V32O2CollarCoordinateResidual.class1DeepBoosted
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateResidual (β := β) (A := A) P₀ Q) :
+    DccClass1DeepResidual 0 :=
+  V30Class1CarryRealizationInputs.deepResidual R.class1CarryInputs
+
+/-- The finite-error/zero-collar coordinate O2 v32 endpoint surface exposes the
+same Appendix-AA/Lane-J class-1 carry realization package. -/
+def Erdos260V32O2CollarCoordinateZeroErrorResidual.class1CarryInputs
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    V30Class1CarryRealizationInputs :=
+  R.toV30Residual.class1CarryInputs
+
+/-- The finite-error/zero-collar coordinate O2 v32 endpoint surface supplies the
+level-`0` boosted class-1 residual. -/
+theorem Erdos260V32O2CollarCoordinateZeroErrorResidual.class1DeepBoosted
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    DccClass1DeepResidual 0 :=
+  V30Class1CarryRealizationInputs.deepResidual R.class1CarryInputs
+
+/-- The empty-collar coordinate O2 v32 endpoint surface exposes the same
+Appendix-AA/Lane-J class-1 carry realization package. -/
+def Erdos260V32O2CollarCoordinateEmptyCollarResidual.class1CarryInputs
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    V30Class1CarryRealizationInputs :=
+  R.toV30Residual.class1CarryInputs
+
+/-- The empty-collar coordinate O2 v32 endpoint surface supplies the level-`0`
+boosted class-1 residual. -/
+theorem Erdos260V32O2CollarCoordinateEmptyCollarResidual.class1DeepBoosted
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    DccClass1DeepResidual 0 :=
+  V30Class1CarryRealizationInputs.deepResidual R.class1CarryInputs
+
+/-- The localized v32 endpoint surface inherits the full class-1 deep field
+through its v30 projection. -/
+theorem Erdos260V32LocalizedExitCapResidual.class1DeepField
+    (R : Erdos260V32LocalizedExitCapResidual) :
+    Class1DeepField :=
+  R.toV30Residual.class1DeepField
+
+/-- The combined zero-error O2/localized v32 endpoint surface inherits the full
+class-1 deep field. -/
+theorem Erdos260V32O2LocalizedExitCapZeroErrorResidual.class1DeepField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    Class1DeepField :=
+  R.toV30Residual.class1DeepField
+
+/-- The combined empty-collar O2/localized v32 endpoint surface inherits the full
+class-1 deep field. -/
+theorem Erdos260V32O2LocalizedExitCapEmptyCollarResidual.class1DeepField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    Class1DeepField :=
+  R.toV30Residual.class1DeepField
+
+/-- The coordinate O2 v32 endpoint surface inherits the full class-1 deep field
+through its v30 projection. -/
+theorem Erdos260V32O2CollarCoordinateResidual.class1DeepField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateResidual (β := β) (A := A) P₀ Q) :
+    Class1DeepField :=
+  R.toV30Residual.class1DeepField
+
+/-- The finite-error/zero-collar coordinate O2 v32 endpoint surface inherits the
+full class-1 deep field. -/
+theorem Erdos260V32O2CollarCoordinateZeroErrorResidual.class1DeepField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateZeroErrorResidual
+      (β := β) (A := A) P₀ Q) :
+    Class1DeepField :=
+  R.toV30Residual.class1DeepField
+
+/-- The empty-collar coordinate O2 v32 endpoint surface inherits the full
+class-1 deep field. -/
+theorem Erdos260V32O2CollarCoordinateEmptyCollarResidual.class1DeepField
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) :
+    Class1DeepField :=
+  R.toV30Residual.class1DeepField
+
+/-! ## Part 5b.  Value-axis projection -/
+
+/-- The v32 residual consumes the Lane-F value-classification guard exactly as its
+v30 projection does; v32 adds no new value-axis mathematics. -/
+theorem Erdos260V32Residual.value_axis_free (R : Erdos260V32Residual)
+    (ctx : ActualFailureContext)
+    (h1 : TowerModulusEnumEscapeV2 ctx)
+    (h2 : (class1SlopeDatum ctx).q < 107)
+    (h4 : ¬ ((class1SlopeDatum ctx).q = 3 ∧ (class1SlopeDatum ctx).K₀ = 1))
+    (h5 : ¬ ((class1SlopeDatum ctx).q = 21 ∧ (class1SlopeDatum ctx).K₀ = 3))
+    (h6 : ((class1SlopeDatum ctx).q, (class1SlopeDatum ctx).K₀)
+            ∉ dccTowerBand4FreeLowPairs)
+    (h7 : 986888 ≤ shellLadderDepth ctx)
+    (h8 : 63 ≤ ctx.n24CarryData.r)
+    (h9 : 3 ≤ towerSparsityBlock ctx) :
+    Class2CycleInequality ctx :=
+  R.toV30.value_axis_free ctx h1 h2 h4 h5 h6 h7 h8 h9
+
+/-- The localized v32 endpoint surface inherits the same Lane-F value-axis
+discharge through its v30 projection. -/
+theorem Erdos260V32LocalizedExitCapResidual.value_axis_free
+    (R : Erdos260V32LocalizedExitCapResidual) (ctx : ActualFailureContext)
+    (h1 : TowerModulusEnumEscapeV2 ctx)
+    (h2 : (class1SlopeDatum ctx).q < 107)
+    (h4 : ¬ ((class1SlopeDatum ctx).q = 3 ∧ (class1SlopeDatum ctx).K₀ = 1))
+    (h5 : ¬ ((class1SlopeDatum ctx).q = 21 ∧ (class1SlopeDatum ctx).K₀ = 3))
+    (h6 : ((class1SlopeDatum ctx).q, (class1SlopeDatum ctx).K₀)
+            ∉ dccTowerBand4FreeLowPairs)
+    (h7 : 986888 ≤ shellLadderDepth ctx)
+    (h8 : 63 ≤ ctx.n24CarryData.r)
+    (h9 : 3 ≤ towerSparsityBlock ctx) :
+    Class2CycleInequality ctx :=
+  R.toV30Residual.value_axis_free ctx h1 h2 h4 h5 h6 h7 h8 h9
+
+/-- The combined zero-error O2/localized v32 surface inherits the same Lane-F
+value-axis discharge through its v30 projection. -/
+theorem Erdos260V32O2LocalizedExitCapZeroErrorResidual.value_axis_free
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapZeroErrorResidual
+      (β := β) (A := A) P₀ Q) (ctx : ActualFailureContext)
+    (h1 : TowerModulusEnumEscapeV2 ctx)
+    (h2 : (class1SlopeDatum ctx).q < 107)
+    (h4 : ¬ ((class1SlopeDatum ctx).q = 3 ∧ (class1SlopeDatum ctx).K₀ = 1))
+    (h5 : ¬ ((class1SlopeDatum ctx).q = 21 ∧ (class1SlopeDatum ctx).K₀ = 3))
+    (h6 : ((class1SlopeDatum ctx).q, (class1SlopeDatum ctx).K₀)
+            ∉ dccTowerBand4FreeLowPairs)
+    (h7 : 986888 ≤ shellLadderDepth ctx)
+    (h8 : 63 ≤ ctx.n24CarryData.r)
+    (h9 : 3 ≤ towerSparsityBlock ctx) :
+    Class2CycleInequality ctx :=
+  R.toV30Residual.value_axis_free ctx h1 h2 h4 h5 h6 h7 h8 h9
+
+/-- The combined empty-collar O2/localized v32 surface inherits the same Lane-F
+value-axis discharge through its v30 projection. -/
+theorem Erdos260V32O2LocalizedExitCapEmptyCollarResidual.value_axis_free
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) (ctx : ActualFailureContext)
+    (h1 : TowerModulusEnumEscapeV2 ctx)
+    (h2 : (class1SlopeDatum ctx).q < 107)
+    (h4 : ¬ ((class1SlopeDatum ctx).q = 3 ∧ (class1SlopeDatum ctx).K₀ = 1))
+    (h5 : ¬ ((class1SlopeDatum ctx).q = 21 ∧ (class1SlopeDatum ctx).K₀ = 3))
+    (h6 : ((class1SlopeDatum ctx).q, (class1SlopeDatum ctx).K₀)
+            ∉ dccTowerBand4FreeLowPairs)
+    (h7 : 986888 ≤ shellLadderDepth ctx)
+    (h8 : 63 ≤ ctx.n24CarryData.r)
+    (h9 : 3 ≤ towerSparsityBlock ctx) :
+    Class2CycleInequality ctx :=
+  R.toV30Residual.value_axis_free ctx h1 h2 h4 h5 h6 h7 h8 h9
+
+/-- The coordinate O2 v32 surface inherits the same Lane-F value-axis discharge
+through its v30 projection. -/
+theorem Erdos260V32O2CollarCoordinateResidual.value_axis_free
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateResidual (β := β) (A := A) P₀ Q)
+    (ctx : ActualFailureContext)
+    (h1 : TowerModulusEnumEscapeV2 ctx)
+    (h2 : (class1SlopeDatum ctx).q < 107)
+    (h4 : ¬ ((class1SlopeDatum ctx).q = 3 ∧ (class1SlopeDatum ctx).K₀ = 1))
+    (h5 : ¬ ((class1SlopeDatum ctx).q = 21 ∧ (class1SlopeDatum ctx).K₀ = 3))
+    (h6 : ((class1SlopeDatum ctx).q, (class1SlopeDatum ctx).K₀)
+            ∉ dccTowerBand4FreeLowPairs)
+    (h7 : 986888 ≤ shellLadderDepth ctx)
+    (h8 : 63 ≤ ctx.n24CarryData.r)
+    (h9 : 3 ≤ towerSparsityBlock ctx) :
+    Class2CycleInequality ctx :=
+  R.toV30Residual.value_axis_free ctx h1 h2 h4 h5 h6 h7 h8 h9
+
+/-- The finite-error/zero-collar coordinate O2 v32 surface inherits the same
+Lane-F value-axis discharge through its v30 projection. -/
+theorem Erdos260V32O2CollarCoordinateZeroErrorResidual.value_axis_free
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateZeroErrorResidual
+      (β := β) (A := A) P₀ Q) (ctx : ActualFailureContext)
+    (h1 : TowerModulusEnumEscapeV2 ctx)
+    (h2 : (class1SlopeDatum ctx).q < 107)
+    (h4 : ¬ ((class1SlopeDatum ctx).q = 3 ∧ (class1SlopeDatum ctx).K₀ = 1))
+    (h5 : ¬ ((class1SlopeDatum ctx).q = 21 ∧ (class1SlopeDatum ctx).K₀ = 3))
+    (h6 : ((class1SlopeDatum ctx).q, (class1SlopeDatum ctx).K₀)
+            ∉ dccTowerBand4FreeLowPairs)
+    (h7 : 986888 ≤ shellLadderDepth ctx)
+    (h8 : 63 ≤ ctx.n24CarryData.r)
+    (h9 : 3 ≤ towerSparsityBlock ctx) :
+    Class2CycleInequality ctx :=
+  R.toV30Residual.value_axis_free ctx h1 h2 h4 h5 h6 h7 h8 h9
+
+/-- The empty-collar coordinate O2 v32 surface inherits the same Lane-F
+value-axis discharge through its v30 projection. -/
+theorem Erdos260V32O2CollarCoordinateEmptyCollarResidual.value_axis_free
+    {β A : Type*} [DecidableEq (Nat -> Int)] {P₀ Q : Int}
+    (R : Erdos260V32O2CollarCoordinateEmptyCollarResidual
+      (β := β) (A := A) P₀ Q) (ctx : ActualFailureContext)
+    (h1 : TowerModulusEnumEscapeV2 ctx)
+    (h2 : (class1SlopeDatum ctx).q < 107)
+    (h4 : ¬ ((class1SlopeDatum ctx).q = 3 ∧ (class1SlopeDatum ctx).K₀ = 1))
+    (h5 : ¬ ((class1SlopeDatum ctx).q = 21 ∧ (class1SlopeDatum ctx).K₀ = 3))
+    (h6 : ((class1SlopeDatum ctx).q, (class1SlopeDatum ctx).K₀)
+            ∉ dccTowerBand4FreeLowPairs)
+    (h7 : 986888 ≤ shellLadderDepth ctx)
+    (h8 : 63 ≤ ctx.n24CarryData.r)
+    (h9 : 3 ≤ towerSparsityBlock ctx) :
+    Class2CycleInequality ctx :=
+  R.toV30Residual.value_axis_free ctx h1 h2 h4 h5 h6 h7 h8 h9
+
 /-! ## Part 6.  Axiom-cleanliness audit
 Every key declaration; expected axioms `[propext, Classical.choice, Quot.sound]` or
 fewer (the pure-combinatorial firewall declarations report `[propext]` or fewer). -/
 
 #print axioms erdos260_of_v32Residual
 #print axioms Erdos260V32Residual.toV30
+#print axioms Erdos260V32Residual.returnGatesField
+#print axioms Erdos260V32Residual.returnInteriorField
+#print axioms Erdos260V32Residual.returnGatesOffTableField
+#print axioms Erdos260V32Residual.returnInteriorOffTableField
+#print axioms Erdos260V32Residual.densePackCoverField
+#print axioms Erdos260V32Residual.densePackDensityField
+#print axioms Erdos260V32Residual.densePackInteriorField
+#print axioms Erdos260V32Residual.class0MassField
+#print axioms Erdos260V32Residual.densePackStartSpacingField
+#print axioms Erdos260V32Residual.densePackClusterFloorField
+#print axioms Erdos260V32Residual.densePackCoverOffTableField
+#print axioms Erdos260V32Residual.densePackDensityOffTableField
+#print axioms Erdos260V32Residual.densePackInteriorOffTableField
+#print axioms Erdos260V32Residual.class1CarryInputs
+#print axioms v32_class1DeepBoosted
+#print axioms Erdos260V32Residual.class1DeepField
+#print axioms Erdos260V32Residual.exitMassCore
+#print axioms Erdos260V32Residual.offPinDeliverables
+#print axioms Erdos260V32Residual.deepOrbitPinVoiding
+#print axioms Erdos260V32Residual.value_axis_free
+#print axioms Erdos260V32LocalizedExitCapResidual
+#print axioms Erdos260V32LocalizedExitCapResidual.lc9
+#print axioms Erdos260V32LocalizedExitCapResidual.lc10
+#print axioms Erdos260V32LocalizedExitCapResidual.toV32Residual
+#print axioms Erdos260V32LocalizedExitCapResidual.toV30Residual
+#print axioms Erdos260V32LocalizedExitCapResidual.offPinDeliverables
+#print axioms Erdos260V32LocalizedExitCapResidual.exitMassCore
+#print axioms Erdos260V32LocalizedExitCapResidual.deepOrbitPinVoiding
+#print axioms Erdos260V32LocalizedExitCapResidual.laneGResidual
+#print axioms Erdos260V32LocalizedExitCapResidual.laneGResidual_topBand
+#print axioms Erdos260V32LocalizedExitCapResidual.laneGResidual_readTail
+#print axioms Erdos260V32LocalizedExitCapResidual.returnGatesField
+#print axioms Erdos260V32LocalizedExitCapResidual.returnInteriorField
+#print axioms Erdos260V32LocalizedExitCapResidual.returnGatesOffTableField
+#print axioms Erdos260V32LocalizedExitCapResidual.returnInteriorOffTableField
+#print axioms Erdos260V32LocalizedExitCapResidual.densePackCoverField
+#print axioms Erdos260V32LocalizedExitCapResidual.densePackDensityField
+#print axioms Erdos260V32LocalizedExitCapResidual.densePackInteriorField
+#print axioms Erdos260V32LocalizedExitCapResidual.class0MassField
+#print axioms Erdos260V32LocalizedExitCapResidual.densePackStartSpacingField
+#print axioms Erdos260V32LocalizedExitCapResidual.densePackClusterFloorField
+#print axioms Erdos260V32LocalizedExitCapResidual.densePackCoverOffTableField
+#print axioms Erdos260V32LocalizedExitCapResidual.densePackDensityOffTableField
+#print axioms Erdos260V32LocalizedExitCapResidual.densePackInteriorOffTableField
+#print axioms Erdos260V32LocalizedExitCapResidual.class1CarryInputs
+#print axioms Erdos260V32LocalizedExitCapResidual.class1DeepBoosted
+#print axioms Erdos260V32LocalizedExitCapResidual.class1DeepField
+#print axioms Erdos260V32LocalizedExitCapResidual.value_axis_free
+#print axioms erdos260_of_v32LocalizedExitCapResidual
+#print axioms Erdos260V32O2LocalizedExitCapZeroErrorResidual
+#print axioms Erdos260V32O2LocalizedExitCapZeroErrorResidual.toLocalizedExitCapResidual
+#print axioms Erdos260V32O2LocalizedExitCapZeroErrorResidual.toV32Residual
+#print axioms Erdos260V32O2LocalizedExitCapZeroErrorResidual.toV30Residual
+#print axioms Erdos260V32O2LocalizedExitCapZeroErrorResidual.offPinDeliverables
+#print axioms Erdos260V32O2LocalizedExitCapZeroErrorResidual.exitMassCore
+#print axioms Erdos260V32O2LocalizedExitCapZeroErrorResidual.deepOrbitPinVoiding
+#print axioms Erdos260V32O2LocalizedExitCapZeroErrorResidual.laneGResidual
+#print axioms Erdos260V32O2LocalizedExitCapZeroErrorResidual.laneGResidual_topBand
+#print axioms Erdos260V32O2LocalizedExitCapZeroErrorResidual.laneGResidual_readTail
+#print axioms Erdos260V32O2LocalizedExitCapZeroErrorResidual.returnGatesField
+#print axioms Erdos260V32O2LocalizedExitCapZeroErrorResidual.returnInteriorField
+#print axioms Erdos260V32O2LocalizedExitCapZeroErrorResidual.returnGatesOffTableField
+#print axioms Erdos260V32O2LocalizedExitCapZeroErrorResidual.returnInteriorOffTableField
+#print axioms Erdos260V32O2LocalizedExitCapZeroErrorResidual.densePackCoverField
+#print axioms Erdos260V32O2LocalizedExitCapZeroErrorResidual.densePackDensityField
+#print axioms Erdos260V32O2LocalizedExitCapZeroErrorResidual.densePackInteriorField
+#print axioms Erdos260V32O2LocalizedExitCapZeroErrorResidual.class0MassField
+#print axioms Erdos260V32O2LocalizedExitCapZeroErrorResidual.densePackStartSpacingField
+#print axioms Erdos260V32O2LocalizedExitCapZeroErrorResidual.densePackClusterFloorField
+#print axioms Erdos260V32O2LocalizedExitCapZeroErrorResidual.densePackCoverOffTableField
+#print axioms Erdos260V32O2LocalizedExitCapZeroErrorResidual.densePackDensityOffTableField
+#print axioms Erdos260V32O2LocalizedExitCapZeroErrorResidual.densePackInteriorOffTableField
+#print axioms Erdos260V32O2LocalizedExitCapZeroErrorResidual.class1CarryInputs
+#print axioms Erdos260V32O2LocalizedExitCapZeroErrorResidual.class1DeepBoosted
+#print axioms Erdos260V32O2LocalizedExitCapZeroErrorResidual.class1DeepField
+#print axioms Erdos260V32O2LocalizedExitCapZeroErrorResidual.value_axis_free
+#print axioms erdos260_of_v32O2LocalizedExitCapZeroErrorResidual
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual.toZeroErrorResidual
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual.toLocalizedExitCapResidual
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual.toV32Residual
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual.toV30Residual
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual.offPinDeliverables
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual.exitMassCore
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual.deepOrbitPinVoiding
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual.laneGResidual
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual.laneGResidual_topBand
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual.laneGResidual_readTail
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual.returnGatesField
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual.returnInteriorField
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual.returnGatesOffTableField
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual.returnInteriorOffTableField
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual.densePackCoverField
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual.densePackDensityField
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual.densePackInteriorField
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual.class0MassField
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual.densePackStartSpacingField
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual.densePackClusterFloorField
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual.densePackCoverOffTableField
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual.densePackDensityOffTableField
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual.densePackInteriorOffTableField
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual.class1CarryInputs
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual.class1DeepBoosted
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual.class1DeepField
+#print axioms Erdos260V32O2LocalizedExitCapEmptyCollarResidual.value_axis_free
+#print axioms erdos260_of_v32O2LocalizedExitCapEmptyCollarResidual
+#print axioms Erdos260V32O2CollarCoordinateResidual
+#print axioms Erdos260V32O2CollarCoordinateResidual.toV32Residual
+#print axioms Erdos260V32O2CollarCoordinateResidual.toV30Residual
+#print axioms Erdos260V32O2CollarCoordinateResidual.offPinDeliverables
+#print axioms Erdos260V32O2CollarCoordinateResidual.exitMassCore
+#print axioms Erdos260V32O2CollarCoordinateResidual.deepOrbitPinVoiding
+#print axioms Erdos260V32O2CollarCoordinateResidual.returnGatesField
+#print axioms Erdos260V32O2CollarCoordinateResidual.returnInteriorField
+#print axioms Erdos260V32O2CollarCoordinateResidual.returnGatesOffTableField
+#print axioms Erdos260V32O2CollarCoordinateResidual.returnInteriorOffTableField
+#print axioms Erdos260V32O2CollarCoordinateResidual.densePackCoverField
+#print axioms Erdos260V32O2CollarCoordinateResidual.densePackDensityField
+#print axioms Erdos260V32O2CollarCoordinateResidual.densePackInteriorField
+#print axioms Erdos260V32O2CollarCoordinateResidual.class0MassField
+#print axioms Erdos260V32O2CollarCoordinateResidual.densePackStartSpacingField
+#print axioms Erdos260V32O2CollarCoordinateResidual.densePackClusterFloorField
+#print axioms Erdos260V32O2CollarCoordinateResidual.densePackCoverOffTableField
+#print axioms Erdos260V32O2CollarCoordinateResidual.densePackDensityOffTableField
+#print axioms Erdos260V32O2CollarCoordinateResidual.densePackInteriorOffTableField
+#print axioms Erdos260V32O2CollarCoordinateResidual.class1CarryInputs
+#print axioms Erdos260V32O2CollarCoordinateResidual.class1DeepBoosted
+#print axioms Erdos260V32O2CollarCoordinateResidual.class1DeepField
+#print axioms Erdos260V32O2CollarCoordinateResidual.value_axis_free
+#print axioms erdos260_of_v32O2CollarCoordinateResidual
+#print axioms Erdos260V32O2CollarCoordinateZeroErrorResidual
+#print axioms Erdos260V32O2CollarCoordinateZeroErrorResidual.toO2CollarCoordinateResidual
+#print axioms Erdos260V32O2CollarCoordinateZeroErrorResidual.toV32Residual
+#print axioms Erdos260V32O2CollarCoordinateZeroErrorResidual.toV30Residual
+#print axioms Erdos260V32O2CollarCoordinateZeroErrorResidual.offPinDeliverables
+#print axioms Erdos260V32O2CollarCoordinateZeroErrorResidual.exitMassCore
+#print axioms Erdos260V32O2CollarCoordinateZeroErrorResidual.deepOrbitPinVoiding
+#print axioms Erdos260V32O2CollarCoordinateZeroErrorResidual.returnGatesField
+#print axioms Erdos260V32O2CollarCoordinateZeroErrorResidual.returnInteriorField
+#print axioms Erdos260V32O2CollarCoordinateZeroErrorResidual.returnGatesOffTableField
+#print axioms Erdos260V32O2CollarCoordinateZeroErrorResidual.returnInteriorOffTableField
+#print axioms Erdos260V32O2CollarCoordinateZeroErrorResidual.densePackCoverField
+#print axioms Erdos260V32O2CollarCoordinateZeroErrorResidual.densePackDensityField
+#print axioms Erdos260V32O2CollarCoordinateZeroErrorResidual.densePackInteriorField
+#print axioms Erdos260V32O2CollarCoordinateZeroErrorResidual.class0MassField
+#print axioms Erdos260V32O2CollarCoordinateZeroErrorResidual.densePackStartSpacingField
+#print axioms Erdos260V32O2CollarCoordinateZeroErrorResidual.densePackClusterFloorField
+#print axioms Erdos260V32O2CollarCoordinateZeroErrorResidual.densePackCoverOffTableField
+#print axioms Erdos260V32O2CollarCoordinateZeroErrorResidual.densePackDensityOffTableField
+#print axioms Erdos260V32O2CollarCoordinateZeroErrorResidual.densePackInteriorOffTableField
+#print axioms Erdos260V32O2CollarCoordinateZeroErrorResidual.class1CarryInputs
+#print axioms Erdos260V32O2CollarCoordinateZeroErrorResidual.class1DeepBoosted
+#print axioms Erdos260V32O2CollarCoordinateZeroErrorResidual.class1DeepField
+#print axioms Erdos260V32O2CollarCoordinateZeroErrorResidual.value_axis_free
+#print axioms erdos260_of_v32O2CollarCoordinateZeroErrorResidual
+#print axioms Erdos260V32O2CollarCoordinateEmptyCollarResidual
+#print axioms Erdos260V32O2CollarCoordinateEmptyCollarResidual.toO2CollarCoordinateResidual
+#print axioms Erdos260V32O2CollarCoordinateEmptyCollarResidual.toV32Residual
+#print axioms Erdos260V32O2CollarCoordinateEmptyCollarResidual.toV30Residual
+#print axioms Erdos260V32O2CollarCoordinateEmptyCollarResidual.offPinDeliverables
+#print axioms Erdos260V32O2CollarCoordinateEmptyCollarResidual.exitMassCore
+#print axioms Erdos260V32O2CollarCoordinateEmptyCollarResidual.deepOrbitPinVoiding
+#print axioms Erdos260V32O2CollarCoordinateEmptyCollarResidual.returnGatesField
+#print axioms Erdos260V32O2CollarCoordinateEmptyCollarResidual.returnInteriorField
+#print axioms Erdos260V32O2CollarCoordinateEmptyCollarResidual.returnGatesOffTableField
+#print axioms Erdos260V32O2CollarCoordinateEmptyCollarResidual.returnInteriorOffTableField
+#print axioms Erdos260V32O2CollarCoordinateEmptyCollarResidual.densePackCoverField
+#print axioms Erdos260V32O2CollarCoordinateEmptyCollarResidual.densePackDensityField
+#print axioms Erdos260V32O2CollarCoordinateEmptyCollarResidual.densePackInteriorField
+#print axioms Erdos260V32O2CollarCoordinateEmptyCollarResidual.class0MassField
+#print axioms Erdos260V32O2CollarCoordinateEmptyCollarResidual.densePackStartSpacingField
+#print axioms Erdos260V32O2CollarCoordinateEmptyCollarResidual.densePackClusterFloorField
+#print axioms Erdos260V32O2CollarCoordinateEmptyCollarResidual.densePackCoverOffTableField
+#print axioms Erdos260V32O2CollarCoordinateEmptyCollarResidual.densePackDensityOffTableField
+#print axioms Erdos260V32O2CollarCoordinateEmptyCollarResidual.densePackInteriorOffTableField
+#print axioms Erdos260V32O2CollarCoordinateEmptyCollarResidual.class1CarryInputs
+#print axioms Erdos260V32O2CollarCoordinateEmptyCollarResidual.class1DeepBoosted
+#print axioms Erdos260V32O2CollarCoordinateEmptyCollarResidual.class1DeepField
+#print axioms Erdos260V32O2CollarCoordinateEmptyCollarResidual.value_axis_free
+#print axioms erdos260_of_v32O2CollarCoordinateEmptyCollarResidual
 #print axioms v32_dependency_firewall
 #print axioms v32_firewall_acyclic
 #print axioms rankIncreasing

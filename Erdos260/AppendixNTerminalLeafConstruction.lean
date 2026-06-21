@@ -1581,6 +1581,21 @@ theorem classicalTerminalN33SeparatedLeafOpenItems_nonempty :
   intro h
   simp [classicalTerminalN33SeparatedLeafOpenItems] at h
 
+theorem classicalTerminalN33SeparatedLeafOpenItems_length :
+    classicalTerminalN33SeparatedLeafOpenItems.length = 7 := by
+  rfl
+
+theorem classicalTerminalN33SeparatedLeafOpenItems_eq :
+    classicalTerminalN33SeparatedLeafOpenItems =
+      [ "N.1.0 concrete same-threshold output events and residual-multiplier comparison for the terminal table",
+        "N.3.1 grouped terminal compression over routed output objects",
+        "N.3.3 DensePack support injection and unit-weight alignment",
+        "N.3.3 Chernoff high-cost progress injection and weight domination",
+        "N.3.3 Return/OLC endpoint leakage alignment and return-piece nonnegativity",
+        "N.3.3 clean-CNL class alignment to the L.1.2/G.35 Kraft leaf",
+        "N.3.3 L.6 low/paid bounded-dirty-return split" ] := by
+  rfl
+
 end
 
 end Erdos260

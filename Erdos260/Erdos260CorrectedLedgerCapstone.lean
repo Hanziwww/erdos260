@@ -408,6 +408,15 @@ def densePackCorrected (R : Erdos260CorrectedResidual) :
     DensePackCorrectedResidue R.budget :=
   (R.densePackUngated.toGatedClosure.toDatumSplit.toCycleSplit.toRegimeSplit R.budget).toCorrected
 
+/-- Direct class-3 ledger field from the corrected DensePack surface.  This names the
+support-count contribution used by TeX L.1/L.3 before it is consumed by the corrected
+P9 ledger. -/
+theorem densePackLedgerField (R : Erdos260CorrectedResidual) :
+    ∀ ctx : ActualFailureContext,
+      routedClassMassOf ctx.n24CarryData (R.budget ctx).route 3
+        ≤ termDensePack (faithfulCapacityPhases R.budget ctx).toClosurePhaseData :=
+  R.densePackCorrected.hDensePackField (fun _ => rfl)
+
 /-! ### The corrected class-1 cap and the parallel ledger assembly -/
 
 /-- **The full count-cap absorption** at every context: `r = 0` shells close FREE
@@ -442,7 +451,7 @@ def toCorrectedLedger (R : Erdos260CorrectedResidual) :
   CorrectedP9CtxPinnedLedgerResidual.ofGenuineCaps R.budget (fun _ => rfl)
     (ChernoffGenuineAreaKraftSmallResidual.ofClass0FibreEmpty R.budget
       R.class0Empty).hChernoffField
-    (R.densePackCorrected.hDensePackField (fun _ => rfl))
+    R.densePackLedgerField
     R.hcapAll
 
 /-- The final statement from the wave-16 surface, through the re-based corrected
@@ -735,6 +744,7 @@ theorem erdos260CorrectedLedgerCapstoneStatus_nonempty :
 #print axioms Erdos260CorrectedResidual.class0Cycle
 #print axioms Erdos260CorrectedResidual.class0Empty
 #print axioms Erdos260CorrectedResidual.densePackCorrected
+#print axioms Erdos260CorrectedResidual.densePackLedgerField
 #print axioms Erdos260CorrectedResidual.hcapAll
 #print axioms Erdos260CorrectedResidual.toCorrectedLedger
 #print axioms Erdos260CorrectedResidual.toStatement

@@ -529,6 +529,18 @@ theorem shellPaidChernoff22_1AOpenItems_nonempty :
   intro h
   simp [shellPaidChernoff22_1AOpenItems] at h
 
+theorem shellPaidChernoff22_1AOpenItems_length :
+    shellPaidChernoff22_1AOpenItems.length = 4 := by
+  rfl
+
+theorem shellPaidChernoff22_1AOpenItems_eq :
+    shellPaidChernoff22_1AOpenItems =
+      [ "22.1A stopped regular/shell-paid branch family",
+        "nonnegative shell-paid multipliers for the stopped family",
+        "final finite layer-cake area smallness bound C_Q X |I_j| 2^{-cY} + o(s X |I_j|)",
+        "L.6.2 bounded-overlap embedding of paid terminal outputs into this family" ] := by
+  rfl
+
 /--
 Proof-v4 Lemma L.6.2 bridge from paid terminal outputs to a stopped
 regular/shell-paid Chernoff family.

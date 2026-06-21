@@ -259,6 +259,44 @@ theorem genuineDensePackStarts_card_le_K13_ofCardLe
       (faithfulCapacityPhases budget ctx).toClosurePhaseData.densePack.hcover
       (faithfulCapacityPhases budget ctx).toClosurePhaseData.densePack.hcount)
 
+/-- **Charge-to-count audit direction.**  A genuine class-3 DensePack charge for the
+genuine route forces the same K.1.1 endpoint-disjoint count on genuine DensePack starts.
+
+This exposes the converse used in the TeX audit: once the routed class-3 fibre is identified with
+`genuineDensePackStarts`, the already proved marker-packing comparison
+`Class3DensePackCharge.fibreCard_le_markerCard` is exactly
+`|genuineDensePackStarts ctx| ≤ |densePackMarkers budget ctx|`. -/
+theorem genuineDensePackStarts_card_le_of_class3Charge
+    {budget : ∀ ctx : ActualFailureContext, SeparatedPhaseRoutedBudget ctx}
+    {ctx : ActualFailureContext}
+    (hroute : ∀ ctx : ActualFailureContext, (budget ctx).route = genuineChargeRoute ctx)
+    (charge : Class3DensePackCharge budget ctx) :
+    (genuineDensePackStarts ctx).card ≤ (densePackMarkers budget ctx).card := by
+  simpa [densePackMarkers, routedFibre_three_eq_densePackStarts hroute ctx] using
+    charge.fibreCard_le_markerCard
+
+/-- **Charge/count equivalence with the active-window discharge fixed.**
+
+The K.1.1 endpoint-disjoint count is equivalent to nonemptiness of the genuine class-3 DensePack
+charge once the active-window gap structure (`hgap`/`hscale`) needed by the J.D unit-charge
+discharge is supplied.  This separates the pure marker-count residual from the independent
+active-window input used by `Class3DensePackCharge.ofGenuineLanding`. -/
+theorem class3DensePackCharge_nonempty_iff_count
+    (budget : ∀ ctx : ActualFailureContext, SeparatedPhaseRoutedBudget ctx)
+    (hroute : ∀ ctx : ActualFailureContext, (budget ctx).route = genuineChargeRoute ctx)
+    (ctx : ActualFailureContext)
+    {g₀ : ℕ}
+    (hgap : ∀ k ∈ routedFibre ctx.n24CarryData (budget ctx).route 3,
+        ∀ j, k ≤ j → j ≤ k + ctx.n24CarryData.r → hitGap ctx.n24CarryData.a j ≤ g₀)
+    (hscale : ((ctx.n24CarryData.r : ℤ) + 1) * (g₀ : ℤ) - ctx.n24CarryData.T ≤ 1) :
+    Nonempty (Class3DensePackCharge budget ctx)
+      ↔ (genuineDensePackStarts ctx).card ≤ (densePackMarkers budget ctx).card :=
+  ⟨fun h => by
+      rcases h with ⟨charge⟩
+      exact genuineDensePackStarts_card_le_of_class3Charge hroute charge,
+    fun hcard =>
+      ⟨class3DensePackCharge_ofCardLe budget hroute ctx hcard hgap hscale⟩⟩
+
 /-! ## 4.  The concrete `genuineSeparatedPhaseRoutedBudget` instantiation -/
 
 /-- **The class-3 charge family against the concrete `genuineSeparatedPhaseRoutedBudget`, from the
@@ -304,6 +342,27 @@ theorem densePackK11_match_non_identity :
     rw [Finset.mem_singleton] at hmem
     omega
 
+/-- **Forward direction of the K.1.1 landing/count equivalence.**  The bare
+endpoint-disjoint count produces a genuine marker landing by the order-rank
+matching construction. -/
+theorem genuineDensePackLanding_nonempty_of_card_le
+    (budget : ∀ ctx : ActualFailureContext, SeparatedPhaseRoutedBudget ctx)
+    (ctx : ActualFailureContext)
+    (hcard : (genuineDensePackStarts ctx).card ≤ (densePackMarkers budget ctx).card) :
+    Nonempty (GenuineDensePackLanding budget ctx) :=
+  ⟨GenuineDensePackLanding.ofCardLe budget ctx hcard⟩
+
+/-- **Reverse direction of the K.1.1 landing/count equivalence.**  Any genuine
+marker landing gives the endpoint-disjoint count by injectivity into
+`densePackMarkers`. -/
+theorem genuineDensePackLanding_card_le_of_nonempty
+    (budget : ∀ ctx : ActualFailureContext, SeparatedPhaseRoutedBudget ctx)
+    (ctx : ActualFailureContext)
+    (h : Nonempty (GenuineDensePackLanding budget ctx)) :
+    (genuineDensePackStarts ctx).card ≤ (densePackMarkers budget ctx).card := by
+  rcases h with ⟨L⟩
+  exact genuineDensePackLanding_card_le L
+
 /-- **Non-vacuity capstone.**  The endpoint-disjoint count residual is *exactly* the marker-landing
 residual: it both produces a genuine `GenuineDensePackLanding` (`ofCardLe`) and is forced by any such
 landing (`genuineDensePackLanding_card_le`).  The produced landing uses the non-identity order-rank
@@ -313,8 +372,8 @@ theorem densePackK11_landing_iff_count
     (ctx : ActualFailureContext) :
     Nonempty (GenuineDensePackLanding budget ctx)
       ↔ (genuineDensePackStarts ctx).card ≤ (densePackMarkers budget ctx).card :=
-  ⟨fun ⟨L⟩ => genuineDensePackLanding_card_le L,
-    fun hcard => ⟨GenuineDensePackLanding.ofCardLe budget ctx hcard⟩⟩
+  ⟨genuineDensePackLanding_card_le_of_nonempty budget ctx,
+    genuineDensePackLanding_nonempty_of_card_le budget ctx⟩
 
 /-! ## 6.  Honest residual inventory -/
 
@@ -330,6 +389,14 @@ def densePackK11SupportResiduals : List String :=
       "count hcard (Finset.card_le_card_of_injOn). With ofCardLe this proves the three-field " ++
       "marker-landing residual is EQUIVALENT to the single endpoint-disjoint count inequality; " ++
       "densePackK11_landing_iff_count packages the equivalence.",
+    "CLOSED (charge-to-count audit direction) — genuineDensePackStarts_card_le_of_class3Charge: any " ++
+      "Class3DensePackCharge for a budget routed through genuineChargeRoute forces the same K.1.1 " ++
+      "count after routedFibre_three_eq_densePackStarts identifies routed class 3 with the genuine " ++
+      "DensePack starts; this records that the charge residual is not weaker than the count surface.",
+    "CLOSED (charge/count equivalence with gap discharge fixed) — " ++
+      "class3DensePackCharge_nonempty_iff_count: once the active-window hgap/hscale data required " ++
+      "for the J.D unit-charge discharge is supplied, nonempty Class3DensePackCharge is equivalent " ++
+      "to the same bare K.1.1 endpoint-disjoint count.",
     "CONSTRUCTED (the ledger densePack field) — densePackChargeFamily_ofCardLe / " ++
       "densePackCharge_genuineBudget_ofCardLe: the exact ∀ ctx, Class3DensePackCharge budget ctx ledger " ++
       "field for the genuine route, from the per-context endpoint-disjoint count family + the " ++
@@ -365,8 +432,12 @@ theorem densePackK11SupportResiduals_nonempty : densePackK11SupportResiduals ≠
 #print axioms hDensePack_field_ofCardLe
 #print axioms routedClass3_le_budget_field_ofCardLe
 #print axioms genuineDensePackStarts_card_le_K13_ofCardLe
+#print axioms genuineDensePackStarts_card_le_of_class3Charge
+#print axioms class3DensePackCharge_nonempty_iff_count
 #print axioms densePackCharge_genuineBudget_ofCardLe
 #print axioms densePackK11_match_non_identity
+#print axioms genuineDensePackLanding_nonempty_of_card_le
+#print axioms genuineDensePackLanding_card_le_of_nonempty
 #print axioms densePackK11_landing_iff_count
 
 end

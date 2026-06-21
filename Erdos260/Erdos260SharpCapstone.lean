@@ -50,7 +50,9 @@ The six sharpened atoms:
    `r = 0`) reduced to the single emptiness Prop, ungated shells carrying exactly the
    corrected K.1.1 density + K.1 interior + K.1.2 amortized cover — proved EQUIVALENT to
    the wave-1 `DensePackCorrectedResidue` (`nonempty_densePackCorrected_iff_regimeSplit`);
-   consumed through `DensePackRegimeSplitResidual.toCorrected`.
+   consumed through `DensePackRegimeSplitResidual.toCorrected` for the six-atom bridge,
+   with the class-3 ledger field also exposed directly by
+   `Erdos260SharpResidual.densePackLedgerField`.
 
 Dependency order mirrors the wave-1 capstone: the Tower/Run/Return fields define the
 canonical budget `sharpAtomBudget` (a `sixAtomBudget`, hence a `v3Budget`, by `rfl`),
@@ -153,6 +155,15 @@ def budget (R : Erdos260SharpResidual) :
     ∀ ctx : ActualFailureContext, SeparatedPhaseRoutedBudget ctx :=
   sharpAtomBudget R.towerCount R.runSplit R.returnSmall R.returnDigit
 
+/-- Direct class-3 ledger field from the sharp regime-split surface.  This is the
+DensePack support-count contribution used in TeX L.1/L.3, exposed without making upper
+assemblies unfold `DensePackRegimeSplitResidual.toCorrected`. -/
+theorem densePackLedgerField (R : Erdos260SharpResidual) :
+    ∀ ctx : ActualFailureContext,
+      routedClassMassOf ctx.n24CarryData (R.budget ctx).route 3
+        ≤ termDensePack (faithfulCapacityPhases R.budget ctx).toClosurePhaseData :=
+  R.densePackSplit.toCorrected.hDensePackField (fun _ => rfl)
+
 /-- **The bridge into the wave-1 capstone**: every field of `Erdos260SixAtomResidual`
 is rebuilt from the sharp surfaces through existing public bridges — nothing is
 re-proved.
@@ -227,7 +238,8 @@ def erdos260SharpCapstoneStatus : List String :=
       "sharpAtomBudget - gated shells (incl. ALL r = 0) reduced to the single emptiness " ++
       "Prop, ungated shells carrying exactly K.1.1 density + K.1 interior + corrected " ++
       "K.1.2 amortized cover; equivalent to the wave-1 DensePackCorrectedResidue " ++
-      "(nonempty_densePackCorrected_iff_regimeSplit); consumed via toCorrected.",
+      "(nonempty_densePackCorrected_iff_regimeSplit); consumed via toCorrected for the " ++
+      "six-atom bridge, and directly available as densePackLedgerField.",
     "BAND MAP (all proved, wave 2): every atom shares the gap-window floor " ++
       "129L+64 <= 64*gW; class 1 = band 4 at the exact pin 64*gW = 129L+64; class 4 = " ++
       "band 2; class 3 = band 3; class 0 = bands >= 5 (16K <= q); class 5 = band 1 or " ++
@@ -243,6 +255,7 @@ theorem erdos260SharpCapstoneStatus_nonempty : erdos260SharpCapstoneStatus ≠ [
 #print axioms RunClass5SplitBoundary.toCore
 #print axioms sharpAtomBudget
 #print axioms Erdos260SharpResidual.budget
+#print axioms Erdos260SharpResidual.densePackLedgerField
 #print axioms Erdos260SharpResidual.toSixAtom
 #print axioms Erdos260SharpResidual.toStatement
 #print axioms erdos260_of_sharpResidual
