@@ -1,0 +1,23 @@
+/.lake/
+
+# Lean/editor build by-products
+*.olean
+*.ilean
+*.c
+*.o
+*.so
+*.dll
+*.dylib
+*.trace
+
+# Editor settings and swap files
+/.idea/
+/.vscode/
+*.swp
+*.swo
+*~
+
+# Operating-system metadata
+.DS_Store
+Thumbs.db
+Desktop.ini

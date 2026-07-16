@@ -1,0 +1,68 @@
+name: Lean verification
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Lean and build
+        uses: leanprover/lean-action@v1
+        with:
+          build: true
+          build-args: "--wfail"
+          test: false
+          use-mathlib-cache: true
+          nanoda: true
+          nanoda-allow-sorry: false
+
+      - name: Check labelled declarations and regression examples
+        run: lake env lean Erdos260/SkeletonAudit.lean
+
+      - name: Reject proof placeholders and project-level axiom stand-ins
+        shell: bash
+        run: |
+          if grep -R -nE '(^|[^[:alnum:]_])sorry([^[:alnum:]_]|$)|^[[:space:]]*admit([[:space:];]|$)|(^|[^[:alnum:]_])by[[:space:]]+admit([^[:alnum:]_]|$)' \
+              --include='*.lean' Erdos260 Erdos260.lean; then
+            echo 'Proof placeholder found.' >&2
+            exit 1
+          fi
+          if grep -R -nE '^[[:space:]]*(axiom|opaque)[[:space:]]' \
+              --include='*.lean' Erdos260 Erdos260.lean; then
+            echo 'Project-level axiom or opaque stand-in found.' >&2
+            exit 1
+          fi
+
+      - name: Audit transitive endpoint axioms
+        shell: bash
+        run: |
+          cat > /tmp/Erdos260AxiomAudit.lean <<'EOF'
+          import Erdos260
+          #print axioms Erdos260.thm_main_density
+          #print axioms Erdos260.erdos_260
+          EOF
+          lake env lean /tmp/Erdos260AxiomAudit.lean | tee /tmp/axioms.txt
+          python3 - <<'PY'
+          import pathlib
+          import re
+
+          text = pathlib.Path('/tmp/axioms.txt').read_text(encoding='utf-8')
+          audits = re.findall(r'depends on axioms:\s*\[([^]]*)\]', text, re.S)
+          if len(audits) != 2:
+              raise SystemExit(f'expected two axiom reports, found {len(audits)}')
+          allowed = {'propext', 'Classical.choice', 'Quot.sound'}
+          for report in audits:
+              actual = {name.strip() for name in report.split(',') if name.strip()}
+              unexpected = actual - allowed
+              if unexpected:
+                  raise SystemExit(f'unexpected transitive axioms: {sorted(unexpected)}')
+          PY
