@@ -121,6 +121,14 @@ In particular, the transitive axiom audit for `Erdos260.erdos_260` contains no
 is the Lean kernel and the pinned Lean/Mathlib toolchain. The proof does not
 attempt to verify the Lean kernel itself.
 
+CI also runs two resource-isolated checker jobs. `leanchecker` replays every
+project module in a separate process, serially, so that imported Mathlib
+environments do not accumulate in memory. Nanoda independently checks every
+non-internal declaration in the `Erdos260` namespace and its recursive
+dependency closure using its Rust kernel. The Nanoda job pins its compatible
+version-2 exporter and streams this project closure instead of materializing
+the approximately 6 GB whole Mathlib environment.
+
 ## Building
 
 Install [elan](https://github.com/leanprover/elan), then run from the repository
@@ -129,7 +137,7 @@ root:
 ```console
 lake exe cache get
 lake build --wfail
-lake env lean Erdos260/SkeletonAudit.lean
+lake env lean --trust=0 Erdos260/SkeletonAudit.lean
 ```
 
 On Windows PowerShell the same commands apply:
@@ -138,14 +146,15 @@ On Windows PowerShell the same commands apply:
 Set-Location path\to\erdos260-formalization
 lake exe cache get
 lake build --wfail
-lake env lean Erdos260/SkeletonAudit.lean
+lake env lean --trust=0 Erdos260/SkeletonAudit.lean
 ```
 
-The GitHub Actions workflow repeats the full build and declaration audit, runs
-the independent Nanoda type checker with `sorryAx` disallowed, rejects proof
-placeholders and project-level axiom declarations, and checks that the
-endpoint's transitive axiom list is contained in the three standard axioms
-displayed above.
+The GitHub Actions workflow repeats the full build and runs the declaration
+audit with `--trust=0`, rejects proof placeholders and project-level axiom
+declarations, checks that the endpoint's transitive axiom list is contained in
+the three standard axioms displayed above, replays every project module with
+`leanchecker`, and checks every project declaration with Nanoda's independent
+kernel.
 
 ## Repository layout
 
@@ -170,7 +179,10 @@ displayed above.
 ├── lake-manifest.json            # pinned dependency graph
 ├── lean-toolchain
 ├── CITATION.cff
-└── .github/workflows/lean.yml
+└── .github/
+    ├── patches/                   # pinned exporter compatibility patch
+    ├── scripts/                   # resource-bounded checker drivers
+    └── workflows/lean.yml
 ```
 
 ## Scope

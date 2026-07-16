@@ -1853,7 +1853,7 @@ theorem prop_low_firstdeep (context : FixedScaleContext) :
       (x := (dyadicScale L : ℝ)) (y := d) hdyadic]
     simp only [dyadicScale, Nat.cast_pow, Nat.cast_ofNat, Real.log_pow]
     dsimp [b]
-    ring
+    ring_nf
   have hdecay : Tendsto
       (fun L : ℕ => ((L : ℝ) + gap.Cgap + 1) /
         Real.rpow (dyadicScale L) d) atTop (𝓝 0) := by

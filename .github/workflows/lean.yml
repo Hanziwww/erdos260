@@ -22,11 +22,9 @@ jobs:
           build-args: "--wfail"
           test: false
           use-mathlib-cache: true
-          nanoda: true
-          nanoda-allow-sorry: false
 
-      - name: Check labelled declarations and regression examples
-        run: lake env lean Erdos260/SkeletonAudit.lean
+      - name: Check declarations and regression examples at trust level zero
+        run: lake env lean --trust=0 Erdos260/SkeletonAudit.lean
 
       - name: Reject proof placeholders and project-level axiom stand-ins
         shell: bash
@@ -50,7 +48,7 @@ jobs:
           #print axioms Erdos260.thm_main_density
           #print axioms Erdos260.erdos_260
           EOF
-          lake env lean /tmp/Erdos260AxiomAudit.lean | tee /tmp/axioms.txt
+          lake env lean --trust=0 /tmp/Erdos260AxiomAudit.lean | tee /tmp/axioms.txt
           python3 - <<'PY'
           import pathlib
           import re
@@ -66,3 +64,43 @@ jobs:
               if unexpected:
                   raise SystemExit(f'unexpected transitive axioms: {sorted(unexpected)}')
           PY
+
+  leanchecker:
+    name: Serial Lean environment replay
+    needs: build-and-audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Restore the pinned Lean environment
+        uses: leanprover/lean-action@v1
+        with:
+          build: true
+          build-args: "--wfail"
+          test: false
+          use-mathlib-cache: true
+
+      - name: Replay every project module serially with leanchecker
+        shell: bash
+        run: bash .github/scripts/run_leanchecker_serial.sh
+
+  nanoda:
+    name: Independent Nanoda kernel check
+    needs: build-and-audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Restore the pinned Lean environment
+        uses: leanprover/lean-action@v1
+        with:
+          build: true
+          build-args: "--wfail"
+          test: false
+          use-mathlib-cache: true
+
+      - name: Check every project declaration with Nanoda
+        shell: bash
+        run: bash .github/scripts/run_nanoda.sh
