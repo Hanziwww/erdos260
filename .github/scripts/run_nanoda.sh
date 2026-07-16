@@ -66,6 +66,23 @@ mapfile -t declarations < <(
   lake env lean --run "${ROOT}/.github/scripts/ListErdos260Declarations.lean" |
     LC_ALL=C sort -u
 )
+
+# Nanoda expands kernel literal nodes back into ordinary Lean expressions.
+# These constants are therefore semantic dependencies of `#ELN`/`#ELS` rows,
+# even though Lean's `Expr.getUsedConstants` cannot see them inside a literal.
+readonly -a LITERAL_EXTENSION_ROOTS=(
+  Nat
+  Nat.zero
+  Nat.succ
+  List
+  List.nil
+  List.cons
+  String
+  String.mk
+  Char
+  Char.ofNat
+)
+
 if (( ${#declarations[@]} < 39 )); then
   echo "Expected at least the 39 paper-labelled declarations; found ${#declarations[@]}." >&2
   exit 1
@@ -75,9 +92,11 @@ grep -Fxq 'Erdos260.thm_main_density' <<< "${declaration_text}"
 grep -Fxq 'Erdos260.erdos_260' <<< "${declaration_text}"
 printf 'Nanoda will check %d project declarations and their dependency closure.\n' \
   "${#declarations[@]}"
+printf 'The export also includes %d kernel-literal support roots required by Nanoda.\n' \
+  "${#LITERAL_EXTENSION_ROOTS[@]}"
 
 echo "::group::Check every project declaration with Nanoda"
 lake env "${WORK}/lean4export/.lake/build/bin/lean4export" \
-  Erdos260 -- "${declarations[@]}" |
+  Erdos260 -- "${LITERAL_EXTENSION_ROOTS[@]}" "${declarations[@]}" |
   "${WORK}/nanoda/target/release/nanoda_bin" "${WORK}/nanoda.json"
 echo "::endgroup::"
