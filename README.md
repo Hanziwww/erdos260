@@ -141,10 +141,11 @@ lake build --wfail
 lake env lean Erdos260/SkeletonAudit.lean
 ```
 
-The GitHub Actions workflow repeats the full build and declaration audit,
-rejects proof placeholders and project-level axiom declarations, and checks
-that the endpoint's transitive axiom list is contained in the three standard
-axioms displayed above.
+The GitHub Actions workflow repeats the full build and declaration audit, runs
+the independent Nanoda type checker with `sorryAx` disallowed, rejects proof
+placeholders and project-level axiom declarations, and checks that the
+endpoint's transitive axiom list is contained in the three standard axioms
+displayed above.
 
 ## Repository layout
 
@@ -165,7 +166,7 @@ axioms displayed above.
 │   ├── DeepMind.lean
 │   └── SkeletonAudit.lean
 ├── blueprint.md                  # paper-to-Lean declaration map
-├── lakefile.toml
+├── lakefile.lean
 ├── lake-manifest.json            # pinned dependency graph
 ├── lean-toolchain
 ├── CITATION.cff
