@@ -1,15 +1,17 @@
 diff --git a/Export.lean b/Export.lean
-index 7a73832..66a3276 100644
+index 7a73832..1a810ea 100644
 --- a/Export.lean
 +++ b/Export.lean
-@@ -77,8 +77,8 @@ def removeMData (e : Expr) : M Expr := do
+@@ -77,8 +77,11 @@ def removeMData (e : Expr) : M Expr := do
      pure <| e.updateApp! (← removeMData f) (← removeMData a)
    | .lam _ d b _ =>
      pure <| e.updateLambdaE! (← removeMData d) (← removeMData b)
--  | .letE _ d v b _ =>
+   | .letE _ d v b _ =>
 -    pure <| e.updateLet! (← removeMData d) (← removeMData v) (← removeMData b)
-+  | .letE _ d v b nondep =>
-+    pure <| e.updateLet! (← removeMData d) (← removeMData v) (← removeMData b) nondep
++    -- Export format 2.0 has no field for Lean 4.32's elaborator-only
++    -- `nondep` flag.  Canonicalize it so expressions that differ only in
++    -- that flag receive one export DAG index, as Nanoda 2.0 expects.
++    pure <| e.updateLet! (← removeMData d) (← removeMData v) (← removeMData b) false
    | .forallE _ d b _ =>
      pure <| e.updateForallE! (← removeMData d) (← removeMData b)
    | .proj _ _ e2 =>
