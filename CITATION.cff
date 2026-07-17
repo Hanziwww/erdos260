@@ -6,15 +6,11 @@ type: software
 authors:
   - family-names: Wang
     given-names: Han
-  - family-names: Grau Ribas
-    given-names: Jose Maria
 preferred-citation:
   type: article
   authors:
     - family-names: Wang
       given-names: Han
-    - family-names: Grau Ribas
-      given-names: Jose Maria
   title: "Positive dyadic density for rational weighted binary expansions"
   year: 2026
   collection-title: arXiv

@@ -4,8 +4,8 @@ This repository contains a complete Lean 4 / Mathlib formalization of the
 positive-dyadic-density argument that resolves Erdős Problem 260. It
 accompanies version 2 of:
 
-> Han Wang and Jose Maria Grau Ribas, *Positive dyadic density for rational
-> weighted binary expansions*, arXiv:2606.24972(v2).
+> Han Wang, *Positive dyadic density for rational weighted binary expansions*,
+> arXiv:2606.24972 (v2).
 
 The permanent paper record is
 [arXiv:2606.24972](https://arxiv.org/abs/2606.24972). The detailed correspondence
@@ -188,11 +188,10 @@ kernel.
 ## Scope
 
 The formalization proves the precise Lean statements documented in
-`blueprint.md`. That file also records places where implicit manuscript
-conditions were made explicit or a statement was strengthened during
-formalization. Assessing the correspondence between prose and formal
-interfaces is therefore possible without reconstructing those decisions from
-the implementation.
+`blueprint.md`. That file records the fidelity repairs that guided the revised
+version 2 statements and the remaining implementation-level strengthenings.
+Assessing the correspondence between prose and formal interfaces is therefore
+possible without reconstructing those decisions from the implementation.
 
 For contributing guidelines, see [`CONTRIBUTING.md`](CONTRIBUTING.md). For
 academic use, please cite the accompanying paper using [`CITATION.cff`](CITATION.cff).

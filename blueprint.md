@@ -3,7 +3,7 @@
 ## Source and audit policy
 
 The mathematical source is version 2 (forthcoming; upload in progress) of
-Wang and Grau Ribas, *Positive dyadic density for rational weighted binary
+Wang, *Positive dyadic density for rational weighted binary
 expansions*.  The permanent public record is
 [arXiv:2606.24972](https://arxiv.org/abs/2606.24972).  This repository is
 self-contained and does not require a local manuscript checkout.
@@ -25,15 +25,19 @@ the source files (`H₂`, `mass`, `ScaleFamily`, and so on) to remain readable;
   entropy value can be negative, while the composition estimates used in the
   initial- and post-exit-prefix counts require the monotone half interval.
 - `lem_sparse_cover` needs the conditions `0 < ell` and
-  `∀ g ∈ segment.gaps, g ≤ ell`, both implicit in the manuscript use
-  `ell = ceil(log₂(4D))`, `q < 2D`.  Without the first, the valid segment
+  `∀ g ∈ segment.gaps, g ≤ ell`; version 2 now states them explicitly alongside
+  the long-span condition.  Without the first, the valid segment
   `Q=3`, slope `1/3`, gaps `[2]`, `B=3`, `ell=0`, `Z=2`, `forward=0`
   produces no completed block and contradicts the claimed half-cover.  With
   only `ell>0`, a single oversized terminal gap gives the same obstruction
   after the forward-reserve filter.
 - A dyadic anchor can equal `2X`, so the uniform support-gap estimate is
   `g ≤ L + Cgap + 1`; the `FirstExitRecord.Valid` endpoint bound records this
-  explicit `+1` rather than absorbing it into a support-dependent constant.
+  explicit `+1`, now also retained in version 2, rather than absorbing it into
+  a support-dependent constant.
+- The primitive-direction parameter count retains the endpoint term
+  `1 + 4QX/q`.  Version 2 uses the valid source-band inequality downstream to
+  absorb the `1`; it is not discarded in the standalone counting lemma.
 - Exterior signatures use the actual first exterior state.  Their record is
   computed from that same pre-exit trajectory and is not an arbitrary valid
   four-tuple.
