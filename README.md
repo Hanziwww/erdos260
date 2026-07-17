@@ -5,16 +5,10 @@ positive-dyadic-density argument that resolves Erdős Problem 260. It
 accompanies version 2 of:
 
 > Han Wang and Jose Maria Grau Ribas, *Positive dyadic density for rational
-> weighted binary expansions*, arXiv:2606.24972
-        
-         (v2).
+> weighted binary expansions*, arXiv:2606.24972(v2).
 
 The permanent paper record is
-[arXiv:2606.24972
-        
-        ](https://arxiv.org/abs/2606.24972
-        
-        ). The detailed correspondence
+[arXiv:2606.24972](https://arxiv.org/abs/2606.24972). The detailed correspondence
 between the paper's 39 labelled declarations and Lean is recorded in
 [`blueprint.md`](blueprint.md).
 
