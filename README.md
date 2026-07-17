@@ -12,6 +12,8 @@ The permanent paper record is
 between the paper's 39 labelled declarations and Lean is recorded in
 [`blueprint.md`](blueprint.md).
 
+The mathematical formalization of the entire proof was assisted by GPT-5.6.
+
 ## Status
 
 - Lean `v4.32.0` and Mathlib `v4.32.0` are pinned.
