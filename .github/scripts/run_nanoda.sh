@@ -83,13 +83,16 @@ readonly -a LITERAL_EXTENSION_ROOTS=(
   Char.ofNat
 )
 
-if (( ${#declarations[@]} < 39 )); then
-  echo "Expected at least the 39 paper-labelled declarations; found ${#declarations[@]}." >&2
+if (( ${#declarations[@]} < 70 )); then
+  echo "Expected at least the original 39 and polynomial-window 31 paper-labelled declarations; found ${#declarations[@]}." >&2
   exit 1
 fi
 printf -v declaration_text '%s\n' "${declarations[@]}"
 grep -Fxq 'Erdos260.thm_main_density' <<< "${declaration_text}"
 grep -Fxq 'Erdos260.erdos_260' <<< "${declaration_text}"
+grep -Fxq 'Erdos260.PolynomialWindow.thm_main_uniform' <<< "${declaration_text}"
+grep -Fxq 'Erdos260.PolynomialWindow.thm_main' <<< "${declaration_text}"
+grep -Fxq 'Erdos260.PolynomialWindow.cor_erdos' <<< "${declaration_text}"
 printf 'Nanoda will check %d project declarations and their dependency closure.\n' \
   "${#declarations[@]}"
 printf 'The export also includes %d kernel-literal support roots required by Nanoda.\n' \

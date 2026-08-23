@@ -26,6 +26,18 @@ The mathematical formalization of the entire proof was assisted by GPT-5.6.
 - `Erdos260/SkeletonAudit.lean` checks all 39 paper labels, the public endpoint,
   and the principal executable regression examples.
 
+## Unpublished generalization
+
+The repository now also contains an incremental polynomial-window
+formalization based on a generalization manuscript that is not yet public. It
+extends the framework to rational polynomial weights and integer bases
+`b >= 2`, proving uniform support lower bounds in admissible polynomial-scale
+windows together with density, gap, and irrationality consequences. This work
+is kept separate from the published dyadic development under
+`Erdos260/PolynomialWindow/`; its current theorem-to-Lean map and audit status
+are recorded in [`blueprint-polynomial-windows.md`](blueprint-polynomial-windows.md).
+The unpublished manuscript itself is not included in this repository.
+
 ## The mathematical statements
 
 The main density theorem, `Erdos260.thm_main_density`, says that for every
@@ -175,8 +187,10 @@ kernel.
 │   ├── SequenceBridge.lean
 │   ├── Completion.lean
 │   ├── DeepMind.lean
-│   └── SkeletonAudit.lean
+│   ├── SkeletonAudit.lean
+│   └── PolynomialWindow/          # unpublished polynomial-window generalization
 ├── blueprint.md                  # paper-to-Lean declaration map
+├── blueprint-polynomial-windows.md # generalization-to-Lean declaration map
 ├── lakefile.lean
 ├── lake-manifest.json            # pinned dependency graph
 ├── lean-toolchain

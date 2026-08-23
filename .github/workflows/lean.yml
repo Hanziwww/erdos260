@@ -23,8 +23,11 @@ jobs:
           test: false
           use-mathlib-cache: true
 
-      - name: Check declarations and regression examples at trust level zero
-        run: lake env lean --trust=0 Erdos260/SkeletonAudit.lean
+      - name: Check declarations, proof spikes, and regressions at trust level zero
+        run: |
+          lake env lean --trust=0 -j 4 -M 15360 Erdos260/SkeletonAudit.lean
+          lake env lean --trust=0 -j 4 -M 15360 Erdos260/PolynomialWindow/SpikeAudit.lean
+          lake env lean --trust=0 -j 4 -M 15360 Erdos260/PolynomialWindow/SkeletonAudit.lean
 
       - name: Reject proof placeholders and project-level axiom stand-ins
         shell: bash
@@ -47,16 +50,19 @@ jobs:
           import Erdos260
           #print axioms Erdos260.thm_main_density
           #print axioms Erdos260.erdos_260
+          #print axioms Erdos260.PolynomialWindow.thm_main_uniform
+          #print axioms Erdos260.PolynomialWindow.thm_main
+          #print axioms Erdos260.PolynomialWindow.cor_erdos
           EOF
-          lake env lean --trust=0 /tmp/Erdos260AxiomAudit.lean | tee /tmp/axioms.txt
+          lake env lean --trust=0 -j 4 -M 15360 /tmp/Erdos260AxiomAudit.lean | tee /tmp/axioms.txt
           python3 - <<'PY'
           import pathlib
           import re
 
           text = pathlib.Path('/tmp/axioms.txt').read_text(encoding='utf-8')
           audits = re.findall(r'depends on axioms:\s*\[([^]]*)\]', text, re.S)
-          if len(audits) != 2:
-              raise SystemExit(f'expected two axiom reports, found {len(audits)}')
+          if len(audits) != 5:
+              raise SystemExit(f'expected five axiom reports, found {len(audits)}')
           allowed = {'propext', 'Classical.choice', 'Quot.sound'}
           for report in audits:
               actual = {name.strip() for name in report.split(',') if name.strip()}
